@@ -84,12 +84,12 @@ export default function SignInDialog(props) {
                                 <Grid container direction="column" spacing={2}>
                                     <Grid item>
                                         <TextField
-                                            autoComplete="email"
+                                            autoComplete="nickname"
                                             fullWidth
-                                            label="E-mail address"
-                                            placeholder="correo@gnt.pe"
+                                            label="Nickname"
+                                            placeholder="Nickname"
                                             required
-                                            type="email"
+                                            type="text"
                                             variant="outlined"
                                         />
                                     </Grid>
@@ -120,12 +120,12 @@ export default function SignInDialog(props) {
 						</Button>
                             <Grid item xs>
                                 <TextField
-                                    autoComplete="email"
+                                    autoComplete="nickname"
                                     fullWidth
-                                    label="E-mail address"
-                                    placeholder="correo@gnt.pe"
+                                    label="Nickname"
+                                    placeholder="Nickname"
                                     required
-                                    type="email"
+                                    type="text"
                                     variant="outlined"
                                 />
                             </Grid>

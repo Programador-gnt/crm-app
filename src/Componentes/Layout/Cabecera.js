@@ -136,6 +136,23 @@ function Cabecera() {
 		localStorage.clear()
 	};
 
+	const dark = () => {
+		theming.createTheme({
+			primaryColor: 'green',
+			secondaryColor: 'red',
+			type: 'dark'
+		})
+		setAnchorEl(null);
+	};
+
+	const light = () => {
+		theming.createTheme({
+			primaryColor: 'green',
+			secondaryColor: 'red',
+			type: 'light'
+		})
+		setAnchorEl(null);
+	};
 
 	if (localStorage.getItem('tokenGoogle') === null) {
 		return (<Redirect to='/login' />)
@@ -144,7 +161,7 @@ function Cabecera() {
 	return (
 		<div className={classes.root}>
 			<CssBaseline />
-			<Backdrop open={open} className={classes.back} onClick={() => handleDrawerClose()}/>
+			<Backdrop open={open} className={classes.back} onClick={() => handleDrawerClose()} />
 			<MuiThemeProvider theme={tema}>
 				<AppBar
 					position="fixed"
@@ -198,6 +215,8 @@ function Cabecera() {
 									open={abrir}
 									onClose={() => setAnchorEl(null)}>
 									<MenuItem disabled><em>Usuario</em></MenuItem>
+									<MenuItem onClick={() => dark()}>Dark</MenuItem>
+									<MenuItem onClick={() => light()}>Light</MenuItem>
 									<MenuItem onClick={() => handleClose()}>Cerrar Sesión</MenuItem>
 								</Menu>
 							</div>
@@ -222,7 +241,7 @@ function Cabecera() {
 					<Divider />
 					<List>
 						{MenuNavegacion.map((items, index) => (
-							<Link to={items.link} style={{ textDecoration: 'none', color: tema.type.id==='dark'? 'white': 'black' }} key={index}>
+							<Link to={items.link} style={{ textDecoration: 'none', color: tema.type.id === 'dark' ? 'white' : 'black' }} key={index}>
 								<ListItem button key={index}>
 									<ListItemIcon>{items.nombre === 'Inicio' ? <HomeIcon /> :
 										items.nombre === 'Gmail' ? <GoogleIcon /> :

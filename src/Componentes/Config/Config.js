@@ -4,6 +4,6 @@ const Config = {
 	client_id: "128451255760-6lug3bde25hnd9btogfr7t3ff135ddvq.apps.googleusercontent.com",
 	primary_color: 'green',
 	secondary_color: 'red',
-	type: 'dark'
+	type: 'light'
 }
 export default Config;
