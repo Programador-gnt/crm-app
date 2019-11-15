@@ -8,7 +8,7 @@ function Inicio() {
     const useStyles = makeStyles(theme => ({
         root: {
             width: '100%',
-            marginTop: theme.spacing(10),
+            marginTop: theme.spacing(8),
         }
     }));
 
@@ -18,10 +18,9 @@ function Inicio() {
         <React.Fragment>
             <CssBaseline />
             <Paper elevation={4} className={classes.root}>
-
+                
             </Paper>
         </React.Fragment>
     );
 }
-
 export default Inicio;
