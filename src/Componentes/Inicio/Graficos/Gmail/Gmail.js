@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/styles';
 import { Card, CardContent, Grid, Typography, Avatar, LinearProgress } from '@material-ui/core';
 import GoogleIcon from 'mdi-material-ui/Google';
 import { red } from '@material-ui/core/colors';
+import { Redirect } from 'react-router-dom'  
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -29,7 +30,13 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Gmail = () => {
+    const [correo, setCorreo] = React.useState(false)
+
     const classes = useStyles();
+
+    if(correo===true){
+        return(<Redirect to='/gmail'/>)
+    }
 
     return (
         <Card className={classes.root}>
@@ -48,7 +55,7 @@ const Gmail = () => {
             </Typography>
                         <Typography variant="h3">70</Typography>
                     </Grid>
-                    <Grid item>
+                    <Grid item onClick={()=>setCorreo(true)} style={{cursor: 'pointer'}}>
                         <Avatar className={classes.avatar}>
                             <GoogleIcon className={classes.icon} />
                         </Avatar>

@@ -6,7 +6,9 @@ import Usuarios from './Graficos/Usuarios/Usuarios';
 import Reuniones from './Graficos/Reuniones/Reuniones'
 import { Grid } from '@material-ui/core';
 import Llamadas from './Graficos/Llamadas/Llamadas';
-import Gmail from './Graficos/Gmail/Gmail'
+import Gmail from './Graficos/Gmail/Gmail';
+import TablaUsuario from './Usuarios/Usuario';
+import { Typography } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -52,6 +54,10 @@ export default function Inicio() {
                         xl={3}
                         xs={12} className={classes.usuarios}>
                         <Gmail />
+                    </Grid>
+                    <Grid item xs={12}>
+                    <Typography variant='h5'>Lista de clientes</Typography>
+                            <TablaUsuario />
                     </Grid>
                 </Grid>
             </Paper>

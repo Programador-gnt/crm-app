@@ -136,23 +136,23 @@ function Cabecera() {
 		localStorage.clear()
 	};
 
-	const dark = () => {
-		theming.createTheme({
-			primaryColor: 'green',
-			secondaryColor: 'red',
-			type: 'dark'
-		})
-		setAnchorEl(null);
-	};
+	// const dark = () => {
+	// 	theming.createTheme({
+	// 		primaryColor: 'green',
+	// 		secondaryColor: 'red',
+	// 		type: 'dark'
+	// 	})
+	// 	setAnchorEl(null);
+	// };
 
-	const light = () => {
-		theming.createTheme({
-			primaryColor: 'green',
-			secondaryColor: 'red',
-			type: 'light'
-		})
-		setAnchorEl(null);
-	};
+	// const light = () => {
+	// 	theming.createTheme({
+	// 		primaryColor: 'green',
+	// 		secondaryColor: 'red',
+	// 		type: 'light'
+	// 	})
+	// 	setAnchorEl(null);
+	// };
 
 	if (localStorage.getItem('tokenGoogle') === null) {
 		return (<Redirect to='/login' />)
@@ -215,8 +215,8 @@ function Cabecera() {
 									open={abrir}
 									onClose={() => setAnchorEl(null)}>
 									<MenuItem disabled><em>Usuario</em></MenuItem>
-									<MenuItem onClick={() => dark()}>Dark</MenuItem>
-									<MenuItem onClick={() => light()}>Light</MenuItem>
+									{/* <MenuItem onClick={() => dark()}>Dark</MenuItem>
+									<MenuItem onClick={() => light()}>Light</MenuItem> */}
 									<MenuItem onClick={() => handleClose()}>Cerrar Sesión</MenuItem>
 								</Menu>
 							</div>
@@ -242,7 +242,7 @@ function Cabecera() {
 					<List>
 						{MenuNavegacion.map((items, index) => (
 							<Link to={items.link} style={{ textDecoration: 'none', color: tema.type.id === 'dark' ? 'white' : 'black' }} key={index}>
-								<ListItem button key={index}>
+								<ListItem button key={index} onClick={handleDrawerClose}>
 									<ListItemIcon>{items.nombre === 'Inicio' ? <HomeIcon /> :
 										items.nombre === 'Gmail' ? <GoogleIcon /> :
 											items.nombre === 'Calendario' ? <EventIcon /> :
