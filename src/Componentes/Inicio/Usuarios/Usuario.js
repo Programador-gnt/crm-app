@@ -18,16 +18,6 @@ const useStyles = makeStyles(theme => (
 		},
 		table: {
 			minWidth: 650,
-		},
-		speedDial: {
-			position: 'fixed',
-			bottom: theme.spacing(2),
-			right: theme.spacing(2),
-		},
-		back: {
-			transform: 'translateZ(0px)',
-			position: 'fixed',
-			zIndex: 100
 		}
 	}
 ));
@@ -50,7 +40,7 @@ export default function TablaUsuario() {
 	return (
 		<React.Fragment>
 			<CssBaseline />
-			<Fade in={true} mountOnEnter unmountOnExit timeout={1000}>
+			<Fade in={true} mountOnEnter unmountOnExit timeout={2000}>
 				<Paper className={classes.root}>
 					<Table className={classes.table} aria-label="simple table" aria-labelledby="tableTitle">
 						<TableHead>

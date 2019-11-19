@@ -9,6 +9,7 @@ import Llamadas from './Graficos/Llamadas/Llamadas';
 import Gmail from './Graficos/Gmail/Gmail';
 import TablaUsuario from './Usuarios/Usuario';
 import { Typography } from '@material-ui/core';
+import Zoom from '@material-ui/core/Zoom';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -31,33 +32,41 @@ export default function Inicio() {
             <CssBaseline />
             <Paper elevation={4} className={classes.root}>
                 <Grid container spacing={1}>
-                    <Grid item lg={3}
-                        sm={6}
-                        xl={3}
-                        xs={12} className={classes.usuarios}>
-                        <Usuarios />
-                    </Grid>
-                    <Grid item lg={3}
-                        sm={6}
-                        xl={3}
-                        xs={12} className={classes.usuarios}>
-                        <Reuniones />
-                    </Grid>
-                    <Grid item lg={3}
-                        sm={6}
-                        xl={3}
-                        xs={12} className={classes.usuarios}>
-                        <Llamadas />
-                    </Grid>
-                    <Grid item lg={3}
-                        sm={6}
-                        xl={3}
-                        xs={12} className={classes.usuarios}>
-                        <Gmail />
-                    </Grid>
+                    <Zoom in={true}>
+                        <Grid item lg={3}
+                            sm={6}
+                            xl={3}
+                            xs={12} className={classes.usuarios}>
+                            <Usuarios />
+                        </Grid>
+                    </Zoom>
+                    <Zoom in={true} timeout={500}>
+                        <Grid item lg={3}
+                            sm={6}
+                            xl={3}
+                            xs={12} className={classes.usuarios}>
+                            <Reuniones />
+                        </Grid>
+                    </Zoom>
+                    <Zoom in={true} timeout={1000}>
+                        <Grid item lg={3}
+                            sm={6}
+                            xl={3}
+                            xs={12} className={classes.usuarios}>
+                            <Llamadas />
+                        </Grid>
+                    </Zoom>
+                    <Zoom in={true} timeout={1500}>
+                        <Grid item lg={3}
+                            sm={6}
+                            xl={3}
+                            xs={12} className={classes.usuarios}>
+                            <Gmail />
+                        </Grid>
+                    </Zoom>
                     <Grid item xs={12}>
-                    <Typography variant='h5'>Lista de clientes</Typography>
-                            <TablaUsuario />
+                        <Typography variant='h5'>Lista de clientes</Typography>
+                        <TablaUsuario />
                     </Grid>
                 </Grid>
             </Paper>

@@ -8,6 +8,7 @@
     "@material-ui/icons": "^4.5.1",
     "@material-ui/lab": "^4.0.0-alpha.30",
     "@material-ui/pickers": "^3.2.7",
+    "b64-to-blob": "^1.2.19",
     "date-fns": "^2.0.0-beta.5",
     "exceljs": "^3.3.0",
     "font-awesome": "^4.7.0",
@@ -44,5 +45,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "eslint-plugin-react-hooks": "^2.3.0"
   }
 }

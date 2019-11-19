@@ -1,6 +1,5 @@
 import React from 'react';
 import { HashRouter, Route, Switch } from 'react-router-dom';
-import './App.css';
 import Box from '@material-ui/core/Box';
 import CircularProgress from '@material-ui/core/CircularProgress';
 

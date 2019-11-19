@@ -7,9 +7,9 @@ import Link from '@material-ui/core/Link';
 
 function Copyright() {
   return (
-    <Typography variant="body2" color="textSecondary" align="center">
+    <Typography variant="body2" align="center">
       {'Copyright © '}
-      <Link color="inherit" href="http://newtransport.net" target='_blank'>
+      <Link href="http://newtransport.net" target='_blank'>
         GNT Servicios Generales S.A.
       </Link>{' '}
       {new Date().getFullYear()}
@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
   footer: {
     padding: theme.spacing(2),
     marginTop: 'auto',
-    backgroundColor: 'white',
+    backgroundColor: theme.palette.background.default,
     position: 'fixed',
     bottom: 0,
     width: '100%'

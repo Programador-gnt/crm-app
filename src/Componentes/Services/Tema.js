@@ -273,15 +273,27 @@ theming.changeTheme = (theme) => {
 
 		if (!primaryColor || !secondaryColor || !type) {
 			reject();
-
 			return;
 		}
 
 		if (!primaryColor || !secondaryColor || !type) {
 			reject();
-
 			return;
 		}
+
+		theme = createMuiTheme({
+			palette: {
+				primary: primaryColor.import,
+				secondary: secondaryColor.import,
+				type: type.id
+			},
+
+			primaryColor: primaryColor,
+			secondaryColor: secondaryColor,
+			type: type
+		});
+
+		return theming.defaultTheme = theme;
 	});
 };
 
