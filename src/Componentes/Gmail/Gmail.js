@@ -44,6 +44,9 @@ import Backdrop from '@material-ui/core/Backdrop';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import SearchIcon from '@material-ui/icons/Search';
 import MenuIcon from '@material-ui/icons/Menu';
+import Modal from '@material-ui/core/Modal';
+import Zoom from '@material-ui/core/Zoom';
+import TextField from '@material-ui/core/TextField';
 
 function TabPanel(props) {
 	const { children, value, index, ...other } = props;
@@ -78,7 +81,7 @@ function a11yProps(index) {
 const useStyles = makeStyles(theme => ({
 	root: {
 		width: '100%',
-		marginTop: theme.spacing(10),
+		marginTop: theme.spacing(10)
 	},
 	card: {
 		width: 400,
@@ -86,7 +89,7 @@ const useStyles = makeStyles(theme => ({
 	},
 	media: {
 		height: 100,
-		paddingTop: '56.25%', // 16:9
+		paddingTop: '56.25%'
 	},
 	avatar: {
 		backgroundColor: red[700],
@@ -95,13 +98,13 @@ const useStyles = makeStyles(theme => ({
 		width: '100%'
 	},
 	typography: {
-		padding: theme.spacing(2),
+		padding: theme.spacing(2)
 	},
 	close: {
-		padding: theme.spacing(0.5),
+		padding: theme.spacing(0.5)
 	},
 	table: {
-		minWidth: 650,
+		minWidth: 650
 	},
 	iframe: {
 		width: "100%",
@@ -119,6 +122,17 @@ const useStyles = makeStyles(theme => ({
 		transform: 'translateZ(0px)',
 		position: 'fixed',
 		zIndex: 100
+	},
+	modal: {
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	estiloModal: {
+		backgroundColor: theme.palette.background.paper,
+		border: '2px solid #000',
+		boxShadow: theme.shadows[5],
+		padding: theme.spacing(2, 4, 3),
 	}
 }));
 
@@ -150,6 +164,7 @@ function Gmail() {
 	const [mensajeAdjunto, setMensajeAdjunto] = React.useState({})
 	const [correo, setCorreo] = React.useState('google')
 	const [open, setOpen] = React.useState(false)
+	const [modalBusqueda, setModalBusqueda] = React.useState(false)
 	var arrayInbox = []
 	var arraySent = []
 	var arrayChat = []
@@ -193,6 +208,7 @@ function Gmail() {
 				console.log(MensajesInbox)
 				setAviso(true)
 				setIdsInbox(arrayInbox)
+				setModalBusqueda(false)
 			})
 	}
 
@@ -413,6 +429,22 @@ function Gmail() {
 		setOpen(false);
 	};
 
+	const handleCloseModalBusqueda = () => {
+		setModalBusqueda(false)
+	}
+
+	const onChangeCorreo = (e) => {
+		setCorreo(e.target.value)
+	}
+
+	const Enter = (e) => {
+		if (e.keyCode === 13) {
+			mensajesInbox()
+			mensajesChat()
+			mensajesSent()
+		}
+	}
+
 	return (
 		<React.Fragment>
 			<CssBaseline />
@@ -442,6 +474,35 @@ function Gmail() {
 				]}
 			/>
 			<Paper elevation={4} className={classes.root} >
+				<Modal
+					aria-labelledby='transition-modal-title'
+					aria-describedby="transition-modal-description"
+					className={classes.modal}
+					open={modalBusqueda}
+					onClose={handleCloseModalBusqueda}
+					closeAfterTransition
+					BackdropComponent={Backdrop}
+					BackdropProps={{ timeout: 500 }}>
+					<Zoom in={modalBusqueda} timeout={500}>
+						<div className={classes.estiloModal}>
+							<Typography variant="h6">
+								Buscar
+								</Typography>
+							<TextField
+								variant="outlined"
+								margin="normal"
+								required
+								fullWidth
+								label="¿Qué deseas buscar?"
+								autoComplete="correo"
+								autoFocus
+								onChange={onChangeCorreo.bind()}
+								onKeyDown={Enter.bind()}
+								value={correo}
+							/>
+						</div>
+					</Zoom>
+				</Modal>
 				{console.log(cuerpo)}
 				{console.log(arregloTipo)}
 				<Backdrop open={open} className={classes.back} />
@@ -458,7 +519,7 @@ function Gmail() {
 							key={action.name}
 							icon={action.name === 'Nuevo' ? <AddCircleIcon /> : action.name === 'Buscar' ? <SearchIcon /> : ''}
 							tooltipTitle={action.name}
-							onClick={action.name === 'Nuevo' ? () => alert('Nuevo') : action.name === 'Buscar' ? () => alert('Buscar') : ''}
+							onClick={action.name === 'Nuevo' ? () => alert('Nuevo') : action.name === 'Buscar' ? () => setModalBusqueda(true) : ''}
 						/>
 					))}
 				</SpeedDial>
