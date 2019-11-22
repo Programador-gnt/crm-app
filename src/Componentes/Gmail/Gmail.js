@@ -47,6 +47,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import Modal from '@material-ui/core/Modal';
 import Zoom from '@material-ui/core/Zoom';
 import TextField from '@material-ui/core/TextField';
+import SignInDialog from '../SignInDIalog/SignInDialog';
 
 function TabPanel(props) {
 	const { children, value, index, ...other } = props;
@@ -165,6 +166,7 @@ function Gmail() {
 	const [correo, setCorreo] = React.useState('google')
 	const [open, setOpen] = React.useState(false)
 	const [modalBusqueda, setModalBusqueda] = React.useState(false)
+	const [openDialog, setOpenDialog] = React.useState(false)
 	var arrayInbox = []
 	var arraySent = []
 	var arrayChat = []
@@ -279,7 +281,6 @@ function Gmail() {
 	}
 
 	React.useEffect(perfilUsuario, []);
-
 	React.useEffect(mensajesInbox, []);
 	React.useEffect(mensajesSent, []);
 	React.useEffect(mensajesChat, []);
@@ -439,15 +440,29 @@ function Gmail() {
 
 	const Enter = (e) => {
 		if (e.keyCode === 13) {
+			setIdsInbox([])
+			setIdsSent([])
+			setIdsChat([])
 			mensajesInbox()
 			mensajesChat()
 			mensajesSent()
 		}
 	}
 
+	const closeDialog = () => {
+		setOpenDialog(false)
+		setIdsInbox([])
+		setIdsSent([])
+		setIdsChat([])
+		mensajesInbox()
+		mensajesChat()
+		mensajesSent()
+	}
+
 	return (
 		<React.Fragment>
 			<CssBaseline />
+			<SignInDialog abrir={openDialog} cerrar={closeDialog.bind()} />
 			<Snackbar
 				anchorOrigin={{
 					vertical: 'bottom',
@@ -519,7 +534,7 @@ function Gmail() {
 							key={action.name}
 							icon={action.name === 'Nuevo' ? <AddCircleIcon /> : action.name === 'Buscar' ? <SearchIcon /> : ''}
 							tooltipTitle={action.name}
-							onClick={action.name === 'Nuevo' ? () => alert('Nuevo') : action.name === 'Buscar' ? () => setModalBusqueda(true) : ''}
+							onClick={action.name === 'Nuevo' ? () => setOpenDialog(true) : action.name === 'Buscar' ? () => setModalBusqueda(true) : ''}
 						/>
 					))}
 				</SpeedDial>

@@ -7,50 +7,32 @@ import DialogActions from '@material-ui/core/DialogActions';
 import Hidden from '@material-ui/core/Hidden';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
-import Divider from '@material-ui/core/Divider';
 import TextField from '@material-ui/core/TextField';
-import GoogleIcon from 'mdi-material-ui/Google';
-import { makeStyles } from '@material-ui/core/styles';
-import Config from '../Config/Config';
-import gapi from 'gapi-client';
-import { Redirect } from 'react-router-dom';
-
-const useStyles = makeStyles(theme => ({
-    icon: {
-        marginRight: theme.spacing(0.5)
-    },
-
-    divider: {
-        margin: 'auto'
-    },
-
-    grid: {
-        marginBottom: theme.spacing(2)
-    }
-}));
+import consumeWSGmail from '../Config/WebServiceGmail'
 
 
 export default function SignInDialog(props) {
-    const [irInicio, setIrInicio] = React.useState(false)
-    const classes = useStyles()
+    const [MensajeEnviar, setMensajeEnviar] = React.useState({})
     const { dialogProps } = props
+    var Mensaje
 
-    const ingresar = () => {
-        const SCOPES = 'https://mail.google.com https://www.googleapis.com/auth/calendar https://www.google.com/m8/feeds/ https://www.googleapis.com/auth/contacts.readonly';
-        gapi.load('auth2', initClient);
-        function initClient() {
-            gapi.auth2.authorize({
-                client_id: `${Config.client_id}`,
-                scope: SCOPES
-            }, response => {
-                localStorage.setItem('tokenGoogle', JSON.stringify(response.access_token))
-                setIrInicio(true)
-            });
-        }
+    const enviarChange = (e) => {
+        setMensajeEnviar({
+            ...MensajeEnviar,
+            [e.target.name]: e.target.value
+        })
     }
 
-    if (irInicio === true) {
-        return (<Redirect to='/inicio' />)
+    const enviarMensaje = () => {
+        var BuildMail = require('buildmail')
+        new BuildMail('text/plain').setContent(MensajeEnviar.Snippet).addHeader('From', '').addHeader('To', MensajeEnviar.To).addHeader('Subject', MensajeEnviar.Subject).build((err, mail) => {
+            Mensaje = btoa(mail.toString())
+        })
+        if (Mensaje) {
+            consumeWSGmail('POST', 'messages/send', Mensaje, `?alt=json`)
+        } else {
+
+        }
     }
 
     return (
@@ -58,37 +40,23 @@ export default function SignInDialog(props) {
             <CssBaseline />
             <Dialog fullWidth maxWidth="sm" {...dialogProps} open={props.abrir} onClose={props.cerrar}>
                 <DialogTitle>
-                    Ingresa tu cuenta
+                    Enviar mensaje
                 </DialogTitle>
 
                 <DialogContent>
                     <Hidden xsDown>
                         <Grid container spacing={1}>
-                            <Grid item xs={4}>
-                                <Button
-                                    color="primary"
-                                    fullWidth
-                                    onClick={() => ingresar()}
-                                    startIcon={<GoogleIcon />}
-                                    variant="contained"
-                                >
-                                    Google
-						</Button>
-                            </Grid>
-
-                            <Grid item xs={1}>
-                                <Divider className={classes.divider} orientation="vertical" />
-                            </Grid>
-
-                            <Grid item xs={7}>
+                            <Grid item xs={12}>
                                 <Grid container direction="column" spacing={2}>
                                     <Grid item>
                                         <TextField
-                                            autoComplete="nickname"
+                                            autoComplete="to"
+                                            name='To'
                                             fullWidth
-                                            label="Nickname"
-                                            placeholder="Nickname"
+                                            label="Destinatario"
+                                            placeholder="Correo electrónico"
                                             required
+                                            onChange={enviarChange.bind()}
                                             type="text"
                                             variant="outlined"
                                         />
@@ -96,11 +64,29 @@ export default function SignInDialog(props) {
 
                                     <Grid item >
                                         <TextField
-                                            autoComplete="current-password"
+                                            autoComplete="motivo"
                                             fullWidth
-                                            label="Password"
+                                            label="Subject"
+                                            name='Subject'
+                                            placeholder="Motivo del mensaje"
+                                            onChange={enviarChange.bind()}
                                             required
-                                            type="password"
+                                            type="text"
+                                            variant="outlined"
+                                        />
+                                    </Grid>
+                                    <Grid item >
+                                        <TextField
+                                            autoComplete="mensaje"
+                                            fullWidth
+                                            multiline
+                                            rows={5}
+                                            label="Mensaje"
+                                            name='Snippet'
+                                            placeholder="Cuerpo del mensaje"
+                                            onChange={enviarChange.bind()}
+                                            required
+                                            type="text"
                                             variant="outlined"
                                         />
                                     </Grid>
@@ -110,20 +96,14 @@ export default function SignInDialog(props) {
                     </Hidden>
                     <Hidden smUp>
                         <Grid container direction="column" spacing={2}>
-                            <Button
-                                color="primary"
-                                fullWidth
-                                onClick={() => ingresar()}
-                                startIcon={<GoogleIcon />}
-                                variant="contained">
-                                Google
-						</Button>
                             <Grid item xs>
                                 <TextField
-                                    autoComplete="nickname"
+                                    autoComplete="to"
+                                    name='To'
                                     fullWidth
-                                    label="Nickname"
-                                    placeholder="Nickname"
+                                    label="Destinatario"
+                                    placeholder="Correo electrónico"
+                                    onChange={enviarChange.bind()}
                                     required
                                     type="text"
                                     variant="outlined"
@@ -133,9 +113,27 @@ export default function SignInDialog(props) {
                                 <TextField
                                     autoComplete="current-password"
                                     fullWidth
-                                    label="Password"
+                                    label="Subject"
+                                    name='Subject'
+                                    placeholder="Motivo del mensaje"
+                                    onChange={enviarChange.bind()}
                                     required
                                     type="password"
+                                    variant="outlined"
+                                />
+                            </Grid>
+                            <Grid item xs>
+                                <TextField
+                                    autoComplete="mensaje"
+                                    fullWidth
+                                    multiline
+                                    rows={5}
+                                    label="Mensaje"
+                                    name='Snippet'
+                                    placeholder="Cuerpo del mensaje"
+                                    onChange={enviarChange.bind()}
+                                    required
+                                    type="text"
                                     variant="outlined"
                                 />
                             </Grid>
@@ -143,11 +141,12 @@ export default function SignInDialog(props) {
                     </Hidden>
                 </DialogContent>
                 <DialogActions>
-                    <Button color="secondary" onClick={props.cerrar}>Cancelar</Button>
+                    <Button color="secondary" onClick={props.cerrar}>Cerrar</Button>
                     <Button
+                        onClick={() => enviarMensaje()}
                         color="primary"
                         variant="contained">
-                        Ingresar
+                        Enviar
                     </Button>
                 </DialogActions>
             </Dialog>
