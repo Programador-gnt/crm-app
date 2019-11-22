@@ -8,13 +8,57 @@ import Hidden from '@material-ui/core/Hidden';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-import consumeWSGmail from '../Config/WebServiceGmail'
+import consumeWSGmail from '../Config/WebServiceGmail';
+import clsx from 'clsx';
+import { makeStyles } from '@material-ui/core/styles';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { green } from '@material-ui/core/colors';
+
+const useStyles = makeStyles(theme => ({
+    root: {
+        display: 'flex',
+        alignItems: 'center',
+    },
+    wrapper: {
+        margin: theme.spacing(1),
+        position: 'relative',
+    },
+    buttonSuccess: {
+        backgroundColor: green[500],
+        '&:hover': {
+            backgroundColor: green[700],
+        },
+    },
+    fabProgress: {
+        color: green[500],
+        position: 'absolute',
+        top: -6,
+        left: -6,
+        zIndex: 1,
+    },
+    buttonProgress: {
+        color: green[500],
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        marginTop: -12,
+        marginLeft: -12,
+    },
+}));
 
 
 export default function SignInDialog(props) {
+    const classes = useStyles();
     const [MensajeEnviar, setMensajeEnviar] = React.useState({})
+    const [loading, setLoading] = React.useState(false);
+    const [success, setSuccess] = React.useState(false);
+    const timer = React.useRef();
     const { dialogProps } = props
     var Mensaje
+
+    const buttonClassname = clsx({
+        [classes.buttonSuccess]: success,
+    });
 
     const enviarChange = (e) => {
         setMensajeEnviar({
@@ -27,13 +71,23 @@ export default function SignInDialog(props) {
         var BuildMail = require('buildmail')
         new BuildMail('text/plain').setContent(MensajeEnviar.Snippet).addHeader('From', '').addHeader('To', MensajeEnviar.To).addHeader('Subject', MensajeEnviar.Subject).build((err, mail) => {
             Mensaje = btoa(mail.toString())
+            if (Mensaje) {
+                setSuccess(false);
+                setLoading(true);
+                timer.current = setTimeout(() => {
+                    setSuccess(true);
+                    setLoading(false);
+                    consumeWSGmail('POST', 'messages/send', Mensaje, `?alt=json`)
+                }, 2000)
+            }
         })
-        if (Mensaje) {
-            consumeWSGmail('POST', 'messages/send', Mensaje, `?alt=json`)
-        } else {
-
-        }
     }
+
+    React.useEffect(() => {
+        return () => {
+            clearTimeout(timer.current);
+        };
+    }, []);
 
     return (
         <React.Fragment>
@@ -118,7 +172,7 @@ export default function SignInDialog(props) {
                                     placeholder="Motivo del mensaje"
                                     onChange={enviarChange.bind()}
                                     required
-                                    type="password"
+                                    type="text"
                                     variant="outlined"
                                 />
                             </Grid>
@@ -145,12 +199,14 @@ export default function SignInDialog(props) {
                     <Button
                         onClick={() => enviarMensaje()}
                         color="primary"
+                        className={buttonClassname}
+                        disabled={loading}
                         variant="contained">
+                        {loading && <CircularProgress size={24} className={classes.buttonProgress} />}
                         Enviar
                     </Button>
                 </DialogActions>
             </Dialog>
-
         </React.Fragment>
     );
 }

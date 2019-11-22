@@ -5,6 +5,7 @@ import { Card, CardContent, Grid, Typography, Avatar } from '@material-ui/core';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import EventIcon from '@material-ui/icons/Event';
 import { blue } from '@material-ui/core/colors';
+import { Redirect } from 'react-router-dom'
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -40,7 +41,12 @@ const useStyles = makeStyles(() => ({
 }));
 
 const Reuniones = () => {
+    const [reuniones, setReuniones] = React.useState(false)
     const classes = useStyles();
+
+    if (reuniones === true) {
+        return (<Redirect to='/calendario' />)
+    }
 
     return (
         <Card className={classes.root}>
@@ -58,7 +64,7 @@ const Reuniones = () => {
             </Typography>
                         <Typography variant="h3">30</Typography>
                     </Grid>
-                    <Grid item>
+                    <Grid item onClick={() => setReuniones(true)} style={{ cursor: 'pointer' }}>
                         <Avatar className={classes.avatar}>
                             <EventIcon className={classes.icon} />
                         </Avatar>
