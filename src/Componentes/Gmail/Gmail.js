@@ -2,7 +2,6 @@ import React from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import GoogleIcon from 'mdi-material-ui/Google';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardMedia from '@material-ui/core/CardMedia';
@@ -10,7 +9,6 @@ import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
-import { red } from '@material-ui/core/colors';
 import Grid from '@material-ui/core/Grid';
 import Fade from '@material-ui/core/Fade';
 import PropTypes from 'prop-types';
@@ -92,9 +90,6 @@ const useStyles = makeStyles(theme => ({
 		height: 100,
 		paddingTop: '56.25%'
 	},
-	avatar: {
-		backgroundColor: red[700],
-	},
 	pestaña: {
 		width: '100%'
 	},
@@ -170,12 +165,13 @@ function Gmail() {
 	var arrayInbox = []
 	var arraySent = []
 	var arrayChat = []
-	const SCOPES = 'https://mail.google.com https://www.googleapis.com/auth/calendar https://www.google.com/m8/feeds/ https://www.googleapis.com/auth/contacts.readonly';
+	const SCOPES = 'https://mail.google.com https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/calendar https://www.google.com/m8/feeds/ https://www.googleapis.com/auth/contacts.readonly';
 	var subjject
 	var To
 	var From
 	var Dates
 	var chatFrom
+	const datos = JSON.parse(localStorage.getItem('perfilGoogle'))
 
 	const handleCambio = (event, newValue) => {
 		setValor(newValue);
@@ -555,9 +551,7 @@ function Gmail() {
 					<Card className={classes.card}>
 						<CardHeader
 							avatar={
-								<Avatar aria-label="recipe" className={classes.avatar}>
-									<GoogleIcon />
-								</Avatar>
+								<Avatar alt="..." src={datos.picture} />
 							}
 							title={perfil.emailAddress}
 						/>

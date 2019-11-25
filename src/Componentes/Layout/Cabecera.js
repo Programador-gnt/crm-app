@@ -117,6 +117,7 @@ function Cabecera() {
 	const [anchorEl, setAnchorEl] = React.useState(null);
 	const abrir = Boolean(anchorEl);
 	const [openDialog, setOpenDialog] = React.useState(false)
+	const perfil= JSON.parse(localStorage.getItem('perfilGoogle'))
 
 	const handleDrawerOpen = () => {
 		setOpen(true);
@@ -188,7 +189,7 @@ function Cabecera() {
 								onClick={handleMenu}
 								color="inherit"
 							>
-								<Avatar alt="..." src='https://i.imgur.com/qSZaqys.jpg' />
+								<Avatar alt="..." src={perfil.picture} />
 							</IconButton>
 							<Menu
 								id="menu-appbar"
@@ -204,7 +205,7 @@ function Cabecera() {
 								}}
 								open={abrir}
 								onClose={() => setAnchorEl(null)}>
-								<MenuItem disabled><em>Usuario</em></MenuItem>
+								<MenuItem disabled><em>{perfil.name}</em></MenuItem>
 								<MenuItem onClick={() => dialog()}>Configuración</MenuItem>
 								<MenuItem onClick={() => handleClose()}>Cerrar Sesión</MenuItem>
 							</Menu>
@@ -222,7 +223,7 @@ function Cabecera() {
 				}}
 			>
 				<div className={classes.drawerHeader}>
-					<Avatar alt="..." src='https://i.imgur.com/qSZaqys.jpg' className={classes.bigAvatar} />
+					<Avatar alt="..." src={perfil.picture} className={classes.bigAvatar} />
 					<IconButton onClick={handleDrawerClose}>
 						{theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
 					</IconButton>

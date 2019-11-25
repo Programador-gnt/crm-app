@@ -1,40 +1,40 @@
-// import React from 'react';
-// import CssBaseline from '@material-ui/core/CssBaseline';
-// import { makeStyles } from '@material-ui/core/styles';
-// import Grid from '@material-ui/core/Grid';
-// import CabeceraLogin from '../Layout/CabeceraLogin';
-// import Paper from '@material-ui/core/Paper';
-// import { Redirect } from 'react-router-dom'
+// // import React from 'react';
+// // import CssBaseline from '@material-ui/core/CssBaseline';
+// // import { makeStyles } from '@material-ui/core/styles';
+// // import Grid from '@material-ui/core/Grid';
+// // import CabeceraLogin from '../Layout/CabeceraLogin';
+// // import Paper from '@material-ui/core/Paper';
+// // import { Redirect } from 'react-router-dom'
 
-// const useStyles = makeStyles(() => ({
-// 	root: {
-// 		backgroundImage: 'url(https://i.imgur.com/5opar7w.jpg)',
-// 		backgroundRepeat: 'no-repeat',
-// 		backgroundSize: 'cover',
-// 		backgroundPosition: 'center',
-// 		height: '100vh'
-// 	}
-// }));
+// // const useStyles = makeStyles(() => ({
+// // 	root: {
+// // 		backgroundImage: 'url(https://i.imgur.com/5opar7w.jpg)',
+// // 		backgroundRepeat: 'no-repeat',
+// // 		backgroundSize: 'cover',
+// // 		backgroundPosition: 'center',
+// // 		height: '100vh'
+// // 	}
+// // }));
 
 
-// export default function Login() {
-// 	const classes = useStyles()
+// // export default function Login() {
+// // 	const classes = useStyles()
 
-// 	if (localStorage.getItem('tokenGoogle')) {
-// 		return (<Redirect to='/inicio' />)
-// 	}
+// // 	if (localStorage.getItem('tokenGoogle')) {
+// // 		return (<Redirect to='/inicio' />)
+// // 	}
 
-// 	return (
-// 		<React.Fragment>
-// 			<CssBaseline />
-// 			<Paper elevation={4}>
-// 				<CabeceraLogin />
-// 			</Paper>
-// 			<Grid container component="main" className={classes.root} />
+// // 	return (
+// // 		<React.Fragment>
+// // 			<CssBaseline />
+// // 			<Paper elevation={4}>
+// // 				<CabeceraLogin />
+// // 			</Paper>
+// // 			<Grid container component="main" className={classes.root} />
 
-// 		</React.Fragment>
-// 	);
-// }
+// // 		</React.Fragment>
+// // 	);
+// // }
 import React from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
@@ -112,7 +112,7 @@ export default function Login() {
 	const classes = useStyles();
 
 	const ingresar = () => {
-		const SCOPES = 'https://mail.google.com https://www.googleapis.com/auth/calendar https://www.google.com/m8/feeds/ https://www.googleapis.com/auth/contacts.readonly';
+		const SCOPES = 'https://mail.google.com https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/calendar https://www.google.com/m8/feeds/ https://www.googleapis.com/auth/contacts.readonly';
 		gapi.load('auth2', initClient);
 		function initClient() {
 			gapi.auth2.authorize({
@@ -120,9 +120,23 @@ export default function Login() {
 				scope: SCOPES
 			}, response => {
 				localStorage.setItem('tokenGoogle', JSON.stringify(response.access_token))
-				setIrInicio(true)
+				perfil(response.access_token)
 			});
 		}
+	}
+
+	const perfil= async(TOKEN)=>{
+		await fetch(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${TOKEN}`, {
+			method:'GET',
+			headers:{
+				"Content-type": "application/json",
+			}
+		}).then(respuesta=>{
+			return respuesta.json()
+		}).then(json=>{
+			localStorage.setItem('perfilGoogle', JSON.stringify(json))
+			setIrInicio(true)
+		})
 	}
 
 	if (irInicio === true) {

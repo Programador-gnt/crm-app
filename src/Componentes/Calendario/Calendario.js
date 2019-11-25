@@ -19,7 +19,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
 import LinearProgress from '@material-ui/core/LinearProgress';
 
-const SCOPES = 'https://mail.google.com https://www.googleapis.com/auth/calendar https://www.google.com/m8/feeds/ https://www.googleapis.com/auth/contacts.readonly';
+const SCOPES = 'https://mail.google.com https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/calendar https://www.google.com/m8/feeds/ https://www.googleapis.com/auth/contacts.readonly';
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -49,6 +49,8 @@ export default function Calendario() {
 	}
 	const [eventosGoogle, setEventosGoogle] = React.useState([])
 	const [aviso, setAviso] = React.useState(false);
+	const [eventoConsultado, setEventoConsultado] = React.useState({})
+	const [modalEventoVista, setModalEventoVista] = React.useState({})
 
 	const GetEventos = () => {
 		consumeWSCalendar('GET', '', '', '')
@@ -128,6 +130,52 @@ export default function Calendario() {
 		setAviso(false)
 	};
 
+	const eventClick = (informacionEvento) => {
+		consultarEvento(informacionEvento.event.id)
+	}
+
+	const consultarEvento = (id) => {
+		consumeWSCalendar('GET', '/', '', `${id}`)
+			.then(result => {
+				setEventoConsultado(result)
+				let creador = result.creator.email
+				let descripcion = result.description
+				if (result.start.hasOwnProperty('dateTime')) {
+					let fechaInicio = result.start.dateTime ? result.start.dateTime : {}
+					let fechaFin = result.end.dateTime ? result.end.dateTime : {}
+					let participantes
+					if (result.hasOwnProperty('attendees')) {
+						participantes = result.attendees[0].email
+					} else {
+						participantes = 'No posee Invitados'
+					}
+					setModalEventoVista({
+						start: fechaInicio.substr(0, 10) + ' - ' + fechaInicio.substr(11, 5),
+						end: fechaFin.substr(0, 10) + ' - ' + fechaFin.substr(11, 5),
+						attendees: participantes,
+						creator: creador,
+						description: descripcion
+					})
+				} else if (result.start.hasOwnProperty('date')) {
+					let fechaInicio = result.start.date ? result.start.date : {}
+					let fechaFin = result.end.date ? result.end.date : {}
+					let participantes
+					if (result.hasOwnProperty('attendees')) {
+						participantes = result.attendees[0].email
+					} else {
+						participantes = 'No posee Invitados'
+					}
+					setModalEventoVista({
+						start: fechaInicio,
+						end: fechaFin,
+						attendees: participantes,
+						creator: creador,
+						description: descripcion
+					})
+				}
+			})
+	}
+
 	React.useEffect(GetEventos, [])
 
 	return (
@@ -171,7 +219,7 @@ export default function Calendario() {
 					events={eventosGoogle}
 					header={header}
 					locale='es'
-					// eventClick={this.eventClick}
+					eventClick={eventClick}
 					eventLimit={true}
 					eventTextColor='#fff'
 					eventBorderColor='rgba(0, 0, 0, 0)'
