@@ -100,6 +100,9 @@ const useStyles = makeStyles(theme => ({
 		transform: 'translateZ(0px)',
 		position: 'fixed',
 		zIndex: 100
+	},
+	nombreMenu:{
+		marginLeft: theme.spacing(6)
 	}
 }));
 
@@ -110,14 +113,14 @@ const MenuNavegacion = [
 	{ nombre: 'Llamadas', link: '/llamadas' }
 ]
 
-function Cabecera() {
+function Cabecera(props) {
 	const classes = useStyles();
 	const theme = useTheme();
 	const [open, setOpen] = React.useState(false);
 	const [anchorEl, setAnchorEl] = React.useState(null);
 	const abrir = Boolean(anchorEl);
 	const [openDialog, setOpenDialog] = React.useState(false)
-	const perfil= JSON.parse(localStorage.getItem('perfilGoogle'))
+	const perfil = JSON.parse(localStorage.getItem('perfilGoogle'))
 
 	const handleDrawerOpen = () => {
 		setOpen(true);
@@ -143,6 +146,7 @@ function Cabecera() {
 
 	const cerrar = () => {
 		setOpenDialog(false)
+		props.history.push(props.location.pathname)
 	}
 
 	if (localStorage.getItem('tokenGoogle') === null) {
@@ -224,10 +228,12 @@ function Cabecera() {
 			>
 				<div className={classes.drawerHeader}>
 					<Avatar alt="..." src={perfil.picture} className={classes.bigAvatar} />
+
 					<IconButton onClick={handleDrawerClose}>
 						{theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
 					</IconButton>
 				</div>
+				<Typography variant='button' className={classes.nombreMenu}>{perfil.name}</Typography>
 				<Divider />
 				<List>
 					{MenuNavegacion.map((items, index) => (

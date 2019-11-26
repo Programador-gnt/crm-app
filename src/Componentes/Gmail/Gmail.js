@@ -266,6 +266,20 @@ function Gmail() {
 			mensajesSent()
 			mensajesChat()
 			perfilUsuario()
+			otroPerfil(response.access_token)
+		})
+	}
+
+	const otroPerfil = async (TOKEN) => {
+		await fetch(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${TOKEN}`, {
+			method: 'GET',
+			headers: {
+				"Content-type": "application/json",
+			}
+		}).then(respuesta => {
+			return respuesta.json()
+		}).then(json => {
+			localStorage.setItem('perfilGoogle', JSON.stringify(json))
 		})
 	}
 

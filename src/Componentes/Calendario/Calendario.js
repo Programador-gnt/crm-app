@@ -18,6 +18,20 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import Dialog from '@material-ui/core/Dialog';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItem from '@material-ui/core/ListItem';
+import List from '@material-ui/core/List';
+import Divider from '@material-ui/core/Divider';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Slide from '@material-ui/core/Slide';
+import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
+import Fab from '@material-ui/core/Fab';
+import Avatar from '@material-ui/core/Avatar';
+import GroupIcon from '@material-ui/icons/Group';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import DescriptionOutlinedIcon from '@material-ui/icons/DescriptionOutlined';
 
 const SCOPES = 'https://mail.google.com https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/calendar https://www.google.com/m8/feeds/ https://www.googleapis.com/auth/contacts.readonly';
 
@@ -31,8 +45,22 @@ const useStyles = makeStyles(theme => ({
 	},
 	close: {
 		padding: theme.spacing(0.5)
+	},
+	appBar: {
+		position: 'relative',
+	},
+	title: {
+		marginLeft: theme.spacing(2),
+		flex: 1,
+	},
+	avatar: {
+		backgroundColor: theme.palette.primary.main
 	}
 }));
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+	return <Slide direction="up" ref={ref} {...props} />;
+});
 
 export default function Calendario() {
 	const classes = useStyles()
@@ -51,6 +79,9 @@ export default function Calendario() {
 	const [aviso, setAviso] = React.useState(false);
 	const [eventoConsultado, setEventoConsultado] = React.useState({})
 	const [modalEventoVista, setModalEventoVista] = React.useState({})
+	const [dialogEvento, setDialogEvento] = React.useState(false)
+	const [colorEvento, setEventoColor] = React.useState('')
+	const [idEventoEliminar, setIdEventoEliminar] = React.useState('')
 
 	const GetEventos = () => {
 		consumeWSCalendar('GET', '', '', '')
@@ -71,7 +102,21 @@ export default function Calendario() {
 			scope: SCOPES
 		}, function (response) {
 			localStorage.setItem('tokenGoogle', JSON.stringify(response.access_token));
+			otroPerfil(response.access_token)
 		});
+	}
+
+	const otroPerfil = async (TOKEN) => {
+		await fetch(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${TOKEN}`, {
+			method: 'GET',
+			headers: {
+				"Content-type": "application/json",
+			}
+		}).then(respuesta => {
+			return respuesta.json()
+		}).then(json => {
+			localStorage.setItem('perfilGoogle', JSON.stringify(json))
+		})
 	}
 
 	const obtenerEventos = (eventos) => {
@@ -132,48 +177,57 @@ export default function Calendario() {
 
 	const eventClick = (informacionEvento) => {
 		consultarEvento(informacionEvento.event.id)
+		setEventoColor(informacionEvento.event.backgroundColor)
+		setIdEventoEliminar(informacionEvento.event.id)
 	}
 
 	const consultarEvento = (id) => {
 		consumeWSCalendar('GET', '/', '', `${id}`)
 			.then(result => {
 				setEventoConsultado(result)
-				let creador = result.creator.email
-				let descripcion = result.description
 				if (result.start.hasOwnProperty('dateTime')) {
 					let fechaInicio = result.start.dateTime ? result.start.dateTime : {}
 					let fechaFin = result.end.dateTime ? result.end.dateTime : {}
-					let participantes
-					if (result.hasOwnProperty('attendees')) {
-						participantes = result.attendees[0].email
-					} else {
-						participantes = 'No posee Invitados'
-					}
 					setModalEventoVista({
 						start: fechaInicio.substr(0, 10) + ' - ' + fechaInicio.substr(11, 5),
-						end: fechaFin.substr(0, 10) + ' - ' + fechaFin.substr(11, 5),
-						attendees: participantes,
-						creator: creador,
-						description: descripcion
+						end: fechaFin.substr(0, 10) + ' - ' + fechaFin.substr(11, 5)
 					})
 				} else if (result.start.hasOwnProperty('date')) {
 					let fechaInicio = result.start.date ? result.start.date : {}
 					let fechaFin = result.end.date ? result.end.date : {}
-					let participantes
-					if (result.hasOwnProperty('attendees')) {
-						participantes = result.attendees[0].email
-					} else {
-						participantes = 'No posee Invitados'
-					}
 					setModalEventoVista({
 						start: fechaInicio,
-						end: fechaFin,
-						attendees: participantes,
-						creator: creador,
-						description: descripcion
+						end: fechaFin
 					})
 				}
 			})
+		setDialogEvento(true)
+	}
+
+	const handleCloseDialogEvento = () => {
+		setDialogEvento(false);
+		setModalEventoVista({})
+		setEventoColor('')
+		setEventoConsultado({})
+		setIdEventoEliminar('')
+	};
+
+	const eliminarEvento = async () => {
+		var token = JSON.parse(localStorage.getItem('tokenGoogle'))
+		await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${idEventoEliminar}`, {
+			method: 'DELETE',
+			headers: {
+				Authorization: `Bearer ${token}`,
+			}
+		}).then(respuesta => {
+			console.log(respuesta)
+			setDialogEvento(false)
+			setModalEventoVista({})
+			setEventoColor('')
+			setEventoConsultado({})
+			setIdEventoEliminar('')
+		})
+		GetEventos()
 	}
 
 	React.useEffect(GetEventos, [])
@@ -206,6 +260,39 @@ export default function Calendario() {
 					</IconButton>,
 				]}
 			/>
+			<Dialog fullScreen open={dialogEvento} onClose={handleCloseDialogEvento} TransitionComponent={Transition}>
+				<AppBar className={classes.appBar} style={{ backgroundColor: colorEvento }}>
+					<Toolbar>
+						<IconButton edge="start" color="inherit" onClick={handleCloseDialogEvento} aria-label="close">
+							<CloseIcon />
+						</IconButton>
+						<Typography variant="h6" className={classes.title}>
+							{eventoConsultado.summary}
+						</Typography>
+						<Fab size='small' color="secondary" aria-label="eliminar" onClick={() => eliminarEvento()}>
+							<DeleteOutlineIcon /></Fab>
+					</Toolbar>
+				</AppBar>
+				<List>
+					<ListItem>
+						<ListItemAvatar>
+							<Avatar className={classes.avatar}>
+								<GroupIcon />
+							</Avatar>
+						</ListItemAvatar>
+						<ListItemText primary={eventoConsultado.hasOwnProperty('attendees') ? eventoConsultado.attendees.length + ' Invitado(s)' : ''} secondary={eventoConsultado.hasOwnProperty('attendees') ? eventoConsultado.attendees.map(invitados => (invitados.email + ', ')) : 'No posee invitados'} />
+					</ListItem>
+					<Divider />
+					<ListItem>
+						<ListItemAvatar>
+							<Avatar className={classes.avatar}>
+								<DescriptionOutlinedIcon />
+							</Avatar>
+						</ListItemAvatar>
+						<ListItemText primary="Descripción" secondary={eventoConsultado.description} />
+					</ListItem>
+				</List>
+			</Dialog>
 			<Paper elevation={4} className={classes.root}>
 				<FullCalendar
 					// className={classes.calendario}

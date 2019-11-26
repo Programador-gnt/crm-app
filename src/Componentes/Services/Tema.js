@@ -183,7 +183,7 @@ const defaultTheme = createMuiTheme({
 	type: defaultType
 });
 
-const theming = {};
+var theming = {};
 
 theming.colors = colors;
 theming.types = types;
@@ -261,25 +261,10 @@ theming.createTheme = (theme) => {
  */
 theming.changeTheme = (theme) => {
 	return new Promise((resolve, reject) => {
-		if (!theme) {
-			reject();
-
-			return;
-		}
 
 		let primaryColor = getColor(theme.primaryColor);
 		let secondaryColor = getColor(theme.secondaryColor);
 		let type = getType(theme.type);
-
-		if (!primaryColor || !secondaryColor || !type) {
-			reject();
-			return;
-		}
-
-		if (!primaryColor || !secondaryColor || !type) {
-			reject();
-			return;
-		}
 
 		theme = createMuiTheme({
 			palette: {
@@ -292,8 +277,7 @@ theming.changeTheme = (theme) => {
 			secondaryColor: secondaryColor,
 			type: type
 		});
-
-		return theming.defaultTheme = theme;
+		theming.defaultTheme = theme;
 	});
 };
 

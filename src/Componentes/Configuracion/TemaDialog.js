@@ -32,10 +32,11 @@ function SettingsDialog(props) {
 
 	const cambiarTema = () => {
 		theming.changeTheme({
-			primaryColor: tema.primaryColor,
-			secondaryColor: tema.secondaryColor,
-			type: tema.type
+			primaryColor: typeof tema.primaryColor === 'undefined' ? theme.primaryColor.id : tema.primaryColor,
+			secondaryColor: typeof tema.secondaryColor === 'undefined' ? theme.secondaryColor.id : tema.secondaryColor,
+			type: typeof tema.type === 'undefined' ? theme.type.id : tema.type
 		})
+		props.funcion()
 	}
 
 	return (
@@ -191,14 +192,24 @@ function SettingsDialog(props) {
 					</Box>
 
 					<ListItem>
-						<Hidden xsDown>
-							<Button
-								color="secondary"
-								variant="contained"
-								onClick={() => cambiarTema()}>
-								Cambiar
+						<Box mb={1}>
+							<Hidden smUp>
+								<Button
+									color="secondary"
+									variant="contained"
+									onClick={() => cambiarTema()}>
+									Cambiar
               				</Button>
-						</Hidden>
+							</Hidden>
+							<Hidden xsDown>
+								<Button
+									color="secondary"
+									variant="contained"
+									onClick={() => cambiarTema()}>
+									Cambiar
+              				</Button>
+							</Hidden>
+						</Box>
 					</ListItem>
 				</List>
 			</DialogContent>
