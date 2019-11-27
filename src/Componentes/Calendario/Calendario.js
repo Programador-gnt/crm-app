@@ -32,6 +32,21 @@ import Avatar from '@material-ui/core/Avatar';
 import GroupIcon from '@material-ui/icons/Group';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import DescriptionOutlinedIcon from '@material-ui/icons/DescriptionOutlined';
+import EventOutlinedIcon from '@material-ui/icons/EventOutlined';
+import ScheduleOutlinedIcon from '@material-ui/icons/ScheduleOutlined';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { green } from '@material-ui/core/colors';
+import clsx from 'clsx';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogActions from '@material-ui/core/DialogActions';
+import Hidden from '@material-ui/core/Hidden';
+import Grid from '@material-ui/core/Grid';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import InvertColorsIcon from '@material-ui/icons/InvertColors';
 
 const SCOPES = 'https://mail.google.com https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/calendar https://www.google.com/m8/feeds/ https://www.googleapis.com/auth/contacts.readonly';
 
@@ -40,14 +55,11 @@ const useStyles = makeStyles(theme => ({
 		width: '100%',
 		marginTop: theme.spacing(10)
 	},
-	calendario: {
-		width: '100%'
-	},
 	close: {
 		padding: theme.spacing(0.5)
 	},
 	appBar: {
-		position: 'relative',
+		position: 'relative'
 	},
 	title: {
 		marginLeft: theme.spacing(2),
@@ -55,6 +67,30 @@ const useStyles = makeStyles(theme => ({
 	},
 	avatar: {
 		backgroundColor: theme.palette.primary.main
+	},
+	buttonSuccess: {
+		backgroundColor: green[500],
+		'&:hover': {
+			backgroundColor: green[700],
+		},
+	},
+	fabProgress: {
+		color: green[500],
+		position: 'absolute',
+		top: -6,
+		left: -6,
+		zIndex: 1,
+	},
+	buttonProgress: {
+		color: green[500],
+		position: 'absolute',
+		top: '50%',
+		left: '50%',
+		marginTop: -12,
+		marginLeft: -12,
+	},
+	cabeceraDialog: {
+		position: 'relative'
 	}
 }));
 
@@ -82,6 +118,19 @@ export default function Calendario() {
 	const [dialogEvento, setDialogEvento] = React.useState(false)
 	const [colorEvento, setEventoColor] = React.useState('')
 	const [idEventoEliminar, setIdEventoEliminar] = React.useState('')
+	const datos = JSON.parse(localStorage.getItem('perfilGoogle'))
+	const [fecha, setFecha] = React.useState({})
+	const [abrirDialog, setAbrirDialog] = React.useState(false)
+	const [loading, setLoading] = React.useState(false);
+	const [success, setSuccess] = React.useState(false);
+	const [eventoNuevo, setEventoNuevo] = React.useState({})
+	const [attendees, setAttendees] = React.useState({})
+	const [colorId, setColorId] = React.useState(11)
+	const timer = React.useRef();
+
+	const buttonClassname = clsx({
+		[classes.buttonSuccess]: success,
+	});
 
 	const GetEventos = () => {
 		consumeWSCalendar('GET', '', '', '')
@@ -103,6 +152,7 @@ export default function Calendario() {
 		}, function (response) {
 			localStorage.setItem('tokenGoogle', JSON.stringify(response.access_token));
 			otroPerfil(response.access_token)
+			GetEventos()
 		});
 	}
 
@@ -219,8 +269,7 @@ export default function Calendario() {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			}
-		}).then(respuesta => {
-			console.log(respuesta)
+		}).then(() => {
 			setDialogEvento(false)
 			setModalEventoVista({})
 			setEventoColor('')
@@ -228,6 +277,116 @@ export default function Calendario() {
 			setIdEventoEliminar('')
 		})
 		GetEventos()
+	}
+
+	const dialogEventoNuevo = (rango) => {
+		var dateStart = rango.startStr.substr(0, 19)
+		var dateEnd = rango.endStr.substr(0, 19)
+		setAbrirDialog(true)
+		setFecha({
+			...fecha,
+			inicio: dateStart,
+			fin: dateEnd
+		})
+		if (dateStart.length === 19) {
+
+			setEventoNuevo({
+				"colorId": colorId,
+				"start": {
+					dateTime: dateStart,
+					timeZone: 'America/Lima'
+				},
+				"end": {
+					dateTime: dateEnd,
+					timeZone: 'America/Lima'
+				},
+				'reminders': {
+					'useDefault': false,
+					'overrides': [
+						{ 'method': 'email', 'minutes': 30 },
+						{ 'method': 'popup', 'minutes': 10 }
+					]
+				}
+
+			})
+		} else if (dateStart.length === 10) {
+			setEventoNuevo({
+				"colorId": colorId,
+				"start": {
+					date: dateStart,
+				},
+				"end": {
+					date: dateEnd,
+				},
+				'reminders': {
+					'useDefault': false,
+					'overrides': [
+						{ 'method': 'email', 'minutes': 24 * 60 },
+						{ 'method': 'popup', 'minutes': 10 }
+					]
+				}
+			})
+		}
+
+	}
+
+	const organizarObjeto = () => {
+		if (attendees.hasOwnProperty('email')) {
+			setEventoNuevo({
+				...eventoNuevo,
+				"sendUpdates": 'all',
+				attendees: [
+					{
+						...attendees,
+						responseStatus: 'accepted'
+					}
+				]
+			})
+			guardarEvento()
+		} else {
+			setEventoNuevo({
+				...eventoNuevo
+			})
+			guardarEvento()
+		}
+	}
+
+	const guardarEvento = () => {
+		if (!loading) {
+			setSuccess(false);
+			setLoading(true);
+			timer.current = setTimeout(() => {
+				setSuccess(true);
+				setLoading(false);
+				consumeWSCalendar('POST', '', eventoNuevo, `?alt=json`)
+					.then(() => {
+						setAbrirDialog(false)
+						GetEventos()
+					})
+			}, 2000)
+		}
+	}
+
+	const handleChange = (e) => {
+		setEventoNuevo({
+			...eventoNuevo,
+			[e.target.name]: e.target.value
+		})
+	}
+
+	const handleChangeAttendees = (e) => {
+		setAttendees({
+			...attendees,
+			[e.target.name]: e.target.value
+		})
+	}
+
+	const handleColor = (e) => {
+		setColorId(e.target.value)
+		setEventoNuevo({
+			...eventoNuevo,
+			"colorId": e.target.value
+		})
 	}
 
 	React.useEffect(GetEventos, [])
@@ -260,6 +419,175 @@ export default function Calendario() {
 					</IconButton>,
 				]}
 			/>
+			<Dialog fullWidth open={abrirDialog} onClose={() => setAbrirDialog(false)}>
+				<DialogTitle disableTypography>
+					<Paper elevation={24}>
+						<AppBar className={classes.cabeceraDialog}>
+							<Toolbar>
+								<Typography variant="h6" className={classes.title}>
+									Crear Evento
+						</Typography>
+								<EventOutlinedIcon />
+							</Toolbar>
+						</AppBar>
+					</Paper>
+				</DialogTitle>
+
+				<DialogContent>
+					<Hidden xsDown>
+						<Grid container spacing={1}>
+							<Grid item xs={12}>
+								<Grid container direction="column" spacing={2}>
+									<Grid item>
+										<TextField
+											autoComplete="summary"
+											name='summary'
+											fullWidth
+											label="Título del evento"
+											placeholder="¿Cómo deseas nombrar el evento?"
+											required
+											onChange={handleChange}
+											type="text"
+											variant="outlined"
+										/>
+									</Grid>
+									<Grid item >
+										<TextField
+											autoComplete="description"
+											fullWidth
+											multiline
+											rows={5}
+											label="Descripción"
+											name='description'
+											placeholder="Describe tu evento"
+											onChange={handleChange}
+											required
+											type="text"
+											variant="outlined"
+										/>
+									</Grid>
+									<Grid item>
+										<TextField
+											autoComplete="email"
+											name='email'
+											fullWidth
+											label="Participante"
+											placeholder="participante@correo.com"
+											required
+											onChange={handleChangeAttendees}
+											type="email"
+											variant="outlined"
+										/>
+									</Grid>
+									<Grid item>
+										<InvertColorsIcon style={{ color: colorId === 1 ? '#a4bdfc' : colorId === 2 ? '#7ae7bf' : colorId === 3 ? '#dbadff' : colorId === 4 ? '#ff887c' : colorId === 5 ? '#fbd75b' : colorId === 6 ? '#ffb878' : colorId === 7 ? '#46d6db' : colorId === 8 ? '#e1e1e1' : colorId === 9 ? '#5484ed' : colorId === 10 ? '#51b749' : colorId === 11 ? '#dc2127' : '' }} />
+										<Select
+											value={colorId}
+											onChange={handleColor}
+										>
+											<MenuItem key={0} value={1}>Melrose</MenuItem>
+											<MenuItem key={1} value={2}>Riptide</MenuItem>
+											<MenuItem key={2} value={3}>Malva</MenuItem>
+											<MenuItem key={3} value={4}>Mandarina</MenuItem>
+											<MenuItem key={4} value={5}>Dandelion</MenuItem>
+											<MenuItem key={5} value={6}>Dorado</MenuItem>
+											<MenuItem key={6} value={7}>Turquesa</MenuItem>
+											<MenuItem key={7} value={8}>Plomo</MenuItem>
+											<MenuItem key={8} value={9}>Azul</MenuItem>
+											<MenuItem key={9} value={10}>Verde Manzana</MenuItem>
+											<MenuItem key={10} value={11}>Carmesí</MenuItem>
+										</Select>
+									</Grid>
+									<Grid item >
+										<Typography variant='h6'>Fecha</Typography>
+										<Typography variant='button'>{`${fecha.inicio} - ${fecha.fin}`}</Typography>
+									</Grid>
+								</Grid>
+							</Grid>
+						</Grid>
+					</Hidden>
+					<Hidden smUp>
+						<Grid container direction="column" spacing={2}>
+							<Grid item xs>
+								<TextField
+									autoComplete="summary"
+									name='summary'
+									fullWidth
+									label="Título del evento"
+									placeholder="¿Cómo deseas nombrar el evento?"
+									required
+									onChange={handleChange}
+									type="text"
+									variant="outlined"
+								/>
+							</Grid>
+							<Grid item xs>
+								<TextField
+									autoComplete="description"
+									fullWidth
+									multiline
+									rows={5}
+									label="Descripción"
+									name='description'
+									placeholder="Describe tu evento"
+									onChange={handleChange}
+									required
+									type="text"
+									variant="outlined"
+								/>
+							</Grid>
+							<Grid item>
+								<TextField
+									autoComplete="email"
+									name='email'
+									fullWidth
+									label="Participante"
+									placeholder="participante@correo.com"
+									required
+									onChange={handleChangeAttendees}
+									type="email"
+									variant="outlined"
+								/>
+							</Grid>
+							<Grid item>
+								<InvertColorsIcon style={{ color: colorId === 1 ? '#a4bdfc' : colorId === 2 ? '#7ae7bf' : colorId === 3 ? '#dbadff' : colorId === 4 ? '#ff887c' : colorId === 5 ? '#fbd75b' : colorId === 6 ? '#ffb878' : colorId === 7 ? '#46d6db' : colorId === 8 ? '#e1e1e1' : colorId === 9 ? '#5484ed' : colorId === 10 ? '#51b749' : colorId === 11 ? '#dc2127' : '' }} />
+								<Select
+									value={colorId}
+									onChange={handleColor}
+								>
+									<MenuItem key={0} value={1}>Melrose</MenuItem>
+									<MenuItem key={1} value={2}>Riptide</MenuItem>
+									<MenuItem key={2} value={3}>Mauve</MenuItem>
+									<MenuItem key={3} value={4}>Vivid Tangerine</MenuItem>
+									<MenuItem key={4} value={5}>Dandelion</MenuItem>
+									<MenuItem key={5} value={6}>Macaroni and Cheese</MenuItem>
+									<MenuItem key={6} value={7}>Turquoise</MenuItem>
+									<MenuItem key={7} value={8}>Mercury</MenuItem>
+									<MenuItem key={8} value={9}>Cornflower Blue</MenuItem>
+									<MenuItem key={9} value={10}>Apple</MenuItem>
+									<MenuItem key={10} value={11}>Alizarin Crimson</MenuItem>
+								</Select>
+							</Grid>
+							<Grid item >
+								<Typography variant='h6'>Fecha</Typography>
+								<Typography variant='button'>{`${fecha.inicio} - ${fecha.fin}`}</Typography>
+							</Grid>
+						</Grid>
+					</Hidden>
+				</DialogContent>
+				<DialogActions>
+					<Button color="secondary" onClick={() => setAbrirDialog(false)}>Cerrar</Button>
+					<Button
+						onClick={() => organizarObjeto()}
+						color="primary"
+						className={buttonClassname}
+						disabled={loading}
+						variant="contained">
+						{loading && <CircularProgress size={24} className={classes.buttonProgress} />}
+						Guardar
+                    </Button>
+				</DialogActions>
+			</Dialog>
 			<Dialog fullScreen open={dialogEvento} onClose={handleCloseDialogEvento} TransitionComponent={Transition}>
 				<AppBar className={classes.appBar} style={{ backgroundColor: colorEvento }}>
 					<Toolbar>
@@ -289,15 +617,41 @@ export default function Calendario() {
 								<DescriptionOutlinedIcon />
 							</Avatar>
 						</ListItemAvatar>
-						<ListItemText primary="Descripción" secondary={eventoConsultado.description} />
+						<ListItemText primary="Descripción" secondary={eventoConsultado.hasOwnProperty('description') ? eventoConsultado.description : 'No posee descripción'} />
+					</ListItem>
+					<Divider />
+					<ListItem>
+						<ListItemAvatar>
+							<Avatar className={classes.avatar}>
+								<EventOutlinedIcon />
+							</Avatar>
+						</ListItemAvatar>
+						<ListItemText primary="Creador" secondary={eventoConsultado.hasOwnProperty('creator') ? eventoConsultado.creator.email : ''} />
+					</ListItem>
+					<Divider />
+					<ListItem>
+						<ListItemAvatar>
+							<Avatar className={classes.avatar}>
+								<ScheduleOutlinedIcon />
+							</Avatar>
+						</ListItemAvatar>
+						<ListItemText primary="Inicio" secondary={modalEventoVista.start} />
+					</ListItem>
+					<Divider />
+					<ListItem>
+						<ListItemAvatar>
+							<Avatar className={classes.avatar}>
+								<ScheduleOutlinedIcon />
+							</Avatar>
+						</ListItemAvatar>
+						<ListItemText primary="Final" secondary={modalEventoVista.end} />
 					</ListItem>
 				</List>
 			</Dialog>
 			<Paper elevation={4} className={classes.root}>
 				<FullCalendar
-					// className={classes.calendario}
 					selectable={true}
-					// select={this.modalOpen2}
+					select={dialogEventoNuevo}
 					weekNumbers={true}
 					editable={true}
 					defaultView='dayGridMonth'
@@ -305,7 +659,7 @@ export default function Calendario() {
 					themeSystem='standart'
 					events={eventosGoogle}
 					header={header}
-					locale='es'
+					locale={datos.locale}
 					eventClick={eventClick}
 					eventLimit={true}
 					eventTextColor='#fff'

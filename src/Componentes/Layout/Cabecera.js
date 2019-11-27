@@ -101,7 +101,7 @@ const useStyles = makeStyles(theme => ({
 		position: 'fixed',
 		zIndex: 100
 	},
-	nombreMenu:{
+	nombreMenu: {
 		marginLeft: theme.spacing(6)
 	}
 }));

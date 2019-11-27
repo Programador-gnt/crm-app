@@ -262,6 +262,9 @@ function Gmail() {
 			scope: SCOPES
 		}, (response) => {
 			localStorage.setItem('tokenGoogle', JSON.stringify(response.access_token));
+			setIdsInbox([])
+			setIdsSent([])
+			setIdsChat([])
 			mensajesInbox()
 			mensajesSent()
 			mensajesChat()
