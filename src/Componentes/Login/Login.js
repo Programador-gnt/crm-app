@@ -82,7 +82,7 @@ export default function Login() {
 			gapi.auth2.authorize({
 				client_id: `${Config.client_id}`,
 				scope: SCOPES,
-				// cookie_policy: 'none'
+				cookie_policy: 'none'
 			}, response => {
 				localStorage.setItem('tokenGoogle', JSON.stringify(response.access_token))
 				perfil(response.access_token)

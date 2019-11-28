@@ -23,6 +23,7 @@
     "font-awesome": "^4.7.0",
     "fullcalendar": "^3.10.1",
     "gapi-client": "0.0.3",
+    "gh-pages": "^2.1.1",
     "jspdf": "^1.5.3",
     "jspdf-autotable": "^3.2.10",
     "material-ui-popup-state": "^1.4.1",
@@ -35,12 +36,14 @@
     "react-scripts": "3.2.0",
     "react-swipeable-views": "^0.13.3"
   },
-  "homepage": ".",
+  "homepage": "https://programador-gnt.github.io/crm-app/",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": "react-app"
