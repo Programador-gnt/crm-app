@@ -25,6 +25,7 @@ import EventIcon from '@material-ui/icons/Event';
 import PhoneAndroidIcon from '@material-ui/icons/PhoneAndroid';
 import Backdrop from '@material-ui/core/Backdrop';
 import TemaDialog from '../Configuracion/TemaDialog';
+import GroupOutlinedIcon from '@material-ui/icons/GroupOutlined';
 
 const drawerWidth = 240;
 
@@ -110,7 +111,8 @@ const MenuNavegacion = [
 	{ nombre: 'Inicio', link: '/inicio' },
 	{ nombre: 'Gmail', link: '/gmail' },
 	{ nombre: 'Calendario', link: '/calendario' },
-	{ nombre: 'Llamadas', link: '/llamadas' }
+	{ nombre: 'Llamadas', link: '/llamadas' },
+	{ nombre: 'Clientes', link: '/clientes' }
 ]
 
 function Cabecera(props) {
@@ -242,7 +244,8 @@ function Cabecera(props) {
 								<ListItemIcon>{items.nombre === 'Inicio' ? <HomeIcon /> :
 									items.nombre === 'Gmail' ? <GoogleIcon /> :
 										items.nombre === 'Calendario' ? <EventIcon /> :
-											items.nombre === 'Llamadas' ? <PhoneAndroidIcon /> : ''}</ListItemIcon>
+											items.nombre === 'Llamadas' ? <PhoneAndroidIcon /> :
+												items.nombre === 'Clientes' ? <GroupOutlinedIcon /> : ''}</ListItemIcon>
 								<ListItemText primary={items.nombre} />
 							</ListItem>
 						</Link>

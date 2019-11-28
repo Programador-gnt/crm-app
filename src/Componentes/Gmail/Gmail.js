@@ -29,7 +29,6 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
-import Fab from '@material-ui/core/Fab';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -629,8 +628,7 @@ function Gmail() {
 													<TableCell align="left" onLoad={getInfo(mensaje.payload)} onClick={() => Cuerpoo(mensaje)} style={{ cursor: 'pointer' }}>{From}</TableCell>
 													<TableCell align="left" onClick={() => Cuerpoo(mensaje)} style={{ cursor: 'pointer' }}><strong>{subjject}</strong>{` - ${mensaje.snippet.substr(0, 20)}...`}</TableCell>
 													<TableCell align="left" onClick={() => Cuerpoo(mensaje)} style={{ cursor: 'pointer' }}>{Dates.substr(5, 11)}</TableCell>
-													<TableCell align="right">{<Fab size='small' color="secondary" aria-label="eliminar" onClick={() => eliminar(mensaje.id)}>
-														<DeleteOutlineIcon /></Fab>}</TableCell>
+													<TableCell align="right">{<IconButton aria-label='eliminar' onClick={() => eliminar(mensaje.id)}><DeleteOutlineIcon color='primary' /></IconButton>}</TableCell>
 												</TableRow>
 											))
 
@@ -668,8 +666,7 @@ function Gmail() {
 													<TableCell align="left" onLoad={getInfo(mensaje.payload)} onClick={() => Cuerpoo(mensaje)} style={{ cursor: 'pointer' }}>{To}</TableCell>
 													<TableCell align="left" onClick={() => Cuerpoo(mensaje)} style={{ cursor: 'pointer' }}><strong>{subjject}</strong>{` - ${mensaje.snippet.substr(0, 20)}...`}</TableCell>
 													<TableCell align="left" onClick={() => Cuerpoo(mensaje)} style={{ cursor: 'pointer' }}>{Dates.substr(5, 11)}</TableCell>
-													<TableCell align="right">{<Fab size='small' color="secondary" aria-label="eliminar" onClick={() => eliminar(mensaje.id)}>
-														<DeleteOutlineIcon /></Fab>}</TableCell>
+													<TableCell align="right">{<IconButton aria-label='eliminar' onClick={() => eliminar(mensaje.id)}><DeleteOutlineIcon color='primary' /></IconButton>}</TableCell>
 												</TableRow>
 											))
 
@@ -708,8 +705,7 @@ function Gmail() {
 													<TableCell align="left" onLoad={getInfo(mensaje.payload)} onClick={() => Cuerpoo(mensaje)} style={{ cursor: 'pointer' }}>{From}</TableCell>
 													<TableCell align="left" onClick={() => Cuerpoo(mensaje)} style={{ cursor: 'pointer' }}><strong>{subjject}</strong>{` - ${mensaje.snippet.substr(0, 20)}...`}</TableCell>
 													<TableCell align="left" onClick={() => Cuerpoo(mensaje)} style={{ cursor: 'pointer' }}>{Dates.substr(5, 11)}</TableCell>
-													<TableCell align="right">{<Fab size='small' color="secondary" aria-label="eliminar" onClick={() => eliminar(mensaje.id)}>
-														<DeleteOutlineIcon /></Fab>}</TableCell>
+													<TableCell align="right">{<IconButton aria-label='eliminar' onClick={() => eliminar(mensaje.id)}><DeleteOutlineIcon color='primary' /></IconButton>}</TableCell>
 												</TableRow>
 											))
 

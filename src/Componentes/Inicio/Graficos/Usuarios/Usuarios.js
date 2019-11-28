@@ -5,6 +5,7 @@ import { Card, CardContent, Grid, Typography, Avatar } from '@material-ui/core';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import PeopleIcon from '@material-ui/icons/PeopleOutlined';
 import { green } from '@material-ui/core/colors';
+import { Redirect } from 'react-router-dom'
 
 const useStyles = makeStyles(() => ({
 	root: {
@@ -40,7 +41,12 @@ const useStyles = makeStyles(() => ({
 }));
 
 const Usuarios = () => {
+	const [clientes, setClientes] = React.useState(false)
 	const classes = useStyles();
+
+	if (clientes === true) {
+		return (<Redirect to='/clientes' />)
+	}
 
 	return (
 		<Card className={classes.root}>
@@ -58,7 +64,7 @@ const Usuarios = () => {
             </Typography>
 						<Typography variant="h3">100</Typography>
 					</Grid>
-					<Grid item>
+					<Grid item onClick={() => setClientes(true)} style={{ cursor: 'pointer' }}>
 						<Avatar className={classes.avatar}>
 							<PeopleIcon className={classes.icon} />
 						</Avatar>

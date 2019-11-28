@@ -65,7 +65,7 @@ export default function Inicio() {
                         </Grid>
                     </Zoom>
                     <Grid item xs={12}>
-                        <Typography variant='h5'>Lista de clientes</Typography>
+                        <Typography variant='h5'>Últimos clientes agregados</Typography>
                         <TablaUsuario />
                     </Grid>
                 </Grid>
