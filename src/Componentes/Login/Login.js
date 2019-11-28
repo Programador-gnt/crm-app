@@ -80,6 +80,7 @@ export default function Login() {
 		gapi.load('auth2', initClient);
 		function initClient() {
 			gapi.auth2.authorize({
+				apiKey: `${Config.api_key}`,
 				client_id: `${Config.client_id}`,
 				scope: SCOPES,
 				cookie_policy: 'none'
