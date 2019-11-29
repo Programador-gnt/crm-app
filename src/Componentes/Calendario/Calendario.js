@@ -593,7 +593,7 @@ export default function Calendario() {
 			<Dialog fullScreen open={dialogEvento} onClose={handleCloseDialogEvento} TransitionComponent={Transition}>
 				<AppBar className={classes.appBar} style={{ backgroundColor: colorEvento }}>
 					<Toolbar>
-						<IconButton edge="start" color="inherit" onClick={handleCloseDialogEvento} aria-label="close">
+						<IconButton edge="start" color="inherit" onClick={handleCloseDialogEvento} aria-label="cerrar">
 							<CloseIcon />
 						</IconButton>
 						<Typography variant="h6" className={classes.title}>
