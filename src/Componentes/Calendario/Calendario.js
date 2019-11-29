@@ -147,8 +147,10 @@ export default function Calendario() {
 
 	function initClient() {
 		gapi.auth2.authorize({
+			apiKey: `${Config.api_key}`,
 			client_id: `${Config.client_id}`,
-			scope: SCOPES
+			scope: SCOPES,
+			cookie_policy: 'none'
 		}, function (response) {
 			localStorage.setItem('tokenGoogle', JSON.stringify(response.access_token));
 			otroPerfil(response.access_token)
