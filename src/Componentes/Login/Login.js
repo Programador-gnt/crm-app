@@ -8,7 +8,7 @@ import Link from '@material-ui/core/Link';
 import Paper from '@material-ui/core/Paper';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import AccountCircleOutlinedIcon from '@material-ui/icons/AccountCircleOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import GoogleIcon from 'mdi-material-ui/Google';
@@ -39,24 +39,24 @@ const useStyles = makeStyles(theme => ({
 		backgroundRepeat: 'no-repeat',
 		backgroundColor: theme.palette.grey[50],
 		backgroundSize: 'cover',
-		backgroundPosition: 'center',
+		backgroundPosition: 'center'
 	},
 	paper: {
 		margin: theme.spacing(8, 4),
 		display: 'flex',
 		flexDirection: 'column',
-		alignItems: 'center',
+		alignItems: 'center'
 	},
 	avatar: {
 		margin: theme.spacing(1),
-		backgroundColor: theme.palette.secondary.main,
+		backgroundColor: theme.palette.secondary.main
 	},
 	form: {
 		width: '100%', // Fix IE 11 issue.
 		marginTop: theme.spacing(1)
 	},
 	submit: {
-		margin: theme.spacing(3, 0, 2),
+		margin: theme.spacing(3, 0, 2)
 	},
 }));
 
@@ -65,7 +65,7 @@ const ColorButton = withStyles(theme => ({
 		color: theme.palette.getContrastText(red[700]),
 		backgroundColor: red[700],
 		'&:hover': {
-			backgroundColor: red[600],
+			backgroundColor: red[900],
 		},
 	},
 }))(Button);
@@ -73,22 +73,19 @@ const ColorButton = withStyles(theme => ({
 
 export default function Login() {
 	const [irInicio, setIrInicio] = React.useState(false)
+	const SCOPES = 'https://mail.google.com https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/calendar https://www.google.com/m8/feeds/ https://www.googleapis.com/auth/contacts.readonly';
 	const classes = useStyles();
 
-	const ingresar = () => {
-		const SCOPES = 'https://mail.google.com https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/calendar https://www.google.com/m8/feeds/ https://www.googleapis.com/auth/contacts.readonly';
-		gapi.load('auth2', initClient);
-		function initClient() {
-			gapi.auth2.authorize({
-				apiKey: `${Config.api_key}`,
-				client_id: `${Config.client_id}`,
-				scope: SCOPES,
-				cookie_policy: 'none'
-			}, response => {
-				localStorage.setItem('tokenGoogle', JSON.stringify(response.access_token))
-				perfil(response.access_token)
-			});
-		}
+	function initClient() {
+		gapi.auth2.authorize({
+			apiKey: `${Config.api_key}`,
+			client_id: `${Config.client_id}`,
+			scope: SCOPES,
+			cookie_policy: 'none'
+		}, response => {
+			localStorage.setItem('tokenGoogle', JSON.stringify(response.access_token))
+			perfil(response.access_token)
+		});
 	}
 
 	const perfil = async (TOKEN) => {
@@ -120,7 +117,7 @@ export default function Login() {
 			<Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
 				<div className={classes.paper}>
 					<Avatar className={classes.avatar}>
-						<LockOutlinedIcon />
+						<AccountCircleOutlinedIcon />
 					</Avatar>
 					<Typography component="h1" variant="h5">
 						GNT - CRM
@@ -157,7 +154,7 @@ export default function Login() {
             			</Button>
 					<ColorButton
 						fullWidth
-						onClick={() => ingresar()}
+						onClick={() => gapi.load('auth2', initClient)}
 						startIcon={<GoogleIcon />}
 						variant="contained"
 					>
