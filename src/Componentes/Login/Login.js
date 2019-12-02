@@ -16,6 +16,9 @@ import { red } from '@material-ui/core/colors';
 import Config from '../Config/Config';
 import gapi from 'gapi-client';
 import { Redirect } from 'react-router-dom';
+import Snackbar from '@material-ui/core/Snackbar';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
 
 function Copyright() {
 	return (
@@ -58,6 +61,9 @@ const useStyles = makeStyles(theme => ({
 	submit: {
 		margin: theme.spacing(3, 0, 2)
 	},
+	close: {
+		padding: theme.spacing(0.5)
+	}
 }));
 
 const ColorButton = withStyles(theme => ({
@@ -73,6 +79,7 @@ const ColorButton = withStyles(theme => ({
 
 export default function Login() {
 	const [irInicio, setIrInicio] = React.useState(false)
+	const [aviso, setAviso] = React.useState(false)
 	const SCOPES = 'https://mail.google.com https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/calendar https://www.google.com/m8/feeds/ https://www.googleapis.com/auth/contacts.readonly';
 	const classes = useStyles();
 
@@ -83,8 +90,12 @@ export default function Login() {
 			scope: SCOPES,
 			cookie_policy: 'none'
 		}, response => {
-			localStorage.setItem('tokenGoogle', JSON.stringify(response.access_token))
-			perfil(response.access_token)
+			if (response.hasOwnProperty('error')) {
+				setAviso(true)
+			} else {
+				localStorage.setItem('tokenGoogle', JSON.stringify(response.access_token))
+				perfil(response.access_token)
+			}
 		});
 	}
 
@@ -102,6 +113,10 @@ export default function Login() {
 		})
 	}
 
+	const handleCloseMensaje = () => {
+		setAviso(false)
+	};
+
 	if (irInicio === true) {
 		return (<Redirect to='/inicio' />)
 	}
@@ -113,6 +128,31 @@ export default function Login() {
 	return (
 		<Grid container component="main" className={classes.root}>
 			<CssBaseline />
+			<Snackbar
+				anchorOrigin={{
+					vertical: 'bottom',
+					horizontal: 'left',
+				}}
+				open={aviso}
+				autoHideDuration={3000}
+				onClose={handleCloseMensaje}
+				style={{ opacity: '0.8' }}
+				ContentProps={{
+					'aria-describedby': 'message-id',
+				}}
+				message={<Typography id="message-id" variant='button'>Error al autenticar</Typography>}
+				action={[
+					<IconButton
+						key="close"
+						aria-label="close"
+						color="inherit"
+						className={classes.close}
+						onClick={handleCloseMensaje}
+					>
+						<CloseIcon />
+					</IconButton>,
+				]}
+			/>
 			<Grid item xs={false} sm={4} md={7} className={classes.image} />
 			<Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
 				<div className={classes.paper}>
