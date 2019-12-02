@@ -8,7 +8,7 @@ import Link from '@material-ui/core/Link';
 import Paper from '@material-ui/core/Paper';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
-import AccountCircleOutlinedIcon from '@material-ui/icons/AccountCircleOutlined';
+import MenuBookOutlinedIcon from '@material-ui/icons/MenuBookOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import GoogleIcon from 'mdi-material-ui/Google';
@@ -42,7 +42,8 @@ const useStyles = makeStyles(theme => ({
 		backgroundRepeat: 'no-repeat',
 		backgroundColor: theme.palette.grey[50],
 		backgroundSize: 'cover',
-		backgroundPosition: 'center'
+		backgroundPosition: 'center',
+		filter: 'blur(3px)'
 	},
 	paper: {
 		margin: theme.spacing(8, 4),
@@ -136,7 +137,7 @@ export default function Login() {
 				open={aviso}
 				autoHideDuration={3000}
 				onClose={handleCloseMensaje}
-				style={{ opacity: '0.8' }}
+				style={{ opacity: '0.9' }}
 				ContentProps={{
 					'aria-describedby': 'message-id',
 				}}
@@ -157,7 +158,7 @@ export default function Login() {
 			<Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
 				<div className={classes.paper}>
 					<Avatar className={classes.avatar}>
-						<AccountCircleOutlinedIcon />
+						<MenuBookOutlinedIcon />
 					</Avatar>
 					<Typography component="h1" variant="h5">
 						GNT - CRM
