@@ -7,6 +7,6 @@ const Config = {
 	api_key: 'AIzaSyC0_rYfBmJYrGPbqlVmcB_MjH_Ioem3tpE',
 	primary_color: 'teal',
 	secondary_color: 'orange',
-	type: 'light'
+	type: 'dark'
 }
 export default Config;

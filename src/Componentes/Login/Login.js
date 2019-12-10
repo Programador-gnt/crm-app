@@ -19,6 +19,8 @@ import { Redirect } from 'react-router-dom';
 import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
+// import useMediaQuery from '@material-ui/core/useMediaQuery';
+// import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
 function Copyright() {
 	return (
@@ -33,17 +35,19 @@ function Copyright() {
 	);
 }
 
+const imagen = Math.floor(Math.random() * (1 - 4) + 4)
+
 const useStyles = makeStyles(theme => ({
 	root: {
 		height: '100vh',
 	},
 	image: {
-		backgroundImage: 'url(https://i.imgur.com/SltHx51.png)',
+		backgroundImage: `url(${imagen === 1 ? 'https://i.imgur.com/fBKkRIw.jpg' : imagen === 2 ? 'https://i.imgur.com/raQJYyn.jpg' : imagen === 3 ? 'https://i.imgur.com/CG5r0YF.png' : ''})`,
 		backgroundRepeat: 'no-repeat',
 		backgroundColor: theme.palette.grey[50],
 		backgroundSize: 'cover',
-		backgroundPosition: 'center',
-		filter: 'blur(3px)'
+		backgroundPosition: 'center'
+		// filter: 'blur(3px)'
 	},
 	paper: {
 		margin: theme.spacing(8, 4),
@@ -83,6 +87,18 @@ export default function Login() {
 	const [aviso, setAviso] = React.useState(false)
 	const SCOPES = 'https://mail.google.com https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/calendar https://www.google.com/m8/feeds/ https://www.googleapis.com/auth/contacts.readonly';
 	const classes = useStyles();
+
+	// const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+
+	// const theme = React.useMemo(
+	// 	() =>
+	// 		createMuiTheme({
+	// 			palette: {
+	// 				type: prefersDarkMode ? 'dark' : 'light',
+	// 			},
+	// 		}),
+	// 	[prefersDarkMode],
+	// );
 
 	function initClient() {
 		gapi.auth2.authorize({
@@ -127,85 +143,87 @@ export default function Login() {
 	}
 
 	return (
-		<Grid container component="main" className={classes.root}>
-			<CssBaseline />
-			<Snackbar
-				anchorOrigin={{
-					vertical: 'bottom',
-					horizontal: 'left',
-				}}
-				open={aviso}
-				autoHideDuration={3000}
-				onClose={handleCloseMensaje}
-				style={{ opacity: '0.9' }}
-				ContentProps={{
-					'aria-describedby': 'message-id',
-				}}
-				message={<Typography id="message-id" variant='button'>Error al autenticar</Typography>}
-				action={[
-					<IconButton
-						key="close"
-						aria-label="close"
-						color="inherit"
-						className={classes.close}
-						onClick={handleCloseMensaje}
-					>
-						<CloseIcon />
-					</IconButton>,
-				]}
-			/>
-			<Grid item xs={false} sm={4} md={7} className={classes.image} />
-			<Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
-				<div className={classes.paper}>
-					<Avatar className={classes.avatar}>
-						<MenuBookOutlinedIcon />
-					</Avatar>
-					<Typography component="h1" variant="h5">
-						GNT - CRM
+		// <ThemeProvider theme={theme}>
+			<Grid container component="main" className={classes.root}>
+				<CssBaseline />
+				<Snackbar
+					anchorOrigin={{
+						vertical: 'bottom',
+						horizontal: 'left',
+					}}
+					open={aviso}
+					autoHideDuration={3000}
+					onClose={handleCloseMensaje}
+					style={{ opacity: '0.9' }}
+					ContentProps={{
+						'aria-describedby': 'message-id',
+					}}
+					message={<Typography id="message-id" variant='button'>Error al autenticar</Typography>}
+					action={[
+						<IconButton
+							key="close"
+							aria-label="close"
+							color="inherit"
+							className={classes.close}
+							onClick={handleCloseMensaje}
+						>
+							<CloseIcon />
+						</IconButton>,
+					]}
+				/>
+				<Grid item xs={false} sm={4} md={7} className={classes.image} />
+				<Grid item xs={12} sm={8} md={5} component={Paper} elevation={10} square>
+					<div className={classes.paper}>
+						<Avatar className={classes.avatar}>
+							<MenuBookOutlinedIcon />
+						</Avatar>
+						<Typography component="h1" variant="h5">
+							GNT - CRM
           			</Typography>
-					<TextField
-						variant="outlined"
-						margin="normal"
-						required
-						fullWidth
-						id="email"
-						label="Nickname"
-						name="nickname"
-						autoComplete="nickname"
-						autoFocus
-					/>
-					<TextField
-						variant="outlined"
-						margin="normal"
-						required
-						fullWidth
-						name="password"
-						label="Password"
-						type="password"
-						id="password"
-						autoComplete="current-password"
-					/>
-					<Button
-						fullWidth
-						variant="contained"
-						color="primary"
-						className={classes.submit}
-					>
-						Ingresar
+						<TextField
+							variant="outlined"
+							margin="normal"
+							required
+							fullWidth
+							id="email"
+							label="Nickname"
+							name="nickname"
+							autoComplete="nickname"
+							autoFocus
+						/>
+						<TextField
+							variant="outlined"
+							margin="normal"
+							required
+							fullWidth
+							name="password"
+							label="Password"
+							type="password"
+							id="password"
+							autoComplete="current-password"
+						/>
+						<Button
+							fullWidth
+							variant="contained"
+							color="primary"
+							className={classes.submit}
+						>
+							Ingresar
             			</Button>
-					<ColorButton
-						fullWidth
-						onClick={() => gapi.load('auth2', initClient)}
-						startIcon={<GoogleIcon />}
-						variant="contained"
-					>
-						Ingresar con Google
+						<ColorButton
+							fullWidth
+							onClick={() => gapi.load('auth2', initClient)}
+							startIcon={<GoogleIcon />}
+							variant="contained"
+						>
+							Ingresar con Google
 						</ColorButton>
-					<Box mt={5}>
-						<Copyright />
-					</Box>
-				</div>
+						<Box mt={5}>
+							<Copyright />
+						</Box>
+					</div>
+				</Grid>
 			</Grid>
-		</Grid>
+		// </ThemeProvider>
 	);
 }
