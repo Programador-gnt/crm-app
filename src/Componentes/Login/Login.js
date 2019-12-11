@@ -35,14 +35,12 @@ function Copyright() {
 	);
 }
 
-const imagen = Math.floor(Math.random() * (1 - 4) + 4)
-
 const useStyles = makeStyles(theme => ({
 	root: {
 		height: '100vh',
 	},
 	image: {
-		backgroundImage: `url(${imagen === 1 ? 'https://i.imgur.com/fBKkRIw.jpg' : imagen === 2 ? 'https://i.imgur.com/raQJYyn.jpg' : imagen === 3 ? 'https://i.imgur.com/CG5r0YF.png' : ''})`,
+		backgroundImage: `url('https://i.imgur.com/OkQoTpl.jpg')`,
 		backgroundRepeat: 'no-repeat',
 		backgroundColor: theme.palette.grey[50],
 		backgroundSize: 'cover',
@@ -144,86 +142,86 @@ export default function Login() {
 
 	return (
 		// <ThemeProvider theme={theme}>
-			<Grid container component="main" className={classes.root}>
-				<CssBaseline />
-				<Snackbar
-					anchorOrigin={{
-						vertical: 'bottom',
-						horizontal: 'left',
-					}}
-					open={aviso}
-					autoHideDuration={3000}
-					onClose={handleCloseMensaje}
-					style={{ opacity: '0.9' }}
-					ContentProps={{
-						'aria-describedby': 'message-id',
-					}}
-					message={<Typography id="message-id" variant='button'>Error al autenticar</Typography>}
-					action={[
-						<IconButton
-							key="close"
-							aria-label="close"
-							color="inherit"
-							className={classes.close}
-							onClick={handleCloseMensaje}
-						>
-							<CloseIcon />
-						</IconButton>,
-					]}
-				/>
-				<Grid item xs={false} sm={4} md={7} className={classes.image} />
-				<Grid item xs={12} sm={8} md={5} component={Paper} elevation={10} square>
-					<div className={classes.paper}>
-						<Avatar className={classes.avatar}>
-							<MenuBookOutlinedIcon />
-						</Avatar>
-						<Typography component="h1" variant="h5">
-							GNT - CRM
+		<Grid container component="main" className={classes.root}>
+			<CssBaseline />
+			<Snackbar
+				anchorOrigin={{
+					vertical: 'bottom',
+					horizontal: 'left',
+				}}
+				open={aviso}
+				autoHideDuration={3000}
+				onClose={handleCloseMensaje}
+				style={{ opacity: '0.9' }}
+				ContentProps={{
+					'aria-describedby': 'mensaje',
+				}}
+				message={<Typography id="mensaje" variant='button'>Error al autenticar</Typography>}
+				action={[
+					<IconButton
+						key="close"
+						aria-label="close"
+						color="inherit"
+						className={classes.close}
+						onClick={handleCloseMensaje}
+					>
+						<CloseIcon />
+					</IconButton>,
+				]}
+			/>
+			<Grid item xs={false} sm={4} md={7} className={classes.image} />
+			<Grid item xs={12} sm={8} md={5} component={Paper} elevation={10} square>
+				<div className={classes.paper}>
+					<Avatar className={classes.avatar}>
+						<MenuBookOutlinedIcon />
+					</Avatar>
+					<Typography component="h1" variant="h5">
+						GNT - CRM
           			</Typography>
-						<TextField
-							variant="outlined"
-							margin="normal"
-							required
-							fullWidth
-							id="email"
-							label="Nickname"
-							name="nickname"
-							autoComplete="nickname"
-							autoFocus
-						/>
-						<TextField
-							variant="outlined"
-							margin="normal"
-							required
-							fullWidth
-							name="password"
-							label="Password"
-							type="password"
-							id="password"
-							autoComplete="current-password"
-						/>
-						<Button
-							fullWidth
-							variant="contained"
-							color="primary"
-							className={classes.submit}
-						>
-							Ingresar
+					<TextField
+						variant="outlined"
+						margin="normal"
+						required
+						fullWidth
+						id="nickname"
+						label="Nickname"
+						name="nickname"
+						autoComplete="nickname"
+						autoFocus
+					/>
+					<TextField
+						variant="outlined"
+						margin="normal"
+						required
+						fullWidth
+						name="password"
+						label="Password"
+						type="password"
+						id="password"
+						autoComplete="password"
+					/>
+					<Button
+						fullWidth
+						variant="contained"
+						color="primary"
+						className={classes.submit}
+					>
+						Ingresar
             			</Button>
-						<ColorButton
-							fullWidth
-							onClick={() => gapi.load('auth2', initClient)}
-							startIcon={<GoogleIcon />}
-							variant="contained"
-						>
-							Ingresar con Google
+					<ColorButton
+						fullWidth
+						onClick={() => gapi.load('auth2', initClient)}
+						startIcon={<GoogleIcon />}
+						variant="contained"
+					>
+						Ingresar con Google
 						</ColorButton>
-						<Box mt={5}>
-							<Copyright />
-						</Box>
-					</div>
-				</Grid>
+					<Box mt={5}>
+						<Copyright />
+					</Box>
+				</div>
 			</Grid>
+		</Grid>
 		// </ThemeProvider>
 	);
 }

@@ -596,9 +596,9 @@ function Gmail() {
 								variant="fullWidth"
 								aria-label="full width tabs example"
 							>
-								<Tab label={<Typography variant='caption'>Inbox</Typography>} {...a11yProps(0)} onClick={() => setLabel('INBOX')} />
-								<Tab label={<Typography variant='caption'>Enviados</Typography>} {...a11yProps(1)} onClick={() => setLabel('SENT')} />
-								<Tab label={<Typography variant='caption'>Chat</Typography>} {...a11yProps(2)} onClick={() => setLabel('CHAT')} />
+								<Tab label={<Typography variant='button'>Inbox</Typography>} {...a11yProps(0)} onClick={() => setLabel('INBOX')} />
+								<Tab label={<Typography variant='button'>Enviados</Typography>} {...a11yProps(1)} onClick={() => setLabel('SENT')} />
+								<Tab label={<Typography variant='button'>Chat</Typography>} {...a11yProps(2)} onClick={() => setLabel('CHAT')} />
 							</Tabs>
 						</AppBar>
 						<SwipeableViews
