@@ -9,7 +9,7 @@ import theming from '../Services/Tema';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 
 function Layout() {
-	const tema = theming.defaultTheme;
+	const tema = theming.defaultTheme
 
 	return (
 		<MuiThemeProvider theme={tema}>

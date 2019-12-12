@@ -381,6 +381,22 @@ export default function Calendario() {
 			...attendees,
 			[e.target.name]: e.target.value
 		})
+		if (typeof attendees.email === 'undefined') {
+			setEventoNuevo({
+				...eventoNuevo
+			})
+		} else {
+			setEventoNuevo({
+				...eventoNuevo,
+				"sendUpdates": 'all',
+				attendees: [
+					{
+						...attendees,
+						responseStatus: 'accepted'
+					}
+				]
+			})
+		}
 	}
 
 	const handleColor = (e) => {

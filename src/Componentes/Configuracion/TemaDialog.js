@@ -19,8 +19,12 @@ import InvertColorsIcon from '@material-ui/icons/InvertColors';
 import theming from '../Services/Tema';
 
 
-function SettingsDialog(props) {
-	const [tema, setTema] = React.useState({})
+function TemaDialog(props) {
+	const [tema, setTema] = React.useState({
+		primaryColor: theming.defaultTheme.primaryColor.id,
+		secondaryColor: theming.defaultTheme.secondaryColor.id,
+		type: theming.defaultTheme.type.id
+	})
 	const theme = theming.defaultTheme
 
 	const handleColorChange = (event) => {
@@ -60,13 +64,12 @@ function SettingsDialog(props) {
 								<Hidden smUp>
 									<Select
 										native
-										value={theme.primaryColor.id}
+										value={tema.primaryColor}
 										name='primaryColor'
 										onChange={handleColorChange.bind()}
 									>
 										{Object.keys(theming.colors).map((color) => {
 											color = theming.colors[color];
-
 											return (
 												<option key={color.id} value={color.id}>{color.name}</option>
 											);
@@ -76,13 +79,12 @@ function SettingsDialog(props) {
 
 								<Hidden xsDown>
 									<Select
-										value={theme.primaryColor.id}
+										value={tema.primaryColor}
 										name='primaryColor'
 										onChange={handleColorChange.bind()}
 									>
 										{Object.keys(theming.colors).map((color) => {
 											color = theming.colors[color];
-
 											return (
 												<MenuItem key={color.id} value={color.id}>{color.name}</MenuItem>
 											);
@@ -105,7 +107,7 @@ function SettingsDialog(props) {
 								<Hidden smUp>
 									<Select
 										native
-										value={theme.secondaryColor.id}
+										value={tema.secondaryColor}
 										name='secondaryColor'
 										onChange={handleColorChange.bind()}
 
@@ -122,10 +124,10 @@ function SettingsDialog(props) {
 
 								<Hidden xsDown>
 									<Select
-										value={theme.secondaryColor.id}
+
+										value={tema.secondaryColor}
 										name='secondaryColor'
 										onChange={handleColorChange.bind()}
-
 									>
 										{Object.keys(theming.colors).map((color) => {
 											color = theming.colors[color];
@@ -152,7 +154,7 @@ function SettingsDialog(props) {
 								<Hidden smUp>
 									<Select
 										native
-										value={theme.type.id}
+										value={tema.type}
 										name='type'
 										onChange={handleColorChange.bind()}
 
@@ -169,10 +171,9 @@ function SettingsDialog(props) {
 
 								<Hidden xsDown>
 									<Select
-										value={theme.type.id}
+										value={tema.type}
 										name='type'
 										onChange={handleColorChange.bind()}
-
 									>
 										{Object.keys(theming.types).map((type) => {
 											type = theming.types[type];
@@ -217,4 +218,4 @@ function SettingsDialog(props) {
 	)
 }
 
-export default SettingsDialog;
+export default TemaDialog;

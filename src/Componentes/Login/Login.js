@@ -19,8 +19,7 @@ import { Redirect } from 'react-router-dom';
 import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
-// import useMediaQuery from '@material-ui/core/useMediaQuery';
-// import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
 function Copyright() {
 	return (
@@ -83,20 +82,19 @@ const ColorButton = withStyles(theme => ({
 export default function Login() {
 	const [irInicio, setIrInicio] = React.useState(false)
 	const [aviso, setAviso] = React.useState(false)
+	const [tipo, setTipo] = React.useState('light')
 	const SCOPES = 'https://mail.google.com https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/calendar https://www.google.com/m8/feeds/ https://www.googleapis.com/auth/contacts.readonly';
 	const classes = useStyles();
 
-	// const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
-
-	// const theme = React.useMemo(
-	// 	() =>
-	// 		createMuiTheme({
-	// 			palette: {
-	// 				type: prefersDarkMode ? 'dark' : 'light',
-	// 			},
-	// 		}),
-	// 	[prefersDarkMode],
-	// );
+	const theme = React.useMemo(
+		() =>
+			createMuiTheme({
+				palette: {
+					type: tipo
+				},
+			}),
+		[tipo],
+	);
 
 	function initClient() {
 		gapi.auth2.authorize({
@@ -141,87 +139,88 @@ export default function Login() {
 	}
 
 	return (
-		// <ThemeProvider theme={theme}>
-		<Grid container component="main" className={classes.root}>
-			<CssBaseline />
-			<Snackbar
-				anchorOrigin={{
-					vertical: 'bottom',
-					horizontal: 'left',
-				}}
-				open={aviso}
-				autoHideDuration={3000}
-				onClose={handleCloseMensaje}
-				style={{ opacity: '0.9' }}
-				ContentProps={{
-					'aria-describedby': 'mensaje',
-				}}
-				message={<Typography id="mensaje" variant='button'>Error al autenticar</Typography>}
-				action={[
-					<IconButton
-						key="close"
-						aria-label="close"
-						color="inherit"
-						className={classes.close}
-						onClick={handleCloseMensaje}
-					>
-						<CloseIcon />
-					</IconButton>,
-				]}
-			/>
-			<Grid item xs={false} sm={4} md={7} className={classes.image} />
-			<Grid item xs={12} sm={8} md={5} component={Paper} elevation={10} square>
-				<div className={classes.paper}>
-					<Avatar className={classes.avatar}>
-						<MenuBookOutlinedIcon />
-					</Avatar>
-					<Typography component="h1" variant="h5">
-						GNT - CRM
+		<ThemeProvider theme={theme}>
+			<Grid container component="main" className={classes.root}>
+				<CssBaseline />
+				<Snackbar
+					anchorOrigin={{
+						vertical: 'bottom',
+						horizontal: 'left',
+					}}
+					open={aviso}
+					autoHideDuration={3000}
+					onClose={handleCloseMensaje}
+					style={{ opacity: '0.9' }}
+					ContentProps={{
+						'aria-describedby': 'mensaje',
+					}}
+					message={<Typography id="mensaje" variant='button'>Error al autenticar</Typography>}
+					action={[
+						<IconButton
+							key="close"
+							aria-label="close"
+							color="inherit"
+							className={classes.close}
+							onClick={handleCloseMensaje}
+						>
+							<CloseIcon />
+						</IconButton>,
+					]}
+				/>
+				<Grid item xs={false} sm={4} md={7} className={classes.image} />
+				<Grid item xs={12} sm={8} md={5} component={Paper} elevation={10} square>
+					<div className={classes.paper}>
+						<Avatar className={classes.avatar}>
+							<MenuBookOutlinedIcon />
+						</Avatar>
+						<Typography component="h1" variant="h5">
+							GNT - CRM
           			</Typography>
-					<TextField
-						variant="outlined"
-						margin="normal"
-						required
-						fullWidth
-						id="nickname"
-						label="Nickname"
-						name="nickname"
-						autoComplete="nickname"
-						autoFocus
-					/>
-					<TextField
-						variant="outlined"
-						margin="normal"
-						required
-						fullWidth
-						name="password"
-						label="Password"
-						type="password"
-						id="password"
-						autoComplete="password"
-					/>
-					<Button
-						fullWidth
-						variant="contained"
-						color="primary"
-						className={classes.submit}
-					>
-						Ingresar
+						<TextField
+							variant="outlined"
+							margin="normal"
+							required
+							fullWidth
+							id="nickname"
+							label="Nickname"
+							name="nickname"
+							autoComplete="nickname"
+							autoFocus
+						/>
+						<TextField
+							variant="outlined"
+							margin="normal"
+							required
+							fullWidth
+							name="password"
+							label="Password"
+							type="password"
+							id="password"
+							autoComplete="password"
+						/>
+						<Button
+							fullWidth
+							variant="contained"
+							color="primary"
+							onClick={() => setTipo('dark')}
+							className={classes.submit}
+						>
+							Ingresar
             			</Button>
-					<ColorButton
-						fullWidth
-						onClick={() => gapi.load('auth2', initClient)}
-						startIcon={<GoogleIcon />}
-						variant="contained"
-					>
-						Ingresar con Google
+						<ColorButton
+							fullWidth
+							onClick={() => gapi.load('auth2', initClient)}
+							startIcon={<GoogleIcon />}
+							variant="contained"
+						>
+							Ingresar con Google
 						</ColorButton>
-					<Box mt={5}>
-						<Copyright />
-					</Box>
-				</div>
+						<Box mt={5}>
+							<Copyright />
+						</Box>
+					</div>
+				</Grid>
 			</Grid>
-		</Grid>
-		// </ThemeProvider>
+		</ThemeProvider>
 	);
 }

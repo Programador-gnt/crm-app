@@ -13,19 +13,18 @@ const loading = () => {
 }
 
 function App() {
-
 	const Login = React.lazy(() => import('./Componentes/Login/Login'));
 	const Layout = React.lazy(() => import('./Componentes/Layout/Layout'));
 
 	return (
-		<HashRouter>
-			<React.Suspense fallback={loading()}>
-				<Switch>
-					<Route exact path='/login' name='Login' render={props => <Login {...props} />} />
-					<Route path='/' name='Inicio' render={props => <Layout {...props} />} />
-				</Switch>
-			</React.Suspense>
-		</HashRouter>
+			<HashRouter>
+				<React.Suspense fallback={loading()}>
+					<Switch>
+						<Route exact path='/login' name='Login' render={props => <Login {...props} />} />
+						<Route path='/' name='Inicio' render={props => <Layout {...props} />} />
+					</Switch>
+				</React.Suspense>
+			</HashRouter>
 	);
 }
 export default App;

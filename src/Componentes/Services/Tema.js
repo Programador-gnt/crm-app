@@ -278,6 +278,7 @@ theming.changeTheme = (theme) => {
 			type: type
 		});
 		theming.defaultTheme = theme;
+		resolve(theming)
 	});
 };
 
