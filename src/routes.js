@@ -7,6 +7,7 @@ const Clientes = React.lazy(() => import('./Componentes/Clientes/Clientes'))
 const Info = React.lazy(() => import('./Componentes/Clientes/Info'))
 const Nuevo = React.lazy(() => import('./Componentes/Clientes/Nuevo'))
 const Empresas = React.lazy(() => import('./Componentes/Empresas/Empresas'))
+const NuevaEmpresa = React.lazy(() => import('./Componentes/Empresas/Nuevo'))
 
 const routes = [
 	{ id: '0', path: '/', exact: true, name: 'Inicio' },
@@ -16,7 +17,8 @@ const routes = [
 	{ id: '4', path: '/clientes', exact: true, name: 'Clientes', component: Clientes },
 	{ id: '5', path: '/clientes/info', name: 'Información', component: Info },
 	{ id: '6', path: '/clientes/nuevo', name: 'Nuevo cliente', component: Nuevo },
-	{ id: '7', path: './empresas', exact: true, name: 'Empresas', component: Empresas }
+	{ id: '7', path: '/empresas', exact: true, name: 'Empresas', component: Empresas },
+	{ id: '8', patch: 'empresas/nuevo', name: 'Nueva empresa', component: NuevaEmpresa }
 ];
 
 export default routes;
