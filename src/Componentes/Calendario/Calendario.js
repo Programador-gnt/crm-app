@@ -460,6 +460,7 @@ export default function Calendario() {
 										<TextField
 											autoComplete="summary"
 											name='summary'
+											autoFocus
 											fullWidth
 											label="Título del evento"
 											placeholder="¿Cómo deseas nombrar el evento?"

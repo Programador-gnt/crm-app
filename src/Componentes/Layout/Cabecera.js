@@ -26,6 +26,9 @@ import PhoneAndroidIcon from '@material-ui/icons/PhoneAndroid';
 import Backdrop from '@material-ui/core/Backdrop';
 import TemaDialog from '../Configuracion/TemaDialog';
 import GroupOutlinedIcon from '@material-ui/icons/GroupOutlined';
+import DomainIcon from '@material-ui/icons/Domain';
+import MonetizationOnOutlinedIcon from '@material-ui/icons/MonetizationOnOutlined';
+import FindInPageOutlinedIcon from '@material-ui/icons/FindInPageOutlined';
 
 const drawerWidth = 240;
 
@@ -109,10 +112,11 @@ const useStyles = makeStyles(theme => ({
 
 const MenuNavegacion = [
 	{ nombre: 'Inicio', link: '/inicio' },
-	{ nombre: 'Gmail', link: '/gmail' },
-	{ nombre: 'Calendario', link: '/calendario' },
-	{ nombre: 'Llamadas', link: '/llamadas' },
-	{ nombre: 'Clientes', link: '/clientes' }
+	{ nombre: 'Contactos', link: '/clientes' },
+	{ nombre: 'Empresas', link: '/empresas' },
+	{ nombre: 'Agenda', link: '/calendario' },
+	{ nombre: 'Cobranza', link: '/cobranza' },
+	{ nombre: 'Caso', link: '/caso' }
 ]
 
 function Cabecera(props) {
@@ -243,9 +247,12 @@ function Cabecera(props) {
 							<ListItem button key={index} onClick={handleDrawerClose}>
 								<ListItemIcon>{items.nombre === 'Inicio' ? <HomeIcon /> :
 									items.nombre === 'Gmail' ? <GoogleIcon /> :
-										items.nombre === 'Calendario' ? <EventIcon /> :
-											items.nombre === 'Llamadas' ? <PhoneAndroidIcon /> :
-												items.nombre === 'Clientes' ? <GroupOutlinedIcon /> : ''}</ListItemIcon>
+										items.nombre === 'Agenda' ? <EventIcon /> :
+											items.nombre === 'Empresas' ? <DomainIcon /> :
+												items.nombre === 'Llamadas' ? <PhoneAndroidIcon /> :
+													items.nombre === 'Caso' ? <FindInPageOutlinedIcon /> :
+														items.nombre === 'Cobranza' ? <MonetizationOnOutlinedIcon /> :
+															items.nombre === 'Contactos' ? <GroupOutlinedIcon /> : ''}</ListItemIcon>
 								<ListItemText primary={items.nombre} />
 							</ListItem>
 						</Link>

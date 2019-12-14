@@ -78,7 +78,7 @@ export default function Info(props) {
             <CssBaseline />
             <Paper elevation={4} className={classes.root}>
                 <Typography component="h1" variant="h4" align="center" color='textSecondary'>
-                    Información de cliente
+                    Información de contacto
           			</Typography>
                 <Backdrop open={open} className={classes.back} />
                 <SpeedDial

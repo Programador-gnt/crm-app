@@ -60,7 +60,7 @@ const Usuarios = () => {
 							className={classes.title}
 							gutterBottom
 							variant="body2">
-							TOTAL CLIENTES
+							TOTAL CONTACTOS
             </Typography>
 						<Typography variant="h3">100</Typography>
 					</Grid>

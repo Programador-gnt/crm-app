@@ -5,7 +5,8 @@ const Gmail = React.lazy(() => import('./Componentes/Gmail/Gmail'))
 const Calendario = React.lazy(() => import('./Componentes/Calendario/Calendario'))
 const Clientes = React.lazy(() => import('./Componentes/Clientes/Clientes'))
 const Info = React.lazy(() => import('./Componentes/Clientes/Info'))
-const Nuevo = React.lazy(()=> import('./Componentes/Clientes/Nuevo'))
+const Nuevo = React.lazy(() => import('./Componentes/Clientes/Nuevo'))
+const Empresas = React.lazy(() => import('./Componentes/Empresas/Empresas'))
 
 const routes = [
 	{ id: '0', path: '/', exact: true, name: 'Inicio' },
@@ -14,7 +15,8 @@ const routes = [
 	{ id: '3', path: '/calendario', exact: true, name: 'Calendario', component: Calendario },
 	{ id: '4', path: '/clientes', exact: true, name: 'Clientes', component: Clientes },
 	{ id: '5', path: '/clientes/info', name: 'Información', component: Info },
-	{ id: '6', path: '/clientes/nuevo', name: 'Nuevo cliente', component: Nuevo}
+	{ id: '6', path: '/clientes/nuevo', name: 'Nuevo cliente', component: Nuevo },
+	{ id: '7', path: './empresas', exact: true, name: 'Empresas', component: Empresas }
 ];
 
 export default routes;
