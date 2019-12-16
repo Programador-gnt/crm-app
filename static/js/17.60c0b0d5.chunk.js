@@ -1,2 +1,0 @@
-(this["webpackJsonpcrm-app"]=this["webpackJsonpcrm-app"]||[]).push([[17],{560:function(n,e,t){"use strict";t.r(e),t.d(e,"default",(function(){return u}));var a=t(1),r=t.n(a),c=t(526);function u(){return r.a.createElement(r.a.Fragment,null,r.a.createElement(c.a,null))}}}]);
-//# sourceMappingURL=17.60c0b0d5.chunk.js.map
