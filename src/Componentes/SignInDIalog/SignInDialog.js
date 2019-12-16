@@ -107,6 +107,7 @@ export default function SignInDialog(props) {
                                             autoComplete="to"
                                             name='To'
                                             fullWidth
+                                            autoFocus
                                             label="Destinatario"
                                             placeholder="Correo electrónico"
                                             required

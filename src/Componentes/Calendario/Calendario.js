@@ -91,6 +91,11 @@ const useStyles = makeStyles(theme => ({
 	},
 	cabeceraDialog: {
 		position: 'relative'
+	},
+	invitadoss: {
+		backgroundColor: theme.palette.secondary.main,
+		width: 30,
+		height: 30,
 	}
 }));
 
@@ -124,7 +129,8 @@ export default function Calendario() {
 	const [loading, setLoading] = React.useState(false);
 	const [success, setSuccess] = React.useState(false);
 	const [eventoNuevo, setEventoNuevo] = React.useState({})
-	const [attendees, setAttendees] = React.useState({})
+	const [attendees, setAttendees] = React.useState([])
+	const [invitados, setInvitados] = React.useState('')
 	const [colorId, setColorId] = React.useState(11)
 	const timer = React.useRef();
 
@@ -332,27 +338,6 @@ export default function Calendario() {
 
 	}
 
-	const organizarObjeto = () => {
-		if (attendees.hasOwnProperty('email')) {
-			setEventoNuevo({
-				...eventoNuevo,
-				"sendUpdates": 'all',
-				attendees: [
-					{
-						...attendees,
-						responseStatus: 'accepted'
-					}
-				]
-			})
-			guardarEvento()
-		} else {
-			setEventoNuevo({
-				...eventoNuevo
-			})
-			guardarEvento()
-		}
-	}
-
 	const guardarEvento = () => {
 		if (!loading) {
 			setSuccess(false);
@@ -364,6 +349,7 @@ export default function Calendario() {
 					.then(() => {
 						setAbrirDialog(false)
 						GetEventos()
+						setAttendees([])
 					})
 			}, 2000)
 		}
@@ -377,25 +363,19 @@ export default function Calendario() {
 	}
 
 	const handleChangeAttendees = (e) => {
-		setAttendees({
-			...attendees,
-			[e.target.name]: e.target.value
-		})
-		if (typeof attendees.email === 'undefined') {
-			setEventoNuevo({
-				...eventoNuevo
-			})
-		} else {
+		setInvitados(e.target.value)
+	}
+
+	const tecla = (e) => {
+		if (e.keyCode === 13) {
+			setAttendees([...attendees, { email: invitados, responseStatus: 'accepted' }])
 			setEventoNuevo({
 				...eventoNuevo,
 				"sendUpdates": 'all',
-				attendees: [
-					{
-						...attendees,
-						responseStatus: 'accepted'
-					}
-				]
+				attendees: [...attendees, { email: invitados, responseStatus: 'accepted' }]
 			})
+			var campo = document.activeElement
+			campo.value = ''
 		}
 	}
 
@@ -405,6 +385,11 @@ export default function Calendario() {
 			...eventoNuevo,
 			"colorId": e.target.value
 		})
+	}
+
+	const cerrarDialog = () => {
+		setAttendees([])
+		setAbrirDialog(false)
 	}
 
 	React.useEffect(GetEventos, [])
@@ -453,75 +438,92 @@ export default function Calendario() {
 
 				<DialogContent>
 					<Hidden xsDown>
-						<Grid container spacing={1}>
-							<Grid item xs={12}>
-								<Grid container direction="column" spacing={2}>
-									<Grid item>
-										<TextField
-											autoComplete="summary"
-											name='summary'
-											autoFocus
-											fullWidth
-											label="Título del evento"
-											placeholder="¿Cómo deseas nombrar el evento?"
-											required
-											onChange={handleChange}
-											type="text"
-											variant="outlined"
-										/>
-									</Grid>
-									<Grid item >
-										<TextField
-											autoComplete="description"
-											fullWidth
-											multiline
-											rows={5}
-											label="Descripción"
-											name='description'
-											placeholder="Describe tu evento"
-											onChange={handleChange}
-											required
-											type="text"
-											variant="outlined"
-										/>
-									</Grid>
-									<Grid item>
-										<TextField
-											autoComplete="email"
-											name='email'
-											fullWidth
-											label="Participante"
-											placeholder="participante@correo.com"
-											required
-											onChange={handleChangeAttendees}
-											type="email"
-											variant="outlined"
-										/>
-									</Grid>
-									<Grid item>
-										<InvertColorsIcon style={{ color: colorId === 1 ? '#a4bdfc' : colorId === 2 ? '#7ae7bf' : colorId === 3 ? '#dbadff' : colorId === 4 ? '#ff887c' : colorId === 5 ? '#fbd75b' : colorId === 6 ? '#ffb878' : colorId === 7 ? '#46d6db' : colorId === 8 ? '#e1e1e1' : colorId === 9 ? '#5484ed' : colorId === 10 ? '#51b749' : colorId === 11 ? '#dc2127' : '' }} />
-										<Select
-											value={colorId}
-											onChange={handleColor}
-										>
-											<MenuItem key={0} value={1}>Melrose</MenuItem>
-											<MenuItem key={1} value={2}>Riptide</MenuItem>
-											<MenuItem key={2} value={3}>Malva</MenuItem>
-											<MenuItem key={3} value={4}>Mandarina</MenuItem>
-											<MenuItem key={4} value={5}>Dandelion</MenuItem>
-											<MenuItem key={5} value={6}>Dorado</MenuItem>
-											<MenuItem key={6} value={7}>Turquesa</MenuItem>
-											<MenuItem key={7} value={8}>Plomo</MenuItem>
-											<MenuItem key={8} value={9}>Azul</MenuItem>
-											<MenuItem key={9} value={10}>Verde Manzana</MenuItem>
-											<MenuItem key={10} value={11}>Carmesí</MenuItem>
-										</Select>
-									</Grid>
-									<Grid item >
-										<Typography variant='h6'>Fecha</Typography>
-										<Typography variant='button'>{`${fecha.inicio} - ${fecha.fin}`}</Typography>
-									</Grid>
-								</Grid>
+						<Grid container direction="column" spacing={2}>
+							<Grid item xs={12} sm={12}>
+								<TextField
+									autoComplete="summary"
+									name='summary'
+									autoFocus
+									fullWidth
+									label="Título del evento"
+									placeholder="¿Cómo deseas nombrar el evento?"
+									required
+									onChange={handleChange}
+									type="text"
+									variant="outlined"
+								/>
+							</Grid>
+							<Grid item xs={12} sm={12}>
+								<TextField
+									autoComplete="description"
+									fullWidth
+									multiline
+									rows={5}
+									label="Descripción"
+									name='description'
+									placeholder="Describe tu evento"
+									onChange={handleChange}
+									required
+									type="text"
+									variant="outlined"
+								/>
+							</Grid>
+							<Grid item xs={12} sm={12}>
+								<TextField
+									id='email'
+									autoComplete="email"
+									name='email'
+									fullWidth
+									label="Participante"
+									placeholder="participante@correo.com"
+									onKeyDown={tecla}
+									onChange={handleChangeAttendees}
+									type="email"
+									variant="outlined"
+								/>
+							</Grid>
+							<Grid item xs={12} sm={12}>
+								<List>
+									{attendees.length > 0 ?
+										attendees.map((invit, index) => (
+											<ListItem key={index}>
+												<ListItemAvatar>
+													<Avatar className={classes.invitadoss} size='small'>
+														{invit.email.substr(0, 1)}
+													</Avatar>
+												</ListItemAvatar>
+												<ListItemText primary={invit.email} />
+											</ListItem>
+										))
+										:
+										<ListItem>
+											<ListItemText primary='Aún no posee invitados' />
+										</ListItem>
+									}
+								</List>
+							</Grid>
+							<Grid item xs={12} sm={12}>
+								<InvertColorsIcon style={{ color: colorId === 1 ? '#a4bdfc' : colorId === 2 ? '#7ae7bf' : colorId === 3 ? '#dbadff' : colorId === 4 ? '#ff887c' : colorId === 5 ? '#fbd75b' : colorId === 6 ? '#ffb878' : colorId === 7 ? '#46d6db' : colorId === 8 ? '#e1e1e1' : colorId === 9 ? '#5484ed' : colorId === 10 ? '#51b749' : colorId === 11 ? '#dc2127' : '' }} />
+								<Select
+									value={colorId}
+									onChange={handleColor}
+								>
+									<MenuItem key={0} value={1}>Melrose</MenuItem>
+									<MenuItem key={1} value={2}>Riptide</MenuItem>
+									<MenuItem key={2} value={3}>Malva</MenuItem>
+									<MenuItem key={3} value={4}>Mandarina</MenuItem>
+									<MenuItem key={4} value={5}>Dandelion</MenuItem>
+									<MenuItem key={5} value={6}>Dorado</MenuItem>
+									<MenuItem key={6} value={7}>Turquesa</MenuItem>
+									<MenuItem key={7} value={8}>Plomo</MenuItem>
+									<MenuItem key={8} value={9}>Azul</MenuItem>
+									<MenuItem key={9} value={10}>Verde Manzana</MenuItem>
+									<MenuItem key={10} value={11}>Carmesí</MenuItem>
+								</Select>
+							</Grid>
+							<Grid item xs={12} sm={12}>
+								<Typography variant='h6'>Fecha</Typography>
+								<Typography variant='button'>{`${fecha.inicio} - ${fecha.fin}`}</Typography>
 							</Grid>
 						</Grid>
 					</Hidden>
@@ -562,7 +564,7 @@ export default function Calendario() {
 									fullWidth
 									label="Participante"
 									placeholder="participante@correo.com"
-									required
+									onKeyDown={tecla}
 									onChange={handleChangeAttendees}
 									type="email"
 									variant="outlined"
@@ -587,6 +589,26 @@ export default function Calendario() {
 									<MenuItem key={10} value={11}>Alizarin Crimson</MenuItem>
 								</Select>
 							</Grid>
+							<Grid item>
+								<List>
+									{attendees.length > 0 ?
+										attendees.map((invit, index) => (
+											<ListItem key={index}>
+												<ListItemAvatar>
+													<Avatar className={classes.invitadoss} size='small'>
+														{invit.email.substr(0, 1)}
+													</Avatar>
+												</ListItemAvatar>
+												<ListItemText primary={invit.email} />
+											</ListItem>
+										))
+										:
+										<ListItem>
+											<ListItemText primary='Aún no posee invitados' />
+										</ListItem>
+									}
+								</List>
+							</Grid>
 							<Grid item >
 								<Typography variant='h6'>Fecha</Typography>
 								<Typography variant='button'>{`${fecha.inicio} - ${fecha.fin}`}</Typography>
@@ -595,9 +617,9 @@ export default function Calendario() {
 					</Hidden>
 				</DialogContent>
 				<DialogActions>
-					<Button color="secondary" onClick={() => setAbrirDialog(false)}>Cerrar</Button>
+					<Button color="secondary" onClick={() => cerrarDialog()}>Cerrar</Button>
 					<Button
-						onClick={() => organizarObjeto()}
+						onClick={() => guardarEvento()}
 						color="primary"
 						className={buttonClassname}
 						disabled={loading}

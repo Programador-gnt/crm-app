@@ -11,9 +11,7 @@ import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
 import TextField from '@material-ui/core/TextField';
-import IconButton from '@material-ui/core/IconButton';
 import Avatar from '@material-ui/core/Avatar';
-import PhotoCameraOutlinedIcon from '@material-ui/icons/PhotoCameraOutlined';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -41,6 +39,8 @@ import Hidden from '@material-ui/core/Hidden';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import SaveOutlinedIcon from '@material-ui/icons/SaveOutlined';
+import PhotoIcon from '@material-ui/icons/Photo';
+import Zoom from '@material-ui/core/Zoom';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -81,8 +81,7 @@ const useStyles = makeStyles(theme => ({
     avatar: {
         backgroundColor: theme.palette.secondary.main,
         width: 70,
-        height: 70,
-        margin: 'auto'
+        height: 70
     },
     texto: {
         marginTop: theme.spacing(4)
@@ -100,6 +99,9 @@ const useStyles = makeStyles(theme => ({
     title: {
         marginLeft: theme.spacing(2),
         flex: 1,
+    },
+    boton: {
+        marginTop: theme.spacing(3)
     }
 }));
 
@@ -127,6 +129,7 @@ export default function Nuevo(props) {
     const [empresas, setEmpresas] = React.useState([])
     const [dialogDireccion, setDialogDireccion] = React.useState(false)
     const classes = useStyles()
+    const perfil = JSON.parse(localStorage.getItem('perfilGoogle'))
 
     const handleOpen = () => {
         setOpen(true);
@@ -181,12 +184,6 @@ export default function Nuevo(props) {
             }
         }
     }
-
-    const imagenChange = (e) => {
-        setImagenAvatar(e.target.value)
-        console.log(imagenAvatar)
-    }
-
 
     const agregarEmpresa = () => {
         setEmpresas([...empresas, { razonSocial: informacion2.razonSocial }])
@@ -257,6 +254,49 @@ export default function Nuevo(props) {
         setArrayDireccion(arrayDireccion.splice(i))
     }
 
+    const handleAvatarChange = (event) => {
+        if (!event) {
+            return;
+        }
+
+        const files = event.target.files;
+
+        if (!files) {
+            return;
+        }
+
+        const avatar = files[0];
+
+        if (!avatar) {
+            return;
+        }
+
+        const fileTypes = [
+            'image/gif',
+            'image/jpeg',
+            'image/png',
+            'image/webp',
+            'image/svg+xml'
+        ];
+
+        if (!fileTypes.includes(avatar.type)) {
+            return;
+        }
+
+        if (avatar.size > (20 * 1024 * 1024)) {
+            return;
+        }
+
+        setImagenAvatar(URL.createObjectURL(avatar))
+
+        // this.setState({
+        //     avatar: avatar,
+        //     avatarUrl: URL.createObjectURL(avatar)
+        // }, () => {
+        //     this.props.openSnackbar(`Selected image “${avatar.name}”`, 5);
+        // });
+    };
+
     return (
         <React.Fragment>
             <CssBaseline />
@@ -299,7 +339,6 @@ export default function Nuevo(props) {
                                             <Grid item>
                                                 <TextField
                                                     name='direccion1'
-                                                    autoFocus
                                                     fullWidth
                                                     label="Dirección 1"
                                                     placeholder="Av- ejemplo #número"
@@ -392,7 +431,6 @@ export default function Nuevo(props) {
                                     <Grid item xs>
                                         <TextField
                                             name='direccion1'
-                                            autoFocus
                                             fullWidth
                                             label="Dirección 1"
                                             placeholder="Av- ejemplo #número"
@@ -494,13 +532,9 @@ export default function Nuevo(props) {
                     </SpeedDial>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
-                            <AppBar className={classes.cabecera}>
-                                <Toolbar variant='dense'>
-                                    <Typography variant="button">
-                                        Información personal
-						            </Typography>
-                                </Toolbar>
-                            </AppBar>
+                            <Typography variant="h6" align='center'>
+                                Información personal
+						    </Typography>
                         </Grid>
                         <Grid item xs={12} sm={3}>
                             <TextField
@@ -517,17 +551,19 @@ export default function Nuevo(props) {
                                 type="text"
                             />
                         </Grid>
-                        <Grid item sx={12} sm={6}>
-                            <input accept="image/*" className={classes.input} id="icon-button-file" type="file" onChange={imagenChange} />
+                        <Grid item sx={12} sm={3}>
+                            <input accept="image/*" className={classes.input} id="icon-button-file" type="file" onChange={handleAvatarChange} />
                             <label htmlFor="icon-button-file">
-                                <IconButton color="primary" aria-label="upload picture" component="span">
-                                    <Avatar className={classes.avatar}>
-                                        <PhotoCameraOutlinedIcon />
-                                    </Avatar>
-                                </IconButton>
+                                {imagenAvatar ?
+                                    <Zoom in={true} timeout={500}>
+                                        <Avatar className={classes.avatar} src={imagenAvatar === '' ? perfil.picture : imagenAvatar} />
+                                    </Zoom>
+                                    : <Button color="primary" component="span" startIcon={<PhotoIcon />} variant="contained" className={classes.boton}>
+                                        Subir...
+                                </Button>}
                             </label>
                         </Grid>
-                        <Grid item xs={12} sm={3} />
+                        <Grid item xs={12} sm={6} />
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 name='apellidoPaterno'
@@ -579,7 +615,6 @@ export default function Nuevo(props) {
                                 name='ruc'
                                 value={ruc}
                                 margin='normal'
-                                autoFocus
                                 fullWidth
                                 label="RUC"
                                 onChange={onChangeRuc}
@@ -626,17 +661,14 @@ export default function Nuevo(props) {
                                     </ListItem>
                                 }
                             </List>
+                            <Divider />
                         </Grid>
                     </Grid>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
-                            <AppBar className={classes.cabecera}>
-                                <Toolbar variant='dense'>
-                                    <Typography variant="button">
-                                        Direcciones
-						            </Typography>
-                                </Toolbar>
-                            </AppBar>
+                            <Typography variant="h6" align='center'>
+                                Direcciones
+						    </Typography>
                         </Grid>
                         <Grid item xs={12} sm={4}>
                             <Fab color='secondary' size='small' className={classes.texto} aria-label='agregar' onClick={() => setDialogDireccion(true)}>
@@ -661,17 +693,14 @@ export default function Nuevo(props) {
                                     </ListItem>
                                 }
                             </List>
+                            <Divider />
                         </Grid>
                     </Grid>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
-                            <AppBar className={classes.cabecera}>
-                                <Toolbar variant='dense'>
-                                    <Typography variant="button">
-                                        Teléfonos
-						            </Typography>
-                                </Toolbar>
-                            </AppBar>
+                            <Typography variant="h6" align='center'>
+                                Teléfonos
+						    </Typography>
                         </Grid>
                         <Grid item xs={12} sm={4}>
                             <TextField
@@ -727,17 +756,14 @@ export default function Nuevo(props) {
                                     </ListItem>
                                 }
                             </List>
+                            <Divider />
                         </Grid>
                     </Grid>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
-                            <AppBar className={classes.cabecera}>
-                                <Toolbar variant='dense'>
-                                    <Typography variant="button">
-                                        Correos
-						            </Typography>
-                                </Toolbar>
-                            </AppBar>
+                            <Typography variant="h6" align='center'>
+                                Correos
+						    </Typography>
                         </Grid>
                         <Grid item xs={12} sm={4}>
                             <TextField
@@ -791,17 +817,14 @@ export default function Nuevo(props) {
                                     </ListItem>
                                 }
                             </List>
+                            <Divider />
                         </Grid>
                     </Grid>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
-                            <AppBar className={classes.cabecera}>
-                                <Toolbar variant='dense'>
-                                    <Typography variant="button">
-                                        Redes sociales
-						            </Typography>
-                                </Toolbar>
-                            </AppBar>
+                            <Typography variant="h6" align='center'>
+                                Redes sociales
+						    </Typography>
                         </Grid>
                         <Grid item xs={12} sm={4}>
                             <TextField

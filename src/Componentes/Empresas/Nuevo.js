@@ -119,7 +119,6 @@ export default function Nuevo(props) {
     const [arrayRedes, setArrayRedes] = React.useState([])
     const [direccion, setDireccion] = React.useState({ tipo: 'casa', pais: 'peru' })
     const [arrayDireccion, setArrayDireccion] = React.useState([])
-    const [empresas, setEmpresas] = React.useState([])
     const [dialogDireccion, setDialogDireccion] = React.useState(false)
     const classes = useStyles()
 
@@ -153,14 +152,6 @@ export default function Nuevo(props) {
             }
         }
     }
-
-    const agregarEmpresa = () => {
-        setEmpresas([...empresas, { razonSocial: informacion2.razonSocial }])
-    }
-
-    // const eliminarEmpresa = (i) => {
-    //     setEmpresas(empresas.splice(i))
-    // }
 
     const onChangeTelefonos = (e) => {
         setTelefonos({
@@ -512,42 +503,15 @@ export default function Nuevo(props) {
                                 type="text"
                             />
                         </Grid>
-                        <Grid item xs={12} sm={3}>
-                            <Fab color='secondary' size='small' aria-label='agregar' onClick={() => agregarEmpresa()}>
-                                <AddIcon />
-                            </Fab>
-                        </Grid>
-                        <Grid item xs={12} sm={3} />
+                        <Grid item xs={12} sm={6} />
                         <Divider />
-                        {/* <Grid item xs={12} sm={12}>
-                            <List>
-                                {empresas.length > 0 ?
-                                    empresas.map((empresa, index) => (
-                                        <ListItem key={index}>
-                                            <ListItemAvatar>
-                                                <DomainIcon color='secondary' />
-                                            </ListItemAvatar>
-                                            <ListItemText primary={empresa.razonSocial} />
-                                            <DeleteOutlineOutlinedIcon color='error' onClick={() => eliminarEmpresa(index)} style={{ cursor: 'pointer' }} />
-                                        </ListItem>
-                                    ))
-                                    :
-                                    <ListItem>
-                                        <ListItemText primary='No hay empresas agregada' />
-                                    </ListItem>
-                                }
-                            </List>
-                        </Grid> */}
                     </Grid>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
-                            <AppBar className={classes.cabecera}>
-                                <Toolbar variant='dense'>
-                                    <Typography variant="button">
-                                        Direcciones
-						            </Typography>
-                                </Toolbar>
-                            </AppBar>
+                            <Typography variant="h6" align='center'>
+                                Direcciones
+						    </Typography>
+                            <Divider />
                         </Grid>
                         <Grid item xs={12} sm={4}>
                             <Fab color='secondary' size='small' className={classes.texto} aria-label='agregar' onClick={() => setDialogDireccion(true)}>
@@ -572,17 +536,14 @@ export default function Nuevo(props) {
                                     </ListItem>
                                 }
                             </List>
+                            <Divider />
                         </Grid>
                     </Grid>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
-                            <AppBar className={classes.cabecera}>
-                                <Toolbar variant='dense'>
-                                    <Typography variant="button">
-                                        Teléfonos
-						            </Typography>
-                                </Toolbar>
-                            </AppBar>
+                            <Typography variant="h6" align='center'>
+                                Teléfonos
+						    </Typography>
                         </Grid>
                         <Grid item xs={12} sm={4}>
                             <TextField
@@ -638,17 +599,14 @@ export default function Nuevo(props) {
                                     </ListItem>
                                 }
                             </List>
+                            <Divider />
                         </Grid>
                     </Grid>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
-                            <AppBar className={classes.cabecera}>
-                                <Toolbar variant='dense'>
-                                    <Typography variant="button">
-                                        Correos
-						            </Typography>
-                                </Toolbar>
-                            </AppBar>
+                            <Typography variant="h6" align='center'>
+                                Correos
+						    </Typography>
                         </Grid>
                         <Grid item xs={12} sm={4}>
                             <TextField
@@ -702,17 +660,14 @@ export default function Nuevo(props) {
                                     </ListItem>
                                 }
                             </List>
+                            <Divider />
                         </Grid>
                     </Grid>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
-                            <AppBar className={classes.cabecera}>
-                                <Toolbar variant='dense'>
-                                    <Typography variant="button">
-                                        Redes sociales
-						            </Typography>
-                                </Toolbar>
-                            </AppBar>
+                            <Typography variant="h6" align='center'>
+                                Redes sociales
+						    </Typography>
                         </Grid>
                         <Grid item xs={12} sm={4}>
                             <TextField
