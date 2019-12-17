@@ -109,6 +109,12 @@ const useStyles = makeStyles(theme => ({
 	},
 	nombreMenu: {
 		marginLeft: theme.spacing(6)
+	},
+	lista: {
+		'&:hover': {
+			backgroundColor: theme.palette.primary.main,
+			color: theme.palette.getContrastText(theme.palette.primary.main)
+		}
 	}
 }));
 
@@ -117,7 +123,7 @@ const MenuNavegacion = [
 	{ nombre: 'Contactos', link: '/clientes' },
 	{ nombre: 'Empresas', link: '/empresas' },
 	{ nombre: 'Agenda', link: '/calendario' },
-	// { nombre: 'Chat', link: '/chat' },
+	{ nombre: 'Chat', link: '/chat' },
 	{ nombre: 'Cobranza', link: '/cobranza' },
 	{ nombre: 'Caso', link: '/caso' }
 ]
@@ -230,7 +236,7 @@ function Cabecera(props) {
 								open={abrir}
 								onClose={() => setAnchorEl(null)}>
 								<MenuItem disabled><em>{perfil.name}</em></MenuItem>
-								{/* <MenuItem onClick={() => chatDialog()}>Conectar chat</MenuItem> */}
+								<MenuItem onClick={() => chatDialog()}>Conectar chat</MenuItem>
 								<MenuItem onClick={() => dialog()}>Tema</MenuItem>
 								<MenuItem onClick={() => handleClose()}>Cerrar Sesión</MenuItem>
 							</Menu>
@@ -259,13 +265,14 @@ function Cabecera(props) {
 				<List>
 					{MenuNavegacion.map((items, index) => (
 						<Link to={items.link} style={{ textDecoration: 'none', color: 'inherit' }} key={index}>
-							<ListItem button key={index} onClick={handleDrawerClose}>
+							<ListItem button key={index} onClick={handleDrawerClose} className={classes.lista}>
 								<ListItemIcon>{items.nombre === 'Inicio' ? <HomeIcon /> :
 									items.nombre === 'Gmail' ? <GoogleIcon /> :
 										items.nombre === 'Agenda' ? <EventIcon /> :
 											items.nombre === 'Empresas' ? <DomainIcon /> :
 												items.nombre === 'Llamadas' ? <PhoneAndroidIcon /> :
 													items.nombre === 'Caso' ? <FindInPageOutlinedIcon /> :
+														items.nombre === 'Chat' ? <ForumOutlinedIcon /> :
 															items.nombre === 'Cobranza' ? <MonetizationOnOutlinedIcon /> :
 																items.nombre === 'Contactos' ? <GroupOutlinedIcon /> : ''}</ListItemIcon>
 								<ListItemText primary={items.nombre} />

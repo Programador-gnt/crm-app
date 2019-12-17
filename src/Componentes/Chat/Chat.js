@@ -18,6 +18,7 @@ import Dialog from '@material-ui/core/Dialog';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -37,6 +38,33 @@ const useStyles = makeStyles(theme => ({
 	avatar: {
 		backgroundColor: theme.palette.primary.main
 	},
+	linea: {
+		width: '105%'
+	},
+	chatRight: {
+		display: 'flex',
+		justifyContent: 'flex-end'
+	},
+	me: {
+		backgroundColor: theme.palette.primary.main,
+		margin: 4,
+		borderRadius: '10px 10px 0 10px',
+		color: theme.palette.getContrastText(theme.palette.primary.main)
+	},
+	listame: {
+		position: 'flex',
+		justifyContent: 'flex-end'
+	},
+	them: {
+		backgroundColor: theme.palette.secondary.main,
+		margin: 4,
+		borderRadius: '0 10px 10px 10px',
+		color: theme.palette.getContrastText(theme.palette.secondary.main)
+	},
+	listathem: {
+		position: 'flex',
+		justifyContent: 'flex-start'
+	}
 }));
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -56,6 +84,7 @@ export default function Chat() {
 	const MESSAGE_LISTENER_KEY = 'listener-key'
 	const limit = 30
 	const classes = useStyles()
+	const user = JSON.parse(localStorage.getItem('usuarioChat'))
 
 
 	const selectFriend = (uid, avatar, name, status) => {
@@ -92,6 +121,101 @@ export default function Chat() {
 		};
 	}, []);
 
+	React.useEffect(() => {
+
+		let listnerID = "UNIQUE_LISTENER_ID";
+		CometChat.addCallListener(
+			listnerID,
+			new CometChat.CallListener({
+				onIncomingCallReceived(call) {
+					// let llamadaEntrante = [call]
+					// setSelectedAvatarEntrante(llamadaEntrante[0].callInitiator.avatar)
+
+					// setModalLlamadaEntrante(!modalLlamadaEntrante)
+					// sessionStorage.setItem('sessionIdLlamadaEntrante', JSON.stringify(llamadaEntrante[0].sessionId))
+				},
+
+				onOutgoingCallAccepted(call) {
+					console.log("Llamada Saliente aceptada: ", call);
+					let sessionID = call.sessionID;
+
+					// setModalLlamadaSaliente(false)
+					// setModal(true)
+
+					CometChat.startCall(sessionID, document.getElementById("callScreen"),
+						new CometChat.OngoingCallListener({
+							onUserJoined: user => {
+
+								// console.log("El usuario se ha unido a la llamada: ", user);
+							},
+							onUserLeft: user => {
+								// setModal(false)
+								// console.log("Usuario abandonó la Llamada: ", user);
+							},
+							onCallEnded: call => {
+
+								// console.log("LLamada Finalizada: ", call);
+								// setModal(false)
+							}
+						})
+					);
+				},
+
+				onOutgoingCallRejected(call) {
+					// setModalLlamadaSaliente(false)
+					// console.log("Llamada Saliente rechazada: ", call);
+				},
+				onIncomingCallCancelled(call) {
+					// setModalLlamadaEntrante(false)
+					// setModalLlamadaSaliente(false)
+					// setModal(false)
+					// console.log("Llamada entrante cancelada: ", call);
+				}
+			})
+		);
+
+		if (selectedFriend) {
+			let messagesRequest = new CometChat.MessagesRequestBuilder()
+				.setUID(selectedFriend)
+				.setLimit(limit)
+				.build();
+
+			messagesRequest.fetchPrevious().then(
+				messages => {
+					setChat(messages);
+					setChatIsLoading(false);
+					// console.log('Mensajes recibidos: ', messages)
+				},
+				error => {
+					// console.log('Error la recibir mensajes:', error);
+				}
+			);
+
+			CometChat.removeMessageListener(MESSAGE_LISTENER_KEY);
+
+			let listenerID = "UNIQUE_LISTENER_ID";
+
+			CometChat.addMessageListener(listenerID,
+				new CometChat.MessageListener({
+					onTextMessageReceived: message => {
+						// console.log('Mensaje Recibido', { message });
+						if (selectedFriend === message.sender.uid) {
+							// let music = new Audio(Musica)
+							// music.play()
+							setChat(prevState => [...prevState, message]);
+						}
+					},
+					onMediaMessageReceived: mediaMessage => {
+						// console.log("Mensaje Multimedia recibido", { mediaMessage });
+						if (selectedFriend === mediaMessage.sender.uid) {
+							setChat(prevState => [...prevState, mediaMessage]);
+						}
+					}
+				})
+			);
+		}
+	}, [selectedFriend]);
+
 	if (friendisLoading) {
 		return (
 			<Box position="absolute" top="50%" left="50%">
@@ -110,10 +234,39 @@ export default function Chat() {
 							</IconButton>
 							<Avatar className={classes.avatar} src={selectedAvatar} />
 							<Typography variant="h6" className={classes.title}>
-								{selectedName}
+								{`${selectedName} - ${selectedStatus}`}
 							</Typography>
 						</Toolbar>
+						{chatIsLoading ?
+							<LinearProgress color='secondary' className={classes.linea} />
+							: null}
 					</AppBar>
+					<List>
+						{chatIsLoading ? null:
+						chat.length ? <ListItem primary='chat cargado'/>: <ListItem primary='No hay mensajes para mostrar'/>}
+					</List>
+					{/* {chatIsLoading ?
+						null :
+						chat.length ?
+							chat.map((mensajes, index) => (
+								<ListItem key={index} className={mensajes.receiver !== user.uid ? classes.them : classes.me}>
+									mensajes.receiver !== user.uid ?
+											<Avatar src={selectedAvatar} alt='...' />
+									<Paper elevation={4} className={classes.them}>
+										<Typography variant='body1' style={{ padding: 6 }}>como estas menor ok?</Typography>
+									</Paper>
+									:
+											<Paper elevation={4} className={classes.me}>
+										<Typography variant='body1' style={{ padding: 6 }}>como estas menor ok?</Typography>
+									</Paper>
+									<Avatar src={user.avatar} alt='...' />
+								</ListItem>
+							))
+							:
+							<List>
+								<ListItem primary='No hay mensajes para mostrar' />
+							</List>} */}
+
 				</Dialog>
 				<Fade in={true} timeout={1000}>
 					<Paper elevation={4} className={classes.root}>
