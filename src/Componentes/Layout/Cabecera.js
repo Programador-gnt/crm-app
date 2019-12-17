@@ -117,7 +117,7 @@ const MenuNavegacion = [
 	{ nombre: 'Contactos', link: '/clientes' },
 	{ nombre: 'Empresas', link: '/empresas' },
 	{ nombre: 'Agenda', link: '/calendario' },
-	{ nombre: 'Chat', link: '/chat' },
+	// { nombre: 'Chat', link: '/chat' },
 	{ nombre: 'Cobranza', link: '/cobranza' },
 	{ nombre: 'Caso', link: '/caso' }
 ]
@@ -230,7 +230,7 @@ function Cabecera(props) {
 								open={abrir}
 								onClose={() => setAnchorEl(null)}>
 								<MenuItem disabled><em>{perfil.name}</em></MenuItem>
-								<MenuItem onClick={() => chatDialog()}>Conectar chat</MenuItem>
+								{/* <MenuItem onClick={() => chatDialog()}>Conectar chat</MenuItem> */}
 								<MenuItem onClick={() => dialog()}>Tema</MenuItem>
 								<MenuItem onClick={() => handleClose()}>Cerrar Sesión</MenuItem>
 							</Menu>
@@ -266,7 +266,6 @@ function Cabecera(props) {
 											items.nombre === 'Empresas' ? <DomainIcon /> :
 												items.nombre === 'Llamadas' ? <PhoneAndroidIcon /> :
 													items.nombre === 'Caso' ? <FindInPageOutlinedIcon /> :
-														items.nombre === 'Chat' ? <ForumOutlinedIcon /> :
 															items.nombre === 'Cobranza' ? <MonetizationOnOutlinedIcon /> :
 																items.nombre === 'Contactos' ? <GroupOutlinedIcon /> : ''}</ListItemIcon>
 								<ListItemText primary={items.nombre} />

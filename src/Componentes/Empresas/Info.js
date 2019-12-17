@@ -14,9 +14,6 @@ import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
-import GoogleIcon from 'mdi-material-ui/Google';
-import EventIcon from '@material-ui/icons/Event';
-import PhoneAndroidIcon from '@material-ui/icons/PhoneAndroid';
 import IconButton from '@material-ui/core/IconButton';
 import Chip from '@material-ui/core/Chip';
 import FaceIcon from '@material-ui/icons/Face';
@@ -127,7 +124,7 @@ export default function Info(props) {
                             </Typography>
                             <Chip
                                 icon={<FaceIcon />}
-                                label="Activo"
+                                label="Activa"
                                 color="primary"
                                 onDelete={() => console.log('status')}
                                 deleteIcon={<DoneIcon />}
@@ -135,15 +132,6 @@ export default function Info(props) {
                             />
                         </CardContent>
                         <CardActions disableSpacing>
-                            <IconButton aria-label="Gmail">
-                                <GoogleIcon color='primary' />
-                            </IconButton>
-                            <IconButton aria-label="Agendar">
-                                <EventIcon color='primary' />
-                            </IconButton>
-                            <IconButton aria-label="Llamadas">
-                                <PhoneAndroidIcon color='primary' />
-                            </IconButton>
                             <IconButton aria-label="Llamadas">
                                 <EditOutlinedIcon color='primary' />
                             </IconButton>

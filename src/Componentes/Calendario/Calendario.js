@@ -110,6 +110,14 @@ export default function Calendario() {
 		center: 'title',
 		right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
 	}
+
+	const botones = {
+		dayGridMonth: 'mes',
+		timeGridWeek: 'semana',
+		timeGridDay: 'día',
+		listMonth: 'lista',
+		today: 'hoy'
+	}
 	const formatoTiempo = {
 		hour: '2-digit',
 		minute: '2-digit',
@@ -709,6 +717,7 @@ export default function Calendario() {
 					schedulerLicenseKey='GPL-My-Project-Is-Open-Source'
 					slotDuration='00:15'
 					nowIndicator={true}
+					buttonText={botones}
 					eventTimeFormat={formatoTiempo}
 				/>
 			</Paper>
