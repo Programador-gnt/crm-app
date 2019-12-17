@@ -126,7 +126,7 @@ export default function Nuevo(props) {
     const [arrayRedes, setArrayRedes] = React.useState([])
     const [direccion, setDireccion] = React.useState({ tipo: 'casa', pais: 'peru' })
     const [arrayDireccion, setArrayDireccion] = React.useState([])
-    const [empresas, setEmpresas] = React.useState([])
+    // const [empresas, setEmpresas] = React.useState([])
     const [dialogDireccion, setDialogDireccion] = React.useState(false)
     const classes = useStyles()
     const perfil = JSON.parse(localStorage.getItem('perfilGoogle'))
@@ -185,13 +185,13 @@ export default function Nuevo(props) {
         }
     }
 
-    const agregarEmpresa = () => {
-        setEmpresas([...empresas, { razonSocial: informacion2.razonSocial }])
-    }
+    // const agregarEmpresa = () => {
+    //     setEmpresas([...empresas, { razonSocial: informacion2.razonSocial }])
+    // }
 
-    const eliminarEmpresa = (i) => {
-        setEmpresas(empresas.splice(i))
-    }
+    // const eliminarEmpresa = (i) => {
+    //     setEmpresas(empresas.splice(i))
+    // }
 
     const onChangeTelefonos = (e) => {
         setTelefonos({
@@ -532,7 +532,7 @@ export default function Nuevo(props) {
                     </SpeedDial>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
-                            <Typography variant="h6" align='center'>
+                            <Typography variant="h6">
                                 Información personal
 						    </Typography>
                         </Grid>
@@ -636,14 +636,14 @@ export default function Nuevo(props) {
                                 type="text"
                             />
                         </Grid>
-                        <Grid item xs={12} sm={3}>
+                        {/* <Grid item xs={12} sm={3}>
                             <Fab color='secondary' size='small' aria-label='agregar' onClick={() => agregarEmpresa()}>
                                 <AddIcon />
                             </Fab>
-                        </Grid>
-                        <Grid item xs={12} sm={3} />
+                        </Grid> */}
+                        <Grid item xs={12} sm={6} />
                         <Divider />
-                        <Grid item xs={12} sm={12}>
+                        {/* <Grid item xs={12} sm={12}>
                             <List>
                                 {empresas.length > 0 ?
                                     empresas.map((empresa, index) => (
@@ -662,11 +662,12 @@ export default function Nuevo(props) {
                                 }
                             </List>
                             <Divider />
-                        </Grid>
+                        </Grid> */}
                     </Grid>
                     <Grid container spacing={2}>
+                    <Divider />
                         <Grid item xs={12}>
-                            <Typography variant="h6" align='center'>
+                            <Typography variant="h6">
                                 Direcciones
 						    </Typography>
                         </Grid>
@@ -698,7 +699,7 @@ export default function Nuevo(props) {
                     </Grid>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
-                            <Typography variant="h6" align='center'>
+                            <Typography variant="h6">
                                 Teléfonos
 						    </Typography>
                         </Grid>
@@ -761,7 +762,7 @@ export default function Nuevo(props) {
                     </Grid>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
-                            <Typography variant="h6" align='center'>
+                            <Typography variant="h6">
                                 Correos
 						    </Typography>
                         </Grid>
@@ -822,7 +823,7 @@ export default function Nuevo(props) {
                     </Grid>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
-                            <Typography variant="h6" align='center'>
+                            <Typography variant="h6">
                                 Redes sociales
 						    </Typography>
                         </Grid>

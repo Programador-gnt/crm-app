@@ -29,6 +29,8 @@ import GroupOutlinedIcon from '@material-ui/icons/GroupOutlined';
 import DomainIcon from '@material-ui/icons/Domain';
 import MonetizationOnOutlinedIcon from '@material-ui/icons/MonetizationOnOutlined';
 import FindInPageOutlinedIcon from '@material-ui/icons/FindInPageOutlined';
+import ChatDialog from '../ChatDialog/ChatDialog';
+import ForumOutlinedIcon from '@material-ui/icons/ForumOutlined';
 
 const drawerWidth = 240;
 
@@ -115,6 +117,7 @@ const MenuNavegacion = [
 	{ nombre: 'Contactos', link: '/clientes' },
 	{ nombre: 'Empresas', link: '/empresas' },
 	{ nombre: 'Agenda', link: '/calendario' },
+	{ nombre: 'Chat', link: '/chat' },
 	{ nombre: 'Cobranza', link: '/cobranza' },
 	{ nombre: 'Caso', link: '/caso' }
 ]
@@ -126,6 +129,7 @@ function Cabecera(props) {
 	const [anchorEl, setAnchorEl] = React.useState(null);
 	const abrir = Boolean(anchorEl);
 	const [openDialog, setOpenDialog] = React.useState(false)
+	const [openChatDialog, setOpenChatDialog] = React.useState(false)
 	const perfil = JSON.parse(localStorage.getItem('perfilGoogle'))
 
 	const handleDrawerOpen = () => {
@@ -150,9 +154,18 @@ function Cabecera(props) {
 		setAnchorEl(null);
 	}
 
+	const chatDialog = () => {
+		setOpenChatDialog(true)
+		setAnchorEl(null);
+	}
+
 	const cerrar = () => {
 		setOpenDialog(false)
 		props.history.push(props.location.pathname)
+	}
+
+	const cerrarChatDialog = () => {
+		setOpenChatDialog(false)
 	}
 
 	if (localStorage.getItem('tokenGoogle') === null) {
@@ -162,6 +175,7 @@ function Cabecera(props) {
 	return (
 		<div className={classes.root}>
 			<CssBaseline />
+			<ChatDialog abrir={openChatDialog} funcion={() => cerrarChatDialog()} />
 			<TemaDialog abrir={openDialog} funcion={() => cerrar()} />
 			<Backdrop open={open} className={classes.back} onClick={() => handleDrawerClose()} />
 			<AppBar
@@ -216,7 +230,8 @@ function Cabecera(props) {
 								open={abrir}
 								onClose={() => setAnchorEl(null)}>
 								<MenuItem disabled><em>{perfil.name}</em></MenuItem>
-								<MenuItem onClick={() => dialog()}>Configuración</MenuItem>
+								<MenuItem onClick={() => chatDialog()}>Conectar chat</MenuItem>
+								<MenuItem onClick={() => dialog()}>Tema</MenuItem>
 								<MenuItem onClick={() => handleClose()}>Cerrar Sesión</MenuItem>
 							</Menu>
 						</div>
@@ -251,8 +266,9 @@ function Cabecera(props) {
 											items.nombre === 'Empresas' ? <DomainIcon /> :
 												items.nombre === 'Llamadas' ? <PhoneAndroidIcon /> :
 													items.nombre === 'Caso' ? <FindInPageOutlinedIcon /> :
-														items.nombre === 'Cobranza' ? <MonetizationOnOutlinedIcon /> :
-															items.nombre === 'Contactos' ? <GroupOutlinedIcon /> : ''}</ListItemIcon>
+														items.nombre === 'Chat' ? <ForumOutlinedIcon /> :
+															items.nombre === 'Cobranza' ? <MonetizationOnOutlinedIcon /> :
+																items.nombre === 'Contactos' ? <GroupOutlinedIcon /> : ''}</ListItemIcon>
 								<ListItemText primary={items.nombre} />
 							</ListItem>
 						</Link>

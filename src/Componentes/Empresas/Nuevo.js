@@ -226,8 +226,7 @@ export default function Nuevo(props) {
             <CssBaseline />
             <main className={classes.layout}>
                 <Paper elevation={4} className={classes.root}>
-                    <Typography variant='h6' color='textPrimary' align='center'>Nueva empresa</Typography>
-                    <Divider />
+                    <Typography variant='h6' color='textPrimary'  >Nueva empresa</Typography>
                     <Dialog fullWidth open={dialogDireccion} onClose={() => setDialogDireccion(false)}>
                         <DialogTitle disableTypography>
                             <Paper elevation={24}>
@@ -508,10 +507,9 @@ export default function Nuevo(props) {
                     </Grid>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
-                            <Typography variant="h6" align='center'>
+                            <Typography variant="h6"  >
                                 Direcciones
 						    </Typography>
-                            <Divider />
                         </Grid>
                         <Grid item xs={12} sm={4}>
                             <Fab color='secondary' size='small' className={classes.texto} aria-label='agregar' onClick={() => setDialogDireccion(true)}>
@@ -541,7 +539,7 @@ export default function Nuevo(props) {
                     </Grid>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
-                            <Typography variant="h6" align='center'>
+                            <Typography variant="h6"  >
                                 Teléfonos
 						    </Typography>
                         </Grid>
@@ -604,7 +602,7 @@ export default function Nuevo(props) {
                     </Grid>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
-                            <Typography variant="h6" align='center'>
+                            <Typography variant="h6"  >
                                 Correos
 						    </Typography>
                         </Grid>
@@ -665,7 +663,7 @@ export default function Nuevo(props) {
                     </Grid>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
-                            <Typography variant="h6" align='center'>
+                            <Typography variant="h6"  >
                                 Redes sociales
 						    </Typography>
                         </Grid>

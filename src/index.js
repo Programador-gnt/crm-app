@@ -2,7 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
+import { CometChat } from '@cometchat-pro/chat';
+import Config from './Componentes/Config/Config';
 import * as serviceWorker from './serviceWorker';
+
+CometChat.init(Config.chatID);
 
 ReactDOM.render(<App />, document.getElementById('root'));
 

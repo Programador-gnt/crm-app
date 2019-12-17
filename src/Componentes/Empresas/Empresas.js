@@ -74,6 +74,7 @@ export default function Clientes() {
 	const [open, setOpen] = React.useState(false)
 	const [nuevo, setNuevo] = React.useState(false)
 	const [openDialog, setOpenDialog] = React.useState(false)
+	const [usuario, setUsuario] = React.useState(false)
 	const classes = useStyles()
 
 	const handleOpen = () => {
@@ -86,6 +87,10 @@ export default function Clientes() {
 
 	if (nuevo === true) {
 		return (<Redirect to='/empresas/nuevo' />)
+	}
+
+	if (usuario === true) {
+		return (<Redirect to='/empresas/info' />)
 	}
 
 	return (
@@ -143,7 +148,7 @@ export default function Clientes() {
 									</Avatar>
 								</ListItemAvatar>
 								<ListItemText primary={client.nombre} secondary={client.empresa} />
-								<IconButton aria-label="información" onClick={() => alert('ver Empresa')}>
+								<IconButton aria-label="información" onClick={() => setUsuario(true)}>
 									<FindInPageOutlinedIcon color='primary' />
 								</IconButton>
 								<IconButton aria-label="editar" onClick={() => alert('editar empresa ' + client.id)}>
