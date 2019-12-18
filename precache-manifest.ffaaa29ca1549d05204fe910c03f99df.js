@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "acfa2eed7222f7d29a7c2256cd71c2ec",
+    "revision": "2d551e28ef784a432af220aa6d46f41b",
     "url": "/crm-app/index.html"
   },
   {
@@ -36,8 +36,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/crm-app/static/js/13.68c5c108.chunk.js"
   },
   {
-    "revision": "ee8d650aa1ae3cb95d74",
-    "url": "/crm-app/static/js/14.c4fbf328.chunk.js"
+    "revision": "4be84ffe824c2163d72a",
+    "url": "/crm-app/static/js/14.5e546706.chunk.js"
   },
   {
     "revision": "fba97528f74a326d3e40",
@@ -100,7 +100,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/crm-app/static/js/main.df7fd60a.chunk.js"
   },
   {
-    "revision": "e81587ed9c20cd7c65ca",
-    "url": "/crm-app/static/js/runtime-main.95a11d00.js"
+    "revision": "822e653c1dbf96f1cb46",
+    "url": "/crm-app/static/js/runtime-main.a0313606.js"
   }
 ]);
