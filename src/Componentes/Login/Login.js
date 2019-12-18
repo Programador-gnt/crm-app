@@ -44,7 +44,6 @@ const useStyles = makeStyles(theme => ({
 		backgroundColor: theme.palette.grey[50],
 		backgroundSize: 'cover',
 		backgroundPosition: 'center'
-		// filter: 'blur(3px)'
 	},
 	paper: {
 		margin: theme.spacing(8, 4),

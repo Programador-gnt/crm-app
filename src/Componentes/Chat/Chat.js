@@ -19,6 +19,10 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import TextField from '@material-ui/core/TextField';
+import Grid from '@material-ui/core/Grid';
+import Zoom from '@material-ui/core/Zoom';
+import Snackbar from '@material-ui/core/Snackbar';
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -29,7 +33,7 @@ const useStyles = makeStyles(theme => ({
 		padding: theme.spacing(0.5)
 	},
 	appBar: {
-		position: 'relative'
+		position: 'fixed'
 	},
 	title: {
 		marginLeft: theme.spacing(2),
@@ -64,6 +68,34 @@ const useStyles = makeStyles(theme => ({
 	listathem: {
 		position: 'flex',
 		justifyContent: 'flex-start'
+	},
+	textoMensaje: {
+		[`& fieldset`]: {
+			borderRadius: 50,
+		}
+	},
+	listaGeneral: {
+		top: theme.spacing(7),
+		width: '100%',
+		position: 'fixed',
+		overflow: 'auto',
+		maxHeight: '80%'
+	},
+	grid: {
+		position: 'fixed',
+		left: theme.spacing(1),
+		bottom: theme.spacing(4),
+		width: '100%'
+	},
+	grid2: {
+		height: '80%'
+	},
+	message: {
+		display: 'flex',
+		alignItems: 'center'
+	},
+	avatarMensaje: {
+		marginRight: theme.spacing(1)
 	}
 }));
 
@@ -81,7 +113,12 @@ export default function Chat() {
 	const [chat, setChat] = React.useState([]);
 	const [chatIsLoading, setChatIsLoading] = React.useState(false)
 	const [dialogEvento, setDialogEvento] = React.useState(false)
+	const [mensaje, setMensaje] = React.useState(null)
+	const [notificacion, setNotificacion] = React.useState(false)
+	const [notificacion2, setNotificacion2] = React.useState(false)
+	const [infoNotificacion, setInfoNotificacion] = React.useState({})
 	const MESSAGE_LISTENER_KEY = 'listener-key'
+	const listenerID = "UNIQUE_LISTENER_ID";
 	const limit = 30
 	const classes = useStyles()
 	const user = JSON.parse(localStorage.getItem('usuarioChat'))
@@ -92,14 +129,43 @@ export default function Chat() {
 		setSelectedAvatar(avatar);
 		setSelectedName(name);
 		setSelectedStatus(status);
-		setChat([]);
 		setChatIsLoading(true);
-		setDialogEvento(true)
+		setDialogEvento(true);
 	}
 
 	const handleCloseDialogEvento = () => {
 		setDialogEvento(false);
+		setSelectedFriend(null);
 	};
+
+	const enviarMensaje = () => {
+		var textMessage = new CometChat.TextMessage(selectedFriend, mensaje, CometChat.RECEIVER_TYPE.USER, CometChat.MESSAGE_TYPE.TEXT)
+		CometChat.sendMessage(textMessage).then(
+			message => {
+				setChat([...chat, message]);
+				scrollBottom()
+			},
+			error => {
+				console.log('No se pudo enviar el mensaje:', error);
+			}
+		);
+	}
+
+	const tecla = (e) => {
+		if (e.keyCode === 13) {
+			enviarMensaje()
+			var campo = document.activeElement
+			campo.value = ''
+		}
+	}
+
+	const scrollBottom = () => {
+		var node = document.getElementById("lista");
+		const bottom = node.scrollHeight - node.scrollTop === node.clientHeight;
+		if (!bottom) {
+			node.scrollTop = node.scrollHeight;
+		}
+	}
 
 	React.useEffect(() => {
 		let usersRequest = new CometChat.UsersRequestBuilder()
@@ -122,10 +188,8 @@ export default function Chat() {
 	}, []);
 
 	React.useEffect(() => {
-
-		let listnerID = "UNIQUE_LISTENER_ID";
 		CometChat.addCallListener(
-			listnerID,
+			listenerID,
 			new CometChat.CallListener({
 				onIncomingCallReceived(call) {
 					// let llamadaEntrante = [call]
@@ -174,6 +238,28 @@ export default function Chat() {
 			})
 		);
 
+		CometChat.addMessageListener(listenerID,
+			new CometChat.MessageListener({
+				onTextMessageReceived: message => {
+					setInfoNotificacion({ avatar: message.sender.avatar, texto: message.text, nombre: message.sender.uid })
+					setNotificacion(true)
+				},
+				onMediaMessageReceived: mediaMessage => {
+					// console.log("Mensaje Multimedia recibido", { mediaMessage });
+				}
+			})
+		);
+
+		CometChat.addUserListener(
+			listenerID,
+			new CometChat.UserListener({
+				onUserOnline: onlineUser => {
+					setInfoNotificacion({ avatar: onlineUser.avatar, nombre: onlineUser.uid })
+					setNotificacion2(true)
+				}
+			})
+		);
+
 		if (selectedFriend) {
 			let messagesRequest = new CometChat.MessagesRequestBuilder()
 				.setUID(selectedFriend)
@@ -184,7 +270,7 @@ export default function Chat() {
 				messages => {
 					setChat(messages);
 					setChatIsLoading(false);
-					// console.log('Mensajes recibidos: ', messages)
+					scrollBottom()
 				},
 				error => {
 					// console.log('Error la recibir mensajes:', error);
@@ -193,16 +279,30 @@ export default function Chat() {
 
 			CometChat.removeMessageListener(MESSAGE_LISTENER_KEY);
 
-			let listenerID = "UNIQUE_LISTENER_ID";
+			// let metadata = {
+			// 	text: 'Escribiendo...'
+			// };
+
+			// let metadata2 = {
+			// 	text: ''
+			// };
+
+			// let iniciarEscritura = new CometChat.TypingIndicator(selectedFriend, CometChat.RECEIVER_TYPE.USER, metadata);
+			// CometChat.startTyping(iniciarEscritura);
+
+			// let typingNotification = new CometChat.TypingIndicator(selectedFriend, CometChat.RECEIVER_TYPE.USER, metadata2);
+			// CometChat.endTyping(typingNotification);
+
 
 			CometChat.addMessageListener(listenerID,
 				new CometChat.MessageListener({
 					onTextMessageReceived: message => {
-						// console.log('Mensaje Recibido', { message });
+						// console.log('Mensaje Recibido dentro', { message });
 						if (selectedFriend === message.sender.uid) {
 							// let music = new Audio(Musica)
 							// music.play()
 							setChat(prevState => [...prevState, message]);
+							scrollBottom()
 						}
 					},
 					onMediaMessageReceived: mediaMessage => {
@@ -210,7 +310,14 @@ export default function Chat() {
 						if (selectedFriend === mediaMessage.sender.uid) {
 							setChat(prevState => [...prevState, mediaMessage]);
 						}
-					}
+					},
+
+					// onTypingStarted: (typingIndicator) => {
+					// 	console.log("escribiendo :", typingIndicator);
+					// },
+					// onTypingEnded: (typingIndicator) => {
+					// 	console.log("Typing ended :", typingIndicator);
+					// }
 				})
 			);
 		}
@@ -226,6 +333,54 @@ export default function Chat() {
 		return (
 			<React.Fragment>
 				<CssBaseline />
+				<Snackbar
+					anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+					open={notificacion}
+					TransitionComponent={Transition}
+					autoHideDuration={3000}
+					onClose={() => setNotificacion(false)}
+					style={{ opacity: '0.9' }}
+					ContentProps={{ 'aria-describedby': 'mensaje' }}
+					message={<Typography variant='button' className={classes.message}>
+						<Avatar src={infoNotificacion.avatar} alt='...' className={classes.avatarMensaje} />
+						{infoNotificacion.texto}
+					</Typography>}
+					action={[
+						<IconButton
+							key="close"
+							aria-label="close"
+							color="inherit"
+							className={classes.close}
+							onClick={() => setNotificacion(false)}
+						>
+							<CloseIcon />
+						</IconButton>,
+					]}
+				/>
+				<Snackbar
+					anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+					open={notificacion2}
+					TransitionComponent={Transition}
+					autoHideDuration={3000}
+					onClose={() => setNotificacion2(false)}
+					style={{ opacity: '0.9' }}
+					ContentProps={{ 'aria-describedby': 'mensaje' }}
+					message={<Typography variant='button' className={classes.message}>
+						<Avatar src={infoNotificacion.avatar} alt='...' className={classes.avatarMensaje} />
+						{`${infoNotificacion.nombre} se ha conectado`}
+					</Typography>}
+					action={[
+						<IconButton
+							key="close"
+							aria-label="close"
+							color="inherit"
+							className={classes.close}
+							onClick={() => setNotificacion2(false)}
+						>
+							<CloseIcon />
+						</IconButton>,
+					]}
+				/>
 				<Dialog fullScreen open={dialogEvento} onClose={handleCloseDialogEvento} TransitionComponent={Transition}>
 					<AppBar className={classes.appBar}>
 						<Toolbar>
@@ -241,32 +396,48 @@ export default function Chat() {
 							<LinearProgress color='secondary' className={classes.linea} />
 							: null}
 					</AppBar>
-					<List>
-						{chatIsLoading ? null:
-						chat.length ? <ListItem primary='chat cargado'/>: <ListItem primary='No hay mensajes para mostrar'/>}
-					</List>
-					{/* {chatIsLoading ?
-						null :
-						chat.length ?
-							chat.map((mensajes, index) => (
-								<ListItem key={index} className={mensajes.receiver !== user.uid ? classes.them : classes.me}>
-									mensajes.receiver !== user.uid ?
-											<Avatar src={selectedAvatar} alt='...' />
-									<Paper elevation={4} className={classes.them}>
-										<Typography variant='body1' style={{ padding: 6 }}>como estas menor ok?</Typography>
-									</Paper>
-									:
-											<Paper elevation={4} className={classes.me}>
-										<Typography variant='body1' style={{ padding: 6 }}>como estas menor ok?</Typography>
-									</Paper>
-									<Avatar src={user.avatar} alt='...' />
-								</ListItem>
-							))
-							:
-							<List>
-								<ListItem primary='No hay mensajes para mostrar' />
-							</List>} */}
-
+					<Grid container spacing={2}>
+						<Grid item xs={12}>
+							<List className={classes.listaGeneral} id='lista'>
+								{chatIsLoading ? null :
+									chat.map((mensajes, index) => (
+										mensajes.receiverId !== user.uid ?
+											<Zoom in={true} timeout={500} key={index}>
+												<ListItem key={index} className={classes.listame}>
+													<Paper elevation={4} className={classes.me}>
+														<Typography variant='body1' style={{ padding: 6 }}>{mensajes.text}</Typography>
+													</Paper>
+													<Avatar src={user.avatar} alt='...' />
+												</ListItem>
+											</Zoom> :
+											<Zoom in={true} timeout={500} key={index}>
+												<ListItem key={index} className={classes.listathem}>
+													<Avatar src={selectedAvatar} alt='...' />
+													<Paper elevation={4} className={classes.them}>
+														<Typography variant='body1' style={{ padding: 6 }}>{mensajes.text}</Typography>
+													</Paper>
+												</ListItem>
+											</Zoom>
+									))}
+							</List>
+						</Grid>
+					</Grid>
+					<Grid container spacing={2} className={classes.grid}>
+						<Grid item xs={12} sm={12}>
+							<TextField
+								autoComplete="mensaje"
+								autoFocus
+								className={classes.textoMensaje}
+								placeholder="Escribe un mensaje..."
+								required
+								fullWidth
+								onKeyDown={tecla}
+								onChange={e => { setMensaje(e.target.value) }}
+								type="text"
+								variant="outlined"
+							/>
+						</Grid>
+					</Grid>
 				</Dialog>
 				<Fade in={true} timeout={1000}>
 					<Paper elevation={4} className={classes.root}>

@@ -31,6 +31,7 @@ import MonetizationOnOutlinedIcon from '@material-ui/icons/MonetizationOnOutline
 import FindInPageOutlinedIcon from '@material-ui/icons/FindInPageOutlined';
 import ChatDialog from '../ChatDialog/ChatDialog';
 import ForumOutlinedIcon from '@material-ui/icons/ForumOutlined';
+import { CometChat } from '@cometchat-pro/chat';
 
 const drawerWidth = 240;
 
@@ -152,7 +153,8 @@ function Cabecera(props) {
 
 	const handleClose = () => {
 		setAnchorEl(null);
-		localStorage.clear()
+		localStorage.clear();
+		CometChat.logout()
 	};
 
 	const dialog = () => {

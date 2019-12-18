@@ -7,6 +7,7 @@ const Config = {
 	secondary_color: 'red',
 	type: 'dark',
 	chatID: '12175f61a39221e',
-	chatKey: 'dc6caa6233ad738d187ea788fe4208da44d5c50b'
+	chatKey: 'dc6caa6233ad738d187ea788fe4208da44d5c50b',
+	chatRegion: 'eu'
 }
 export default Config;
