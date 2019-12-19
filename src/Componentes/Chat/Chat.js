@@ -23,6 +23,15 @@ import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
 import Zoom from '@material-ui/core/Zoom';
 import Snackbar from '@material-ui/core/Snackbar';
+import SpeedDial from '@material-ui/lab/SpeedDial';
+import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
+import CallEndOutlinedIcon from '@material-ui/icons/CallEndOutlined';
+import CallOutlinedIcon from '@material-ui/icons/CallOutlined';
+import VideocamOutlinedIcon from '@material-ui/icons/VideocamOutlined';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogActions from '@material-ui/core/DialogActions';
+import Button from '@material-ui/core/Button';
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -39,8 +48,15 @@ const useStyles = makeStyles(theme => ({
 		marginLeft: theme.spacing(2),
 		flex: 1,
 	},
+	'@keyframes blinker': {
+		'0%': { opacity: 1 },
+		'50%': { opacity: .2 },
+		'100%': { opacity: 1 }
+	},
 	avatar: {
-		backgroundColor: theme.palette.primary.main
+		height: 50,
+		width: 50,
+		animation: '$blinker 1s infinite'
 	},
 	linea: {
 		width: '105%'
@@ -96,6 +112,17 @@ const useStyles = makeStyles(theme => ({
 	},
 	avatarMensaje: {
 		marginRight: theme.spacing(1)
+	},
+	speedLlamadas: {
+		position: 'fixed',
+		top: theme.spacing(1.3),
+		right: theme.spacing(2),
+
+	},
+	div: {
+		position: 'absolute',
+		width: '100%',
+		height: '100%'
 	}
 }));
 
@@ -117,12 +144,22 @@ export default function Chat() {
 	const [notificacion, setNotificacion] = React.useState(false)
 	const [notificacion2, setNotificacion2] = React.useState(false)
 	const [infoNotificacion, setInfoNotificacion] = React.useState({})
+	const [speedLlamadas, setSpeedLlamadas] = React.useState(false)
+	const [dialogSaliente, setDialogSaliente] = React.useState(false)
+	const [idSaliente, setIdSaliente] = React.useState(null)
+	const [dialogEntrante, setDialogEntrante] = React.useState(false)
+	const [idEntrante, setIdEntrante] = React.useState(null)
+	const [avatarEntrante, setAvatarEntrante] = React.useState(null)
+	const [llamadaPantalla, setLlamadaPantalla] = React.useState(false)
 	const MESSAGE_LISTENER_KEY = 'listener-key'
 	const listenerID = "UNIQUE_LISTENER_ID";
 	const limit = 30
 	const classes = useStyles()
 	const user = JSON.parse(localStorage.getItem('usuarioChat'))
-
+	const botonLlamadas = [
+		{ name: 'Audio' },
+		{ name: 'Video' }
+	]
 
 	const selectFriend = (uid, avatar, name, status) => {
 		setSelectedFriend(uid);
@@ -167,6 +204,82 @@ export default function Chat() {
 		}
 	}
 
+	const llamar = () => {
+		setDialogSaliente(true)
+
+		var call = new CometChat.Call(selectedFriend, CometChat.CALL_TYPE.AUDIO, CometChat.RECEIVER_TYPE.USER);
+
+		CometChat.initiateCall(call).then(
+			outGoingCall => {
+				var llamada = [outGoingCall]
+				setIdSaliente(llamada[0].sessionId)
+			},
+			error => {
+				console.log("Ha fallado el inicio de llamada: ", error);
+			}
+		);
+	}
+
+	const cancelarLlamar = () => {
+		setDialogSaliente(false)
+
+		CometChat.rejectCall(idSaliente, CometChat.CALL_STATUS.CANCELLED).then(
+			() => {
+				setIdSaliente(null)
+			},
+			error => {
+				console.log("Error al cancelar llamada: ", error);
+			}
+		);
+	};
+
+	const aceptarLlamadaEntrante = () => {
+		setDialogEntrante(false)
+
+		CometChat.acceptCall(idEntrante).then(
+			() => {
+				setLlamadaPantalla(true)
+				CometChat.startCall(idEntrante, document.getElementById("callScreen"),
+					new CometChat.OngoingCallListener({
+						onCallEnded: call => {
+							setLlamadaPantalla(false)
+						}
+					}))
+			},
+			error => {
+				console.log("Error al aceptar la llamada: ", error);
+			}
+		);
+	}
+
+	const cancelarLlamadaEntrante = () => {
+		setDialogEntrante(false)
+
+		CometChat.rejectCall(idEntrante, CometChat.CALL_STATUS.CANCELLED).then(
+			() => {
+			},
+			error => {
+				console.log("Error al rechazar llamada: ", error);
+			}
+		);
+	}
+
+	const videoLlamar = () => {
+		setDialogSaliente(true)
+
+		var call = new CometChat.Call(selectedFriend, CometChat.CALL_TYPE.VIDEO, CometChat.RECEIVER_TYPE.USER);
+
+		CometChat.initiateCall(call).then(
+			outGoingCall => {
+				var llamada = [outGoingCall]
+				setIdSaliente(llamada[0].sessionId)
+			},
+			error => {
+				console.log("Ha fallado el inicio de llamada: ", error);
+			}
+		);
+	}
+
 	React.useEffect(() => {
 		let usersRequest = new CometChat.UsersRequestBuilder()
 			.setLimit(limit)
@@ -192,48 +305,34 @@ export default function Chat() {
 			listenerID,
 			new CometChat.CallListener({
 				onIncomingCallReceived(call) {
-					// let llamadaEntrante = [call]
-					// setSelectedAvatarEntrante(llamadaEntrante[0].callInitiator.avatar)
-
-					// setModalLlamadaEntrante(!modalLlamadaEntrante)
-					// sessionStorage.setItem('sessionIdLlamadaEntrante', JSON.stringify(llamadaEntrante[0].sessionId))
+					var llamadaEntrante = [call]
+					setAvatarEntrante(llamadaEntrante[0].callInitiator.avatar)
+					setDialogEntrante(true)
+					setIdEntrante(llamadaEntrante[0].sessionId)
 				},
 
 				onOutgoingCallAccepted(call) {
-					console.log("Llamada Saliente aceptada: ", call);
-					let sessionID = call.sessionID;
-
-					// setModalLlamadaSaliente(false)
-					// setModal(true)
+					var sessionID = call.sessionID;
 
 					CometChat.startCall(sessionID, document.getElementById("callScreen"),
 						new CometChat.OngoingCallListener({
-							onUserJoined: user => {
-
-								// console.log("El usuario se ha unido a la llamada: ", user);
+							onUserJoined: () => {
 							},
-							onUserLeft: user => {
-								// setModal(false)
-								// console.log("Usuario abandonó la Llamada: ", user);
+							onUserLeft: () => {
+								setLlamadaPantalla(false)
 							},
-							onCallEnded: call => {
-
-								// console.log("LLamada Finalizada: ", call);
-								// setModal(false)
+							onCallEnded: () => {
+								setLlamadaPantalla(false)
 							}
 						})
 					);
 				},
 
-				onOutgoingCallRejected(call) {
-					// setModalLlamadaSaliente(false)
-					// console.log("Llamada Saliente rechazada: ", call);
+				onOutgoingCallRejected: () => {
+					setDialogSaliente(false)
 				},
-				onIncomingCallCancelled(call) {
-					// setModalLlamadaEntrante(false)
-					// setModalLlamadaSaliente(false)
-					// setModal(false)
-					// console.log("Llamada entrante cancelada: ", call);
+				onIncomingCallCancelled: () => {
+					setDialogEntrante(false)
 				}
 			})
 		);
@@ -244,8 +343,7 @@ export default function Chat() {
 					setInfoNotificacion({ avatar: message.sender.avatar, texto: message.text, nombre: message.sender.uid })
 					setNotificacion(true)
 				},
-				onMediaMessageReceived: mediaMessage => {
-					// console.log("Mensaje Multimedia recibido", { mediaMessage });
+				onMediaMessageReceived: () => {
 				}
 			})
 		);
@@ -255,7 +353,35 @@ export default function Chat() {
 			new CometChat.UserListener({
 				onUserOnline: onlineUser => {
 					setInfoNotificacion({ avatar: onlineUser.avatar, nombre: onlineUser.uid })
+					let usersRequest = new CometChat.UsersRequestBuilder()
+						.setLimit(limit)
+						.build();
+
+					usersRequest.fetchNext().then(
+						userList => {
+							setFriends(userList);
+							setFriendisLoading(false);
+						},
+						error => {
+							console.log('Error al recibir lista: ', error);
+						}
+					);
 					setNotificacion2(true)
+				},
+				onUserOffline: () => {
+					let usersRequest = new CometChat.UsersRequestBuilder()
+						.setLimit(limit)
+						.build();
+
+					usersRequest.fetchNext().then(
+						userList => {
+							setFriends(userList);
+							setFriendisLoading(false);
+						},
+						error => {
+							console.log('Error al recibir lista: ', error);
+						}
+					);
 				}
 			})
 		);
@@ -273,51 +399,63 @@ export default function Chat() {
 					scrollBottom()
 				},
 				error => {
-					// console.log('Error la recibir mensajes:', error);
+					console.log('Error la recibir mensajes:', error);
 				}
 			);
 
 			CometChat.removeMessageListener(MESSAGE_LISTENER_KEY);
 
-			// let metadata = {
-			// 	text: 'Escribiendo...'
-			// };
+			CometChat.addCallListener(listenerID,
+				new CometChat.CallListener({
+					onIncomingCallReceived(call) {
+						var llamadaEntrante = [call]
+						setAvatarEntrante(llamadaEntrante[0].callInitiator.avatar)
+						setDialogEntrante(true)
+						setIdEntrante(llamadaEntrante[0].sessionId)
+					},
 
-			// let metadata2 = {
-			// 	text: ''
-			// };
+					onOutgoingCallAccepted(call) {
+						var sessionID = call.sessionID;
+						setDialogSaliente(false)
+						setLlamadaPantalla(true)
 
-			// let iniciarEscritura = new CometChat.TypingIndicator(selectedFriend, CometChat.RECEIVER_TYPE.USER, metadata);
-			// CometChat.startTyping(iniciarEscritura);
+						CometChat.startCall(sessionID, document.getElementById("callScreen"),
+							new CometChat.OngoingCallListener({
+								onUserJoined: () => {
+								},
+								onUserLeft: () => {
+									setLlamadaPantalla(false)
+								},
+								onCallEnded: () => {
+									setLlamadaPantalla(false)
+								}
+							})
+						);
+					},
 
-			// let typingNotification = new CometChat.TypingIndicator(selectedFriend, CometChat.RECEIVER_TYPE.USER, metadata2);
-			// CometChat.endTyping(typingNotification);
-
+					onOutgoingCallRejected: () => {
+						setDialogSaliente(false)
+					},
+					onIncomingCallCancelled: () => {
+						setDialogEntrante(false)
+						setDialogSaliente(false)
+					}
+				})
+			);
 
 			CometChat.addMessageListener(listenerID,
 				new CometChat.MessageListener({
 					onTextMessageReceived: message => {
-						// console.log('Mensaje Recibido dentro', { message });
 						if (selectedFriend === message.sender.uid) {
-							// let music = new Audio(Musica)
-							// music.play()
 							setChat(prevState => [...prevState, message]);
 							scrollBottom()
 						}
 					},
 					onMediaMessageReceived: mediaMessage => {
-						// console.log("Mensaje Multimedia recibido", { mediaMessage });
 						if (selectedFriend === mediaMessage.sender.uid) {
 							setChat(prevState => [...prevState, mediaMessage]);
 						}
 					},
-
-					// onTypingStarted: (typingIndicator) => {
-					// 	console.log("escribiendo :", typingIndicator);
-					// },
-					// onTypingEnded: (typingIndicator) => {
-					// 	console.log("Typing ended :", typingIndicator);
-					// }
 				})
 			);
 		}
@@ -381,16 +519,51 @@ export default function Chat() {
 						</IconButton>,
 					]}
 				/>
+				<Dialog fullWidth open={dialogSaliente} onClose={() => setDialogSaliente(false)} TransitionComponent={Transition}>
+					<DialogTitle><Typography variant='button'>Llamando...</Typography></DialogTitle>
+					<DialogContent><Avatar src={selectedAvatar} alt='...' className={classes.avatar} /></DialogContent>
+					<DialogActions><Button color="secondary" onClick={() => cancelarLlamar()}>Cancelar</Button></DialogActions>
+				</Dialog>
+				<Dialog fullWidth open={dialogEntrante} onClose={() => setDialogEntrante(false)} TransitionComponent={Transition}>
+					<DialogTitle><Typography variant='button'>Llamanda entrante...</Typography></DialogTitle>
+					<DialogContent><Avatar src={avatarEntrante} alt='...' className={classes.avatar} /></DialogContent>
+					<DialogActions>
+						<Button color="secondary" onClick={() => cancelarLlamadaEntrante()}>Cancelar</Button>
+						<Button color="primary" variant='contained' onClick={() => aceptarLlamadaEntrante()}>Aceptar</Button>
+					</DialogActions>
+				</Dialog>
+				<Dialog fullScreen open={llamadaPantalla} onClose={() => setLlamadaPantalla(false)} TransitionComponent={Transition}>
+					<div id='callScreen' className={classes.div} />
+				</Dialog>
 				<Dialog fullScreen open={dialogEvento} onClose={handleCloseDialogEvento} TransitionComponent={Transition}>
 					<AppBar className={classes.appBar}>
 						<Toolbar>
 							<IconButton edge="start" color="inherit" onClick={handleCloseDialogEvento} aria-label="cerrar">
 								<CloseIcon />
 							</IconButton>
-							<Avatar className={classes.avatar} src={selectedAvatar} />
+							<Avatar src={selectedAvatar} />
 							<Typography variant="h6" className={classes.title}>
 								{`${selectedName} - ${selectedStatus}`}
 							</Typography>
+							<SpeedDial
+								className={classes.speedLlamadas}
+								direction='down'
+								FabProps={{ size: 'small', color: 'secondary' }}
+								ariaLabel="Llamadas"
+								icon={<CallEndOutlinedIcon />}
+								onClose={() => setSpeedLlamadas(false)}
+								onOpen={() => setSpeedLlamadas(true)}
+								open={speedLlamadas}>
+
+								{botonLlamadas.map(action => (
+									<SpeedDialAction
+										key={action.name}
+										icon={action.name === 'Audio' ? <CallOutlinedIcon /> : action.name === 'Video' ? <VideocamOutlinedIcon /> : ''}
+										tooltipTitle={action.name}
+										onClick={action.name === 'Audio' ? () => llamar() : action.name === 'Video' ? () => videoLlamar() : ''}
+									/>
+								))}
+							</SpeedDial>
 						</Toolbar>
 						{chatIsLoading ?
 							<LinearProgress color='secondary' className={classes.linea} />
@@ -405,7 +578,9 @@ export default function Chat() {
 											<Zoom in={true} timeout={500} key={index}>
 												<ListItem key={index} className={classes.listame}>
 													<Paper elevation={4} className={classes.me}>
-														<Typography variant='body1' style={{ padding: 6 }}>{mensajes.text}</Typography>
+														<Typography variant='body1' style={{ padding: 6 }}>{mensajes.type === 'text' ? mensajes.text :
+															mensajes.type === 'audio' ? `${mensajes.sender.uid} te llamó` :
+																mensajes.type === 'video' ? `${mensajes.sender.uid} te llamó` : ''}</Typography>
 													</Paper>
 													<Avatar src={user.avatar} alt='...' />
 												</ListItem>
@@ -414,7 +589,9 @@ export default function Chat() {
 												<ListItem key={index} className={classes.listathem}>
 													<Avatar src={selectedAvatar} alt='...' />
 													<Paper elevation={4} className={classes.them}>
-														<Typography variant='body1' style={{ padding: 6 }}>{mensajes.text}</Typography>
+														<Typography variant='body1' style={{ padding: 6 }}>{mensajes.type === 'text' ? mensajes.text :
+															mensajes.type === 'audio' ? `${mensajes.sender.uid} te llamó` :
+																mensajes.type === 'video' ? `${mensajes.sender.uid} te llamó` : ''}</Typography>
 													</Paper>
 												</ListItem>
 											</Zoom>
@@ -445,7 +622,7 @@ export default function Chat() {
 							{friends.map((lista, index) => (
 								<ListItem key={index} button divider={true} onClick={() => selectFriend(lista.uid, lista.avatar, lista.name, lista.status)}>
 									<ListItemAvatar>
-										<Avatar className={classes.avatar} src={lista.avatar} />
+										<Avatar src={lista.avatar} />
 									</ListItemAvatar>
 									<ListItemText primary={lista.name} secondary={`${lista.uid} - ${lista.status}`} />
 								</ListItem>
