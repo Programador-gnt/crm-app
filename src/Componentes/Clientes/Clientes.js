@@ -58,7 +58,11 @@ const clientes = [
 	{ id: 7, nombre: 'Superman', empresa: 'Super amigos' },
 	{ id: 8, nombre: 'Spiderman', empresa: 'Avengers' },
 	{ id: 9, nombre: 'Capitan américa', empresa: 'Avengers' },
-	{ id: 10, nombre: 'Luigi', empresa: 'Nintendo' }
+	{ id: 10, nombre: 'Luigi', empresa: 'Nintendo' },
+	{ id: 11, nombre: 'Superman', empresa: 'Super amigos' },
+	{ id: 12, nombre: 'Spiderman', empresa: 'Avengers' },
+	{ id: 13, nombre: 'Capitan américa', empresa: 'Avengers' },
+	{ id: 14, nombre: 'Luigi', empresa: 'Nintendo' }
 ]
 
 const actions = [

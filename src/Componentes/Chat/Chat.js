@@ -135,8 +135,6 @@ export default function Chat() {
 	const [friendisLoading, setFriendisLoading] = React.useState(true)
 	const [selectedFriend, setSelectedFriend] = React.useState(null);
 	const [selectedAvatar, setSelectedAvatar] = React.useState(null);
-	const [selectedName, setSelectedName] = React.useState(null);
-	const [selectedStatus, setSelectedStatus] = React.useState(null)
 	const [chat, setChat] = React.useState([]);
 	const [chatIsLoading, setChatIsLoading] = React.useState(false)
 	const [dialogEvento, setDialogEvento] = React.useState(false)
@@ -161,11 +159,9 @@ export default function Chat() {
 		{ name: 'Video' }
 	]
 
-	const selectFriend = (uid, avatar, name, status) => {
+	const selectFriend = (uid, avatar) => {
 		setSelectedFriend(uid);
 		setSelectedAvatar(avatar);
-		setSelectedName(name);
-		setSelectedStatus(status);
 		setChatIsLoading(true);
 		setDialogEvento(true);
 	}
@@ -543,7 +539,7 @@ export default function Chat() {
 							</IconButton>
 							<Avatar src={selectedAvatar} />
 							<Typography variant="h6" className={classes.title}>
-								{`${selectedName} - ${selectedStatus}`}
+								{`${selectedFriend}`}
 							</Typography>
 							<SpeedDial
 								className={classes.speedLlamadas}
@@ -620,7 +616,7 @@ export default function Chat() {
 					<Paper elevation={4} className={classes.root}>
 						<List>
 							{friends.map((lista, index) => (
-								<ListItem key={index} button divider={true} onClick={() => selectFriend(lista.uid, lista.avatar, lista.name, lista.status)}>
+								<ListItem key={index} button divider={true} onClick={() => selectFriend(lista.uid, lista.avatar)}>
 									<ListItemAvatar>
 										<Avatar src={lista.avatar} />
 									</ListItemAvatar>

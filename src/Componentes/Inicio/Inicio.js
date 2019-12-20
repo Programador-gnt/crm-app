@@ -7,9 +7,11 @@ import Reuniones from './Graficos/Reuniones/Reuniones'
 import { Grid } from '@material-ui/core';
 import Llamadas from './Graficos/Llamadas/Llamadas';
 import Gmail from './Graficos/Gmail/Gmail';
-import TablaUsuario from './Usuarios/Usuario';
-import { Typography } from '@material-ui/core';
+import BarraUsuario from './Usuarios/Usuario';
+import TortaReuniones from './Usuarios/Reuniones';
 import Zoom from '@material-ui/core/Zoom';
+import LineaLlamadas from './Usuarios/Llamadas';
+import AreaGmail from './Usuarios/Gmail'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -64,9 +66,17 @@ export default function Inicio() {
                             <Gmail />
                         </Grid>
                     </Zoom>
-                    <Grid item xs={12}>
-                        <Typography variant='h5'>Últimos clientes agregados</Typography>
-                        <TablaUsuario />
+                    <Grid item xs={12} sm={6} xl={3} lg={3}>
+                        <BarraUsuario />
+                    </Grid>
+                    <Grid item xs={12} sm={6} xl={3} lg={3}>
+                        <TortaReuniones />
+                    </Grid>
+                    <Grid item xs={12} sm={6} xl={3} lg={3}>
+                        <LineaLlamadas />
+                    </Grid>
+                    <Grid item xs={12} sm={6} xl={3} lg={3}>
+                        <AreaGmail />
                     </Grid>
                 </Grid>
             </Paper>
