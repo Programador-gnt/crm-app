@@ -6,49 +6,49 @@ import Container from '@material-ui/core/Container';
 import Link from '@material-ui/core/Link';
 
 function Copyright() {
-  return (
-    <Typography variant="body2" align="center">
-      {'Copyright © '}
-      <Link href="http://newtransport.net" target='_blank'>
-        GNT Servicios Generales S.A.
+	return (
+		<Typography variant="body2" align="center">
+			{'Copyright © '}
+			<Link href="http://newtransport.net" target='_blank'>
+				GNT Servicios Generales S.A.
       </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
+			{new Date().getFullYear()}
+			{'.'}
+		</Typography>
+	);
 }
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    display: 'flex',
-    flexDirection: 'column',
-    minHeight: '100vh',
-  },
-  main: {
-    marginTop: theme.spacing(8),
-    marginBottom: theme.spacing(2),
-  },
-  footer: {
-    padding: theme.spacing(2),
-    marginTop: 'auto',
-    backgroundColor: theme.palette.background.default,
-    position: 'fixed',
-    bottom: 0,
-    width: '100%'
-  },
+	root: {
+		display: 'flex',
+		flexDirection: 'column',
+		minHeight: '100vh',
+	},
+	main: {
+		marginTop: theme.spacing(8),
+		marginBottom: theme.spacing(2),
+	},
+	footer: {
+		padding: theme.spacing(2),
+		marginTop: 'auto',
+		backgroundColor: theme.palette.background.default,
+		position: 'fixed',
+		bottom: 0,
+		width: '100%'
+	},
 }));
 
 export default function StickyFooter() {
-  const classes = useStyles();
+	const classes = useStyles();
 
-  return (
-    <div className={classes.root}>
-      <CssBaseline />
-      <footer className={classes.footer}>
-        <Container maxWidth="sm">
-          <Copyright />
-        </Container>
-      </footer>
-    </div>
-  );
+	return (
+		<div className={classes.root}>
+			<CssBaseline />
+			<footer className={classes.footer}>
+				<Container maxWidth="sm">
+					<Copyright />
+				</Container>
+			</footer>
+		</div>
+	);
 }

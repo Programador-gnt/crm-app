@@ -32,6 +32,10 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
 import Button from '@material-ui/core/Button';
+import AttachFileOutlinedIcon from '@material-ui/icons/AttachFileOutlined';
+import InsertDriveFileOutlinedIcon from '@material-ui/icons/InsertDriveFileOutlined';
+import ImageOutlinedIcon from '@material-ui/icons/ImageOutlined';
+import Link from '@material-ui/core/Link';
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -123,6 +127,20 @@ const useStyles = makeStyles(theme => ({
 		position: 'absolute',
 		width: '100%',
 		height: '100%'
+	},
+	speedArchivos: {
+		position: 'fixed',
+		top: theme.spacing(1.3),
+		right: theme.spacing(8),
+
+	},
+	inputFile: {
+		display: 'none',
+	},
+	imagenMensaje: {
+		padding: 6,
+		width: '100%',
+		height: '100%'
 	}
 }));
 
@@ -143,6 +161,7 @@ export default function Chat() {
 	const [notificacion2, setNotificacion2] = React.useState(false)
 	const [infoNotificacion, setInfoNotificacion] = React.useState({})
 	const [speedLlamadas, setSpeedLlamadas] = React.useState(false)
+	const [speedArchivos, setSpeedArchivos] = React.useState(false)
 	const [dialogSaliente, setDialogSaliente] = React.useState(false)
 	const [idSaliente, setIdSaliente] = React.useState(null)
 	const [dialogEntrante, setDialogEntrante] = React.useState(false)
@@ -157,6 +176,11 @@ export default function Chat() {
 	const botonLlamadas = [
 		{ name: 'Audio' },
 		{ name: 'Video' }
+	]
+
+	const archivos = [
+		{ name: 'File' },
+		{ name: 'Images' }
 	]
 
 	const selectFriend = (uid, avatar) => {
@@ -272,6 +296,64 @@ export default function Chat() {
 			},
 			error => {
 				console.log("Ha fallado el inicio de llamada: ", error);
+			}
+		);
+	}
+
+	const adjuntarFile = (e) => {
+		var mediaMessage = new CometChat.MediaMessage(selectedFriend, e.target.files[0], CometChat.MESSAGE_TYPE.FILE, CometChat.RECEIVER_TYPE.USER);
+		CometChat.sendMediaMessage(mediaMessage).then(
+			message => {
+				setChat([...chat, message])
+				scrollBottom()
+			},
+			error => {
+				console.log("No se pudo enviar el archivo: ", error);
+			}
+		);
+	}
+
+	const adjuntarImages = (event) => {
+		if (!event) {
+			return;
+		}
+
+		const files = event.target.files;
+
+		if (!files) {
+			return;
+		}
+
+		const avatar = files[0];
+
+		if (!avatar) {
+			return;
+		}
+
+		const fileTypes = [
+			'image/gif',
+			'image/jpeg',
+			'image/png',
+			'image/webp',
+			'image/svg+xml'
+		];
+
+		if (!fileTypes.includes(avatar.type)) {
+			return;
+		}
+
+		if (avatar.size > (20 * 1024 * 1024)) {
+			return;
+		}
+
+		var mediaMessage = new CometChat.MediaMessage(selectedFriend, avatar, CometChat.MESSAGE_TYPE.IMAGE, CometChat.RECEIVER_TYPE.USER);
+		CometChat.sendMediaMessage(mediaMessage).then(
+			message => {
+				setChat([...chat, message])
+				scrollBottom()
+			},
+			error => {
+				console.log("No se pudo enviar el archivo: ", error);
 			}
 		);
 	}
@@ -467,54 +549,17 @@ export default function Chat() {
 		return (
 			<React.Fragment>
 				<CssBaseline />
-				<Snackbar
-					anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-					open={notificacion}
-					TransitionComponent={Transition}
-					autoHideDuration={3000}
-					onClose={() => setNotificacion(false)}
+				<Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }} open={notificacion} TransitionComponent={Transition} autoHideDuration={3000} onClose={() => setNotificacion(false)}
 					style={{ opacity: '0.9' }}
 					ContentProps={{ 'aria-describedby': 'mensaje' }}
-					message={<Typography variant='button' className={classes.message}>
-						<Avatar src={infoNotificacion.avatar} alt='...' className={classes.avatarMensaje} />
-						{infoNotificacion.texto}
-					</Typography>}
-					action={[
-						<IconButton
-							key="close"
-							aria-label="close"
-							color="inherit"
-							className={classes.close}
-							onClick={() => setNotificacion(false)}
-						>
-							<CloseIcon />
-						</IconButton>,
-					]}
-				/>
-				<Snackbar
-					anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-					open={notificacion2}
-					TransitionComponent={Transition}
-					autoHideDuration={3000}
-					onClose={() => setNotificacion2(false)}
+					message={<Typography variant='button' className={classes.message}><Avatar src={infoNotificacion.avatar} alt='...' className={classes.avatarMensaje} />{infoNotificacion.texto}</Typography>}
+					action={[<IconButton key="close" aria-label="close" color="inherit" className={classes.close} onClick={() => setNotificacion(false)}><CloseIcon /></IconButton>,]}/>
+				<Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }} open={notificacion2} TransitionComponent={Transition} autoHideDuration={3000} onClose={() => setNotificacion2(false)}
 					style={{ opacity: '0.9' }}
 					ContentProps={{ 'aria-describedby': 'mensaje' }}
-					message={<Typography variant='button' className={classes.message}>
-						<Avatar src={infoNotificacion.avatar} alt='...' className={classes.avatarMensaje} />
-						{`${infoNotificacion.nombre} se ha conectado`}
-					</Typography>}
-					action={[
-						<IconButton
-							key="close"
-							aria-label="close"
-							color="inherit"
-							className={classes.close}
-							onClick={() => setNotificacion2(false)}
-						>
-							<CloseIcon />
-						</IconButton>,
-					]}
-				/>
+					message={<Typography variant='button' className={classes.message}><Avatar src={infoNotificacion.avatar} alt='...' className={classes.avatarMensaje} />
+						{`${infoNotificacion.nombre} se ha conectado`}</Typography>}
+					action={[<IconButton key="close" aria-label="close" color="inherit" className={classes.close} onClick={() => setNotificacion2(false)}><CloseIcon /></IconButton>,]} />
 				<Dialog fullWidth open={dialogSaliente} onClose={() => setDialogSaliente(false)} TransitionComponent={Transition}>
 					<DialogTitle><Typography variant='button'>Llamando...</Typography></DialogTitle>
 					<DialogContent><Avatar src={selectedAvatar} alt='...' className={classes.avatar} /></DialogContent>
@@ -541,6 +586,33 @@ export default function Chat() {
 							<Typography variant="h6" className={classes.title}>
 								{`${selectedFriend}`}
 							</Typography>
+							<SpeedDial
+								className={classes.speedArchivos}
+								direction='down'
+								FabProps={{ size: 'small', color: 'secondary' }}
+								ariaLabel="Archivos"
+								icon={<AttachFileOutlinedIcon />}
+								onClose={() => setSpeedArchivos(false)}
+								onOpen={() => setSpeedArchivos(true)}
+								open={speedArchivos}>
+
+								{archivos.map(action => (
+									<SpeedDialAction
+										key={action.name}
+										icon={action.name === 'File' ? <React.Fragment>
+											<input className={classes.inputFile} name='archivoFile' id="archivoFile" type="file" onChange={adjuntarFile} />
+											<label htmlFor="archivoFile">
+												<InsertDriveFileOutlinedIcon />
+											</label></React.Fragment> : action.name === 'Images' ?
+												<React.Fragment>
+													<input className={classes.inputFile} accept="image/*" name='archivoImages' id="archivoImages" type="file" onChange={adjuntarImages} />
+													<label htmlFor="archivoImages">
+														<ImageOutlinedIcon />
+													</label></React.Fragment> : ''}
+										tooltipTitle={action.name}
+									/>
+								))}
+							</SpeedDial>
 							<SpeedDial
 								className={classes.speedLlamadas}
 								direction='down'
@@ -574,9 +646,11 @@ export default function Chat() {
 											<Zoom in={true} timeout={500} key={index}>
 												<ListItem key={index} className={classes.listame}>
 													<Paper elevation={4} className={classes.me}>
-														<Typography variant='body1' style={{ padding: 6 }}>{mensajes.type === 'text' ? mensajes.text :
-															mensajes.type === 'audio' ? `${mensajes.sender.uid} te llamó` :
-																mensajes.type === 'video' ? `${mensajes.sender.uid} te llamó` : ''}</Typography>
+														{mensajes.type === 'text' ? <Typography variant='body1' style={{ padding: 6 }}>{mensajes.text}</Typography> :
+															mensajes.type === 'audio' ? <Typography variant='body1' style={{ padding: 6 }}>{`${mensajes.sender.uid} te llamó`}</Typography> :
+																mensajes.type === 'video' ? <Typography variant='body1' style={{ padding: 6 }}>{`${mensajes.sender.uid} te llamó`}</Typography> :
+																	mensajes.type === 'file' ? <Link href={mensajes.data.url} color='inherit' target='_blank'><Typography variant='body1' style={{ padding: 6 }}>{mensajes.data.url}</Typography></Link> :
+																		mensajes.type === 'image' ? <Link href={mensajes.data.url} target='_blank'><img src={mensajes.data.url} className={classes.imagenMensaje} alt='...' /></Link> : ''}
 													</Paper>
 													<Avatar src={user.avatar} alt='...' />
 												</ListItem>
@@ -585,9 +659,11 @@ export default function Chat() {
 												<ListItem key={index} className={classes.listathem}>
 													<Avatar src={selectedAvatar} alt='...' />
 													<Paper elevation={4} className={classes.them}>
-														<Typography variant='body1' style={{ padding: 6 }}>{mensajes.type === 'text' ? mensajes.text :
-															mensajes.type === 'audio' ? `${mensajes.sender.uid} te llamó` :
-																mensajes.type === 'video' ? `${mensajes.sender.uid} te llamó` : ''}</Typography>
+														{mensajes.type === 'text' ? <Typography variant='body1' style={{ padding: 6 }}>{mensajes.text}</Typography> :
+															mensajes.type === 'audio' ? <Typography variant='body1' style={{ padding: 6 }}>{`${mensajes.sender.uid} te llamó`}</Typography> :
+																mensajes.type === 'video' ? <Typography variant='body1' style={{ padding: 6 }}>{`${mensajes.sender.uid} te llamó`}</Typography> :
+																	mensajes.type === 'file' ? <Link href={mensajes.data.url} color='inherit' target='_blank'><Typography variant='body1' style={{ padding: 6 }}>{mensajes.data.url}</Typography></Link> :
+																		mensajes.type === 'image' ? <Link href={mensajes.data.url} target='_blank'><img src={mensajes.data.url} className={classes.imagenMensaje} alt='...' /></Link> : ''}
 													</Paper>
 												</ListItem>
 											</Zoom>

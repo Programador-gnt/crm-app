@@ -39,7 +39,8 @@ const useStyles = makeStyles(theme => ({
 		height: '100vh',
 	},
 	image: {
-		backgroundImage: `url('https://i.imgur.com/OkQoTpl.jpg')`,
+		// backgroundImage: `url('https://i.imgur.com/OkQoTpl.jpg')`,
+		backgroundImage: `url('https://i.imgur.com/YAfOhJZ.jpg')`,
 		backgroundRepeat: 'no-repeat',
 		backgroundColor: theme.palette.grey[50],
 		backgroundSize: 'cover',

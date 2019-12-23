@@ -9,11 +9,11 @@ import * as serviceWorker from './serviceWorker';
 var appSetting = new CometChat.AppSettingsBuilder().subscribePresenceForAllUsers().setRegion(Config.chatRegion).build();
 
 CometChat.init(Config.chatID, appSetting).then(
-    () => {
-    },
-    error => {
-        console.log("fallo el inicio de chat:", error);
-    }
+	() => {
+	},
+	error => {
+		console.log("fallo el inicio de chat:", error);
+	}
 );
 
 ReactDOM.render(<App />, document.getElementById('root'));
