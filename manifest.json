@@ -1,25 +1,25 @@
 {
-  "short_name": "CRM",
-  "name": "GNT-CRM",
-  "icons": [
-    {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
-    },
-    {
-      "src": "LogoWeb.png",
-      "type": "image/png",
-      "sizes": "1973x780"
-    },
-    {
-      "src": "LogoWeb.png",
-      "type": "image/png",
-      "sizes": "1973x780"
-    }
-  ],
-  "start_url": ".",
-  "display": "standalone",
-  "theme_color": "blue",
-  "background_color": "#ffffff"
+	"short_name": "CRM",
+	"name": "GNT-CRM",
+	"icons": [
+		{
+			"src": "favicon.ico",
+			"sizes": "64x64 32x32 24x24 16x16",
+			"type": "image/x-icon"
+		},
+		{
+			"src": "LogoWeb.png",
+			"type": "image/png",
+			"sizes": "1973x780"
+		},
+		{
+			"src": "LogoWeb.png",
+			"type": "image/png",
+			"sizes": "1973x780"
+		}
+	],
+	"start_url": ".",
+	"display": "standalone",
+	"theme_color": "blue",
+	"background_color": "#ffffff"
 }
