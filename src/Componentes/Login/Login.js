@@ -57,7 +57,7 @@ const useStyles = makeStyles(theme => ({
 		backgroundColor: theme.palette.secondary.main
 	},
 	form: {
-		width: '100%', // Fix IE 11 issue.
+		width: '100%',
 		marginTop: theme.spacing(1)
 	},
 	submit: {
@@ -86,15 +86,12 @@ export default function Login() {
 	const SCOPES = 'https://mail.google.com https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/calendar https://www.google.com/m8/feeds/ https://www.googleapis.com/auth/contacts.readonly';
 	const classes = useStyles();
 
-	const theme = React.useMemo(
-		() =>
-			createMuiTheme({
-				palette: {
-					type: tipo
-				},
-			}),
-		[tipo],
-	);
+	const theme = React.useMemo(() =>
+		createMuiTheme({
+			palette: {
+				type: tipo
+			},
+		}), [tipo]);
 
 	function initClient() {
 		gapi.auth2.authorize({
@@ -142,18 +139,8 @@ export default function Login() {
 		<ThemeProvider theme={theme}>
 			<Grid container component="main" className={classes.root}>
 				<CssBaseline />
-				<Snackbar
-					anchorOrigin={{
-						vertical: 'bottom',
-						horizontal: 'left',
-					}}
-					open={aviso}
-					autoHideDuration={3000}
-					onClose={handleCloseMensaje}
-					style={{ opacity: '0.9' }}
-					ContentProps={{
-						'aria-describedby': 'mensaje',
-					}}
+				<Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }} open={aviso} autoHideDuration={3000} onClose={handleCloseMensaje} style={{ opacity: '0.9' }}
+					ContentProps={{ 'aria-describedby': 'mensaje' }}
 					message={<Typography id="mensaje" variant='button'>Error al autenticar</Typography>}
 					action={[
 						<IconButton
@@ -173,9 +160,7 @@ export default function Login() {
 						<Avatar className={classes.avatar}>
 							<MenuBookOutlinedIcon />
 						</Avatar>
-						<Typography component="h1" variant="h5">
-							GNT - CRM
-          			</Typography>
+						<Typography component="h1" variant="h5">GNT - CRM</Typography>
 						<TextField
 							variant="outlined"
 							margin="normal"

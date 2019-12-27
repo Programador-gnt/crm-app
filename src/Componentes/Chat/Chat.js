@@ -36,6 +36,8 @@ import AttachFileOutlinedIcon from '@material-ui/icons/AttachFileOutlined';
 import InsertDriveFileOutlinedIcon from '@material-ui/icons/InsertDriveFileOutlined';
 import ImageOutlinedIcon from '@material-ui/icons/ImageOutlined';
 import Link from '@material-ui/core/Link';
+import io from 'socket.io-client';
+// import consumeWSChat from '../Config/WebServiceChat';
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -172,6 +174,7 @@ export default function Chat() {
 	const listenerID = "UNIQUE_LISTENER_ID";
 	const limit = 30
 	const classes = useStyles()
+	var socket = io.connect('http://172.19.39.179:5000', { 'forceNew': true })
 	const user = JSON.parse(localStorage.getItem('usuarioChat'))
 	const botonLlamadas = [
 		{ name: 'Audio' },
@@ -358,25 +361,49 @@ export default function Chat() {
 		);
 	}
 
-	React.useEffect(() => {
-		let usersRequest = new CometChat.UsersRequestBuilder()
-			.setLimit(limit)
-			.build();
+	const tunel = () => {
+		socket.on('notificacion', mensaje => {
+			if (mensaje.uid === user.uid) {
 
-		usersRequest.fetchNext().then(
-			userList => {
-				setFriends(userList);
-				setFriendisLoading(false);
-			},
-			error => {
-				console.log('Error al recibir lista: ', error);
+			} else {
+				setInfoNotificacion({ avatar: mensaje.avatar, nombre: mensaje.uid })
+				setNotificacion2(true)
 			}
-		);
+		})
+		socket.emit('usuarios')
+		socket.on('usuarios/respuesta', usuarios => {
+			setFriends(usuarios)
+			setFriendisLoading(false)
+		})
+	}
 
-		return () => {
-			CometChat.removeMessageListener(MESSAGE_LISTENER_KEY);
-		};
-	}, []);
+	// React.useEffect(() => {
+	// 	// consumeWSChat('GET', 'usuarios', '', '')
+	// 	// 	.then(result => {
+	// 	// 		setFriends(result)
+	// 	// 		setFriendisLoading(false)
+	// 	// 	})
+
+	// 	// let usersRequest = new CometChat.UsersRequestBuilder()
+	// 	// 	.setLimit(limit)
+	// 	// 	.build();
+
+	// 	// usersRequest.fetchNext().then(
+	// 	// 	userList => {
+	// 	// 		setFriends(userList);
+	// 	// 		setFriendisLoading(false);
+	// 	// 	},
+	// 	// 	error => {
+	// 	// 		console.log('Error al recibir lista: ', error);
+	// 	// 	}
+	// 	// );
+
+	// 	// return () => {
+	// 	// 	CometChat.removeMessageListener(MESSAGE_LISTENER_KEY);
+	// 	// };
+	// }, []);
+
+	React.useEffect(tunel, [])
 
 	React.useEffect(() => {
 		CometChat.addCallListener(
@@ -539,6 +566,18 @@ export default function Chat() {
 		}
 	}, [selectedFriend]);
 
+	// React.useEffect(() => {
+	// 	if (selectedFriend) {
+	// 		consumeWSChat('GET', 'conversation', '', `?conversationId=${selectedFriend}_user_${user.uid}`)
+	// 			.then(result => {
+	// 				setChat(result)
+	// 				setChatIsLoading(false)
+	// 				scrollBottom()
+	// 			})
+	// 	}
+
+	// }, [selectedFriend])
+
 	if (friendisLoading) {
 		return (
 			<Box position="absolute" top="50%" left="50%">
@@ -553,7 +592,7 @@ export default function Chat() {
 					style={{ opacity: '0.9' }}
 					ContentProps={{ 'aria-describedby': 'mensaje' }}
 					message={<Typography variant='button' className={classes.message}><Avatar src={infoNotificacion.avatar} alt='...' className={classes.avatarMensaje} />{infoNotificacion.texto}</Typography>}
-					action={[<IconButton key="close" aria-label="close" color="inherit" className={classes.close} onClick={() => setNotificacion(false)}><CloseIcon /></IconButton>,]}/>
+					action={[<IconButton key="close" aria-label="close" color="inherit" className={classes.close} onClick={() => setNotificacion(false)}><CloseIcon /></IconButton>,]} />
 				<Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }} open={notificacion2} TransitionComponent={Transition} autoHideDuration={3000} onClose={() => setNotificacion2(false)}
 					style={{ opacity: '0.9' }}
 					ContentProps={{ 'aria-describedby': 'mensaje' }}
@@ -692,12 +731,13 @@ export default function Chat() {
 					<Paper elevation={4} className={classes.root}>
 						<List>
 							{friends.map((lista, index) => (
-								<ListItem key={index} button divider={true} onClick={() => selectFriend(lista.uid, lista.avatar)}>
-									<ListItemAvatar>
-										<Avatar src={lista.avatar} />
-									</ListItemAvatar>
-									<ListItemText primary={lista.name} secondary={`${lista.uid} - ${lista.status}`} />
-								</ListItem>
+								lista.uid === user.uid ? null :
+									<ListItem key={index} button divider={true} onClick={() => selectFriend(lista.uid, lista.avatar)}>
+										<ListItemAvatar>
+											<Avatar src={lista.avatar} />
+										</ListItemAvatar>
+										<ListItemText primary={lista.name} secondary={`${lista.uid} - ${lista.status}`} />
+									</ListItem>
 							))}
 						</List>
 					</Paper>

@@ -40,7 +40,8 @@
 		"react-metismenu": "^1.4.0",
 		"react-router-dom": "^5.1.2",
 		"react-scripts": "3.2.0",
-		"react-swipeable-views": "^0.13.3"
+		"react-swipeable-views": "^0.13.3",
+		"socket.io-client": "^2.3.0"
 	},
 	"homepage": "https://programador-gnt.github.io/crm-app/",
 	"scripts": {

@@ -12,8 +12,10 @@ import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { green } from '@material-ui/core/colors';
-import Config from '../Config/Config';
-import { CometChat } from '@cometchat-pro/chat'
+// import Config from '../Config/Config';
+// import { CometChat } from '@cometchat-pro/chat';
+import io from 'socket.io-client';
+
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -49,20 +51,12 @@ const useStyles = makeStyles(theme => ({
 
 
 export default function ChatDialog(props) {
+	var socket = io.connect('http://172.19.39.179:5000', { 'forceNew': true })
 	const classes = useStyles();
 	const [loading, setLoading] = React.useState(false);
 	const [success, setSuccess] = React.useState(false);
 	const timer = React.useRef();
-	// const perfil = JSON.parse(localStorage.getItem('perfilGoogle'))
-	// const headers = {
-	//     'Content-Type': 'application/json',
-	//     appid: Config.chatID,
-	//     apikey: Config.chatKey
-	// }
-	const [usuario, setUsuario] = React.useState({
-		// name: perfil.name,
-		// avatar: perfil.picture
-	})
+	const [usuario, setUsuario] = React.useState({})
 	const { dialogProps } = props
 
 	const buttonClassname = clsx({
@@ -83,11 +77,22 @@ export default function ChatDialog(props) {
 			timer.current = setTimeout(() => {
 				setSuccess(true);
 				setLoading(false);
-				CometChat.login(usuario.uid, Config.chatKey)
-					.then(result => {
-						localStorage.setItem('usuarioChat', JSON.stringify(result))
+				socket.emit('conectado', usuario.uid)
+				socket.on('conectado/respuesta', result => {
+					if (localStorage.getItem('usuarioChat')) {
+						socket.emit('usuarios')
 						props.funcion()
-					})
+					} else {
+						localStorage.setItem('usuarioChat', JSON.stringify(result))
+						socket.emit('usuarios')
+						props.funcion()
+					}
+				})
+				// CometChat.login(usuario.uid, Config.chatKey)
+				// 	.then(result => {
+				// 		localStorage.setItem('usuarioChat', JSON.stringify(result))
+				// 		props.funcion()
+				// 	})
 			}, 2000)
 		}
 	}
@@ -142,6 +147,8 @@ export default function ChatDialog(props) {
 									autoComplete="uid"
 									name='uid'
 									fullWidth
+									autoFocus
+									onKeyDown={tecla}
 									label="Nickname"
 									placeholder="Nombre de usuario"
 									onChange={enviarChange.bind()}
@@ -162,7 +169,7 @@ export default function ChatDialog(props) {
 						disabled={loading}
 						variant="contained">
 						{loading && <CircularProgress size={24} className={classes.buttonProgress} />}
-						Enviar
+						Conectar
                     </Button>
 				</DialogActions>
 			</Dialog>

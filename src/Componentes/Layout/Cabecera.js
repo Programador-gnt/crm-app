@@ -31,7 +31,8 @@ import MonetizationOnOutlinedIcon from '@material-ui/icons/MonetizationOnOutline
 import FindInPageOutlinedIcon from '@material-ui/icons/FindInPageOutlined';
 import ChatDialog from '../ChatDialog/ChatDialog';
 import ForumOutlinedIcon from '@material-ui/icons/ForumOutlined';
-import { CometChat } from '@cometchat-pro/chat';
+import io from 'socket.io-client';
+// import { CometChat } from '@cometchat-pro/chat';
 
 const drawerWidth = 240;
 
@@ -130,6 +131,7 @@ const MenuNavegacion = [
 ]
 
 function Cabecera(props) {
+	var socket = io.connect('http://172.19.39.179:5000', { 'forceNew': true })
 	const classes = useStyles();
 	const theme = useTheme();
 	const [open, setOpen] = React.useState(false);
@@ -153,8 +155,13 @@ function Cabecera(props) {
 
 	const handleClose = () => {
 		setAnchorEl(null);
-		localStorage.clear();
-		CometChat.logout()
+		if (localStorage.getItem('usuarioChat')) {
+			var user = JSON.parse(localStorage.getItem('usuarioChat'))
+			socket.emit('desconectado', user.uid)
+			socket.emit('usuarios')
+			localStorage.clear();
+		}
+		// CometChat.logout()
 	};
 
 	const dialog = () => {
