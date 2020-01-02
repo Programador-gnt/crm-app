@@ -70,7 +70,7 @@ export default function ChatDialog(props) {
 		})
 	}
 
-	const enviarMensaje = () => {
+	const login = () => {
 		if (usuario) {
 			setSuccess(false);
 			setLoading(true);
@@ -99,7 +99,7 @@ export default function ChatDialog(props) {
 
 	const tecla = (e) => {
 		if (e.keyCode === 13) {
-			enviarMensaje()
+			login()
 		}
 	}
 
@@ -163,7 +163,7 @@ export default function ChatDialog(props) {
 				<DialogActions>
 					<Button color="secondary" onClick={props.funcion}>Cerrar</Button>
 					<Button
-						onClick={() => enviarMensaje()}
+						onClick={() => login()}
 						color="primary"
 						className={buttonClassname}
 						disabled={loading}

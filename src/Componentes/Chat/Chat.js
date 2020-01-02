@@ -143,6 +143,16 @@ const useStyles = makeStyles(theme => ({
 		padding: 6,
 		width: '100%',
 		height: '100%'
+	},
+	noMensaje: {
+		backgroundColor: theme.palette.primary[400],
+		margin: 4,
+		borderRadius: '10px 10px 10px 10px',
+		color: theme.palette.getContrastText(theme.palette.primary[400])
+	},
+	listaNoMensaje: {
+		position: 'flex',
+		justifyContent: 'center'
 	}
 }));
 
@@ -170,9 +180,6 @@ export default function Chat() {
 	const [idEntrante, setIdEntrante] = React.useState(null)
 	const [avatarEntrante, setAvatarEntrante] = React.useState(null)
 	const [llamadaPantalla, setLlamadaPantalla] = React.useState(false)
-	const MESSAGE_LISTENER_KEY = 'listener-key'
-	const listenerID = "UNIQUE_LISTENER_ID";
-	const limit = 30
 	const classes = useStyles()
 	var socket = io.connect('http://172.19.39.179:5000', { 'forceNew': true })
 	const user = JSON.parse(localStorage.getItem('usuarioChat'))
@@ -199,16 +206,22 @@ export default function Chat() {
 	};
 
 	const enviarMensaje = () => {
-		var textMessage = new CometChat.TextMessage(selectedFriend, mensaje, CometChat.RECEIVER_TYPE.USER, CometChat.MESSAGE_TYPE.TEXT)
-		CometChat.sendMessage(textMessage).then(
-			message => {
-				setChat([...chat, message]);
-				scrollBottom()
-			},
-			error => {
-				console.log('No se pudo enviar el mensaje:', error);
-			}
-		);
+		var data = {
+			receiverId: selectedFriend,
+			text: mensaje,
+			type: 'text',
+			conversationId: `${selectedFriend}_user_${user.uid}`,
+			sender: user.uid,
+			category: 'message',
+			avatar: user.avatar
+		}
+		var datos = { id1: `${selectedFriend}_user_${user.uid}`, id2: `${user.uid}_user_${selectedFriend}` }
+		socket.emit('enviarMensaje', data)
+		socket.emit('conversation', datos)
+		socket.on('conversation/respuesta', result => {
+			setChat(result)
+			scrollBottom()
+		})
 	}
 
 	const tecla = (e) => {
@@ -370,201 +383,203 @@ export default function Chat() {
 				setNotificacion2(true)
 			}
 		})
+		socket.on('notificacion/mensaje', nofi => {
+			if (nofi.receiverId === user.uid) {
+				if (selectedFriend === nofi.sender) {
+					setNotificacion(false)
+				} else {
+					setInfoNotificacion({ avatar: nofi.avatar, texto: nofi.texto, nombre: nofi.sender })
+					setNotificacion(true)
+				}
+			}
+		})
 		socket.emit('usuarios')
 		socket.on('usuarios/respuesta', usuarios => {
 			setFriends(usuarios)
 			setFriendisLoading(false)
 		})
+
+		// socket.on('conversation/respuesta', result => {
+		// 	setChat(result)
+		// })
 	}
 
-	// React.useEffect(() => {
-	// 	// consumeWSChat('GET', 'usuarios', '', '')
-	// 	// 	.then(result => {
-	// 	// 		setFriends(result)
-	// 	// 		setFriendisLoading(false)
-	// 	// 	})
-
-	// 	// let usersRequest = new CometChat.UsersRequestBuilder()
-	// 	// 	.setLimit(limit)
-	// 	// 	.build();
-
-	// 	// usersRequest.fetchNext().then(
-	// 	// 	userList => {
-	// 	// 		setFriends(userList);
-	// 	// 		setFriendisLoading(false);
-	// 	// 	},
-	// 	// 	error => {
-	// 	// 		console.log('Error al recibir lista: ', error);
-	// 	// 	}
-	// 	// );
-
-	// 	// return () => {
-	// 	// 	CometChat.removeMessageListener(MESSAGE_LISTENER_KEY);
-	// 	// };
-	// }, []);
+	const chatTunel = () => {
+		if (selectedFriend) {
+			var data = { id1: `${selectedFriend}_user_${user.uid}`, id2: `${user.uid}_user_${selectedFriend}` }
+			socket.emit('conversation', data)
+			socket.on('conversation/respuesta', result => {
+				setChat(result)
+				setChatIsLoading(false)
+				scrollBottom()
+			})
+		}
+	}
 
 	React.useEffect(tunel, [])
 
-	React.useEffect(() => {
-		CometChat.addCallListener(
-			listenerID,
-			new CometChat.CallListener({
-				onIncomingCallReceived(call) {
-					var llamadaEntrante = [call]
-					setAvatarEntrante(llamadaEntrante[0].callInitiator.avatar)
-					setDialogEntrante(true)
-					setIdEntrante(llamadaEntrante[0].sessionId)
-				},
+	React.useEffect(chatTunel, [selectedFriend!==null])
 
-				onOutgoingCallAccepted(call) {
-					var sessionID = call.sessionID;
+	// React.useEffect(() => {
+	// 	CometChat.addCallListener(
+	// 		listenerID,
+	// 		new CometChat.CallListener({
+	// 			onIncomingCallReceived(call) {
+	// 				var llamadaEntrante = [call]
+	// 				setAvatarEntrante(llamadaEntrante[0].callInitiator.avatar)
+	// 				setDialogEntrante(true)
+	// 				setIdEntrante(llamadaEntrante[0].sessionId)
+	// 			},
 
-					CometChat.startCall(sessionID, document.getElementById("callScreen"),
-						new CometChat.OngoingCallListener({
-							onUserJoined: () => {
-							},
-							onUserLeft: () => {
-								setLlamadaPantalla(false)
-							},
-							onCallEnded: () => {
-								setLlamadaPantalla(false)
-							}
-						})
-					);
-				},
+	// 			onOutgoingCallAccepted(call) {
+	// 				var sessionID = call.sessionID;
 
-				onOutgoingCallRejected: () => {
-					setDialogSaliente(false)
-				},
-				onIncomingCallCancelled: () => {
-					setDialogEntrante(false)
-				}
-			})
-		);
+	// 				CometChat.startCall(sessionID, document.getElementById("callScreen"),
+	// 					new CometChat.OngoingCallListener({
+	// 						onUserJoined: () => {
+	// 						},
+	// 						onUserLeft: () => {
+	// 							setLlamadaPantalla(false)
+	// 						},
+	// 						onCallEnded: () => {
+	// 							setLlamadaPantalla(false)
+	// 						}
+	// 					})
+	// 				);
+	// 			},
 
-		CometChat.addMessageListener(listenerID,
-			new CometChat.MessageListener({
-				onTextMessageReceived: message => {
-					setInfoNotificacion({ avatar: message.sender.avatar, texto: message.text, nombre: message.sender.uid })
-					setNotificacion(true)
-				},
-				onMediaMessageReceived: () => {
-				}
-			})
-		);
+	// 			onOutgoingCallRejected: () => {
+	// 				setDialogSaliente(false)
+	// 			},
+	// 			onIncomingCallCancelled: () => {
+	// 				setDialogEntrante(false)
+	// 			}
+	// 		})
+	// 	);
 
-		CometChat.addUserListener(
-			listenerID,
-			new CometChat.UserListener({
-				onUserOnline: onlineUser => {
-					setInfoNotificacion({ avatar: onlineUser.avatar, nombre: onlineUser.uid })
-					let usersRequest = new CometChat.UsersRequestBuilder()
-						.setLimit(limit)
-						.build();
+	// 	CometChat.addMessageListener(listenerID,
+	// 		new CometChat.MessageListener({
+	// 			onTextMessageReceived: message => {
+	// 				setInfoNotificacion({ avatar: message.sender.avatar, texto: message.text, nombre: message.sender.uid })
+	// 				setNotificacion(true)
+	// 			},
+	// 			onMediaMessageReceived: () => {
+	// 			}
+	// 		})
+	// 	);
 
-					usersRequest.fetchNext().then(
-						userList => {
-							setFriends(userList);
-							setFriendisLoading(false);
-						},
-						error => {
-							console.log('Error al recibir lista: ', error);
-						}
-					);
-					setNotificacion2(true)
-				},
-				onUserOffline: () => {
-					let usersRequest = new CometChat.UsersRequestBuilder()
-						.setLimit(limit)
-						.build();
+	// 	CometChat.addUserListener(
+	// 		listenerID,
+	// 		new CometChat.UserListener({
+	// 			onUserOnline: onlineUser => {
+	// 				setInfoNotificacion({ avatar: onlineUser.avatar, nombre: onlineUser.uid })
+	// 				let usersRequest = new CometChat.UsersRequestBuilder()
+	// 					.setLimit(limit)
+	// 					.build();
 
-					usersRequest.fetchNext().then(
-						userList => {
-							setFriends(userList);
-							setFriendisLoading(false);
-						},
-						error => {
-							console.log('Error al recibir lista: ', error);
-						}
-					);
-				}
-			})
-		);
+	// 				usersRequest.fetchNext().then(
+	// 					userList => {
+	// 						setFriends(userList);
+	// 						setFriendisLoading(false);
+	// 					},
+	// 					error => {
+	// 						console.log('Error al recibir lista: ', error);
+	// 					}
+	// 				);
+	// 				setNotificacion2(true)
+	// 			},
+	// 			onUserOffline: () => {
+	// 				let usersRequest = new CometChat.UsersRequestBuilder()
+	// 					.setLimit(limit)
+	// 					.build();
 
-		if (selectedFriend) {
-			let messagesRequest = new CometChat.MessagesRequestBuilder()
-				.setUID(selectedFriend)
-				.setLimit(limit)
-				.build();
+	// 				usersRequest.fetchNext().then(
+	// 					userList => {
+	// 						setFriends(userList);
+	// 						setFriendisLoading(false);
+	// 					},
+	// 					error => {
+	// 						console.log('Error al recibir lista: ', error);
+	// 					}
+	// 				);
+	// 			}
+	// 		})
+	// 	);
 
-			messagesRequest.fetchPrevious().then(
-				messages => {
-					setChat(messages);
-					setChatIsLoading(false);
-					scrollBottom()
-				},
-				error => {
-					console.log('Error la recibir mensajes:', error);
-				}
-			);
+	// 	if (selectedFriend) {
+	// 		let messagesRequest = new CometChat.MessagesRequestBuilder()
+	// 			.setUID(selectedFriend)
+	// 			.setLimit(limit)
+	// 			.build();
 
-			CometChat.removeMessageListener(MESSAGE_LISTENER_KEY);
+	// 		messagesRequest.fetchPrevious().then(
+	// 			messages => {
+	// 				setChat(messages);
+	// 				setChatIsLoading(false);
+	// 				scrollBottom()
+	// 			},
+	// 			error => {
+	// 				console.log('Error la recibir mensajes:', error);
+	// 			}
+	// 		);
 
-			CometChat.addCallListener(listenerID,
-				new CometChat.CallListener({
-					onIncomingCallReceived(call) {
-						var llamadaEntrante = [call]
-						setAvatarEntrante(llamadaEntrante[0].callInitiator.avatar)
-						setDialogEntrante(true)
-						setIdEntrante(llamadaEntrante[0].sessionId)
-					},
+	// 		CometChat.removeMessageListener(MESSAGE_LISTENER_KEY);
 
-					onOutgoingCallAccepted(call) {
-						var sessionID = call.sessionID;
-						setDialogSaliente(false)
-						setLlamadaPantalla(true)
+	// 		CometChat.addCallListener(listenerID,
+	// 			new CometChat.CallListener({
+	// 				onIncomingCallReceived(call) {
+	// 					var llamadaEntrante = [call]
+	// 					setAvatarEntrante(llamadaEntrante[0].callInitiator.avatar)
+	// 					setDialogEntrante(true)
+	// 					setIdEntrante(llamadaEntrante[0].sessionId)
+	// 				},
 
-						CometChat.startCall(sessionID, document.getElementById("callScreen"),
-							new CometChat.OngoingCallListener({
-								onUserJoined: () => {
-								},
-								onUserLeft: () => {
-									setLlamadaPantalla(false)
-								},
-								onCallEnded: () => {
-									setLlamadaPantalla(false)
-								}
-							})
-						);
-					},
+	// 				onOutgoingCallAccepted(call) {
+	// 					var sessionID = call.sessionID;
+	// 					setDialogSaliente(false)
+	// 					setLlamadaPantalla(true)
 
-					onOutgoingCallRejected: () => {
-						setDialogSaliente(false)
-					},
-					onIncomingCallCancelled: () => {
-						setDialogEntrante(false)
-						setDialogSaliente(false)
-					}
-				})
-			);
+	// 					CometChat.startCall(sessionID, document.getElementById("callScreen"),
+	// 						new CometChat.OngoingCallListener({
+	// 							onUserJoined: () => {
+	// 							},
+	// 							onUserLeft: () => {
+	// 								setLlamadaPantalla(false)
+	// 							},
+	// 							onCallEnded: () => {
+	// 								setLlamadaPantalla(false)
+	// 							}
+	// 						})
+	// 					);
+	// 				},
 
-			CometChat.addMessageListener(listenerID,
-				new CometChat.MessageListener({
-					onTextMessageReceived: message => {
-						if (selectedFriend === message.sender.uid) {
-							setChat(prevState => [...prevState, message]);
-							scrollBottom()
-						}
-					},
-					onMediaMessageReceived: mediaMessage => {
-						if (selectedFriend === mediaMessage.sender.uid) {
-							setChat(prevState => [...prevState, mediaMessage]);
-						}
-					},
-				})
-			);
-		}
-	}, [selectedFriend]);
+	// 				onOutgoingCallRejected: () => {
+	// 					setDialogSaliente(false)
+	// 				},
+	// 				onIncomingCallCancelled: () => {
+	// 					setDialogEntrante(false)
+	// 					setDialogSaliente(false)
+	// 				}
+	// 			})
+	// 		);
+
+	// 		CometChat.addMessageListener(listenerID,
+	// 			new CometChat.MessageListener({
+	// 				onTextMessageReceived: message => {
+	// 					if (selectedFriend === message.sender.uid) {
+	// 						setChat(prevState => [...prevState, message]);
+	// 						scrollBottom()
+	// 					}
+	// 				},
+	// 				onMediaMessageReceived: mediaMessage => {
+	// 					if (selectedFriend === mediaMessage.sender.uid) {
+	// 						setChat(prevState => [...prevState, mediaMessage]);
+	// 					}
+	// 				},
+	// 			})
+	// 		);
+	// 	}
+	// }, [selectedFriend]);
 
 	// React.useEffect(() => {
 	// 	if (selectedFriend) {
@@ -680,7 +695,7 @@ export default function Chat() {
 						<Grid item xs={12}>
 							<List className={classes.listaGeneral} id='lista'>
 								{chatIsLoading ? null :
-									chat.map((mensajes, index) => (
+									chat.length ? chat.map((mensajes, index) => (
 										mensajes.receiverId !== user.uid ?
 											<Zoom in={true} timeout={500} key={index}>
 												<ListItem key={index} className={classes.listame}>
@@ -706,7 +721,13 @@ export default function Chat() {
 													</Paper>
 												</ListItem>
 											</Zoom>
-									))}
+									)) : <Zoom in={true} timeout={1000}>
+											<ListItem className={classes.listaNoMensaje}>
+												<Paper elevation={4} className={classes.noMensaje}>
+													<Typography variant='body1' style={{ padding: 6 }}>{`No tienes mensajes con ${selectedFriend}`}</Typography>
+												</Paper>
+											</ListItem>
+										</Zoom>}
 							</List>
 						</Grid>
 					</Grid>
