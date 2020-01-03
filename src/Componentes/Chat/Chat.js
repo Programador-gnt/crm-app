@@ -201,8 +201,10 @@ export default function Chat() {
 	}
 
 	const handleCloseDialogEvento = () => {
-		setDialogEvento(false);
-		setSelectedFriend(null);
+		setDialogEvento(false)
+		setSelectedFriend(null)
+		setSelectedAvatar(null)
+		setChat([])
 	};
 
 	const enviarMensaje = () => {
@@ -215,12 +217,12 @@ export default function Chat() {
 			category: 'message',
 			avatar: user.avatar
 		}
-		var datos = { id1: `${selectedFriend}_user_${user.uid}`, id2: `${user.uid}_user_${selectedFriend}` }
 		socket.emit('enviarMensaje', data)
-		socket.emit('conversation', datos)
-		socket.on('conversation/respuesta', result => {
-			setChat(result)
+		socket.on('notificacion/mensaje', () => {
 			scrollBottom()
+			setMensaje(null)
+			setNotificacion(false)
+			setNotificacion2(false)
 		})
 	}
 
@@ -374,38 +376,37 @@ export default function Chat() {
 		);
 	}
 
-	const tunel = () => {
-		socket.on('notificacion', mensaje => {
-			if (mensaje.uid === user.uid) {
-
-			} else {
-				setInfoNotificacion({ avatar: mensaje.avatar, nombre: mensaje.uid })
-				setNotificacion2(true)
-			}
-		})
-		socket.on('notificacion/mensaje', nofi => {
-			if (nofi.receiverId === user.uid) {
-				if (selectedFriend === nofi.sender) {
-					setNotificacion(false)
-				} else {
-					setInfoNotificacion({ avatar: nofi.avatar, texto: nofi.texto, nombre: nofi.sender })
-					setNotificacion(true)
-				}
-			}
-		})
+	React.useEffect(() => {
+		//falta poco para dejar de darle ctrlz
 		socket.emit('usuarios')
 		socket.on('usuarios/respuesta', usuarios => {
 			setFriends(usuarios)
 			setFriendisLoading(false)
 		})
+	}, [])
 
-		// socket.on('conversation/respuesta', result => {
-		// 	setChat(result)
-		// })
-	}
+	React.useEffect(() => {
+		if (!selectedFriend) {
+			setChat([])
+			//notificacion de usuario conectado
+			socket.on('notificacion', mensaje => {
+				setInfoNotificacion({ avatar: mensaje.avatar, nombre: mensaje.uid })
+				setNotificacion2(true)
+			})
 
-	const chatTunel = () => {
+			//notificacion de mensaje entrante sin seleccionar amigo
+			socket.on('notificacion/mensaje', message => {
+				setInfoNotificacion({ avatar: message.avatar, texto: message.text })
+				setNotificacion(true)
+			})
+		}
+
 		if (selectedFriend) {
+			setInfoNotificacion({})
+			setNotificacion(false)
+			setNotificacion2(false)
+
+			//construyo el array de mensajes
 			var data = { id1: `${selectedFriend}_user_${user.uid}`, id2: `${user.uid}_user_${selectedFriend}` }
 			socket.emit('conversation', data)
 			socket.on('conversation/respuesta', result => {
@@ -413,12 +414,14 @@ export default function Chat() {
 				setChatIsLoading(false)
 				scrollBottom()
 			})
+
+			//notificacion mensaje entrante con amigo seleccionado
+			socket.on('notificacion/mensaje', message => {
+				setChat(prevState => [...prevState, message])
+				scrollBottom()
+			})
 		}
-	}
-
-	React.useEffect(tunel, [])
-
-	React.useEffect(chatTunel, [selectedFriend!==null])
+	}, [selectedFriend])
 
 	// React.useEffect(() => {
 	// 	CometChat.addCallListener(
@@ -580,18 +583,6 @@ export default function Chat() {
 	// 		);
 	// 	}
 	// }, [selectedFriend]);
-
-	// React.useEffect(() => {
-	// 	if (selectedFriend) {
-	// 		consumeWSChat('GET', 'conversation', '', `?conversationId=${selectedFriend}_user_${user.uid}`)
-	// 			.then(result => {
-	// 				setChat(result)
-	// 				setChatIsLoading(false)
-	// 				scrollBottom()
-	// 			})
-	// 	}
-
-	// }, [selectedFriend])
 
 	if (friendisLoading) {
 		return (
