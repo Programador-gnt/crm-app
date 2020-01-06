@@ -160,6 +160,8 @@ function Cabecera(props) {
 			socket.emit('desconectado', user.uid)
 			socket.emit('usuarios')
 			localStorage.clear();
+		} else {
+			localStorage.clear()
 		}
 		// CometChat.logout()
 	};

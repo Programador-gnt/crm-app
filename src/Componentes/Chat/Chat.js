@@ -153,6 +153,9 @@ const useStyles = makeStyles(theme => ({
 	listaNoMensaje: {
 		position: 'flex',
 		justifyContent: 'center'
+	},
+	snack: {
+		opacity: '0.8'
 	}
 }));
 
@@ -595,12 +598,11 @@ export default function Chat() {
 			<React.Fragment>
 				<CssBaseline />
 				<Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }} open={notificacion} TransitionComponent={Transition} autoHideDuration={3000} onClose={() => setNotificacion(false)}
-					style={{ opacity: '0.9' }}
+					className={classes.snack}
 					ContentProps={{ 'aria-describedby': 'mensaje' }}
 					message={<Typography variant='button' className={classes.message}><Avatar src={infoNotificacion.avatar} alt='...' className={classes.avatarMensaje} />{infoNotificacion.texto}</Typography>}
 					action={[<IconButton key="close" aria-label="close" color="inherit" className={classes.close} onClick={() => setNotificacion(false)}><CloseIcon /></IconButton>,]} />
-				<Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }} open={notificacion2} TransitionComponent={Transition} autoHideDuration={3000} onClose={() => setNotificacion2(false)}
-					style={{ opacity: '0.9' }}
+				<Snackbar className={classes.snack} anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }} open={notificacion2} TransitionComponent={Transition} autoHideDuration={3000} onClose={() => setNotificacion2(false)}
 					ContentProps={{ 'aria-describedby': 'mensaje' }}
 					message={<Typography variant='button' className={classes.message}><Avatar src={infoNotificacion.avatar} alt='...' className={classes.avatarMensaje} />
 						{`${infoNotificacion.nombre} se ha conectado`}</Typography>}
@@ -629,7 +631,7 @@ export default function Chat() {
 							</IconButton>
 							<Avatar src={selectedAvatar} />
 							<Typography variant="h6" className={classes.title}>
-								{`${selectedFriend}`}
+								{selectedFriend}
 							</Typography>
 							<SpeedDial
 								className={classes.speedArchivos}
