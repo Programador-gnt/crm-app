@@ -155,13 +155,11 @@ function Cabecera(props) {
 
 	const handleClose = () => {
 		setAnchorEl(null);
-		if (localStorage.getItem('usuarioChat')) {
+		if (localStorage.getItem('tokenGoogle')) {
 			var user = JSON.parse(localStorage.getItem('usuarioChat'))
 			socket.emit('desconectado', user.uid)
 			socket.emit('usuarios')
 			localStorage.clear();
-		} else {
-			localStorage.clear()
 		}
 		// CometChat.logout()
 	};
@@ -185,9 +183,31 @@ function Cabecera(props) {
 		setOpenChatDialog(false)
 	}
 
+	const chat = () => {
+		if (localStorage.getItem('tokenGoogle')) {
+			socket.emit('conectado', perfil.nickname)
+			socket.on('conectado/respuesta', result => {
+				if (localStorage.getItem('usuarioChat')) {
+					socket.emit('usuarios')
+				} else {
+					localStorage.setItem('usuarioChat', JSON.stringify(result))
+					socket.emit('usuarios')
+				}
+			})
+		} else {
+
+		}
+	}
+
+	React.useEffect(chat, [])
+
 	if (localStorage.getItem('tokenGoogle') === null) {
 		return (<Redirect to='/login' />)
 	}
+
+	// if (localStorage.getItem('perfilGoogle') === null) {
+	// 	return (<Redirect to='/login' />)
+	// }
 
 	return (
 		<div className={classes.root}>
@@ -247,7 +267,7 @@ function Cabecera(props) {
 								open={abrir}
 								onClose={() => setAnchorEl(null)}>
 								<MenuItem disabled><em>{perfil.name}</em></MenuItem>
-								<MenuItem onClick={() => chatDialog()}>Conectar chat</MenuItem>
+								<MenuItem onClick={() => chatDialog()}>Configuraciones</MenuItem>
 								<MenuItem onClick={() => dialog()}>Tema</MenuItem>
 								<MenuItem onClick={() => handleClose()}>Cerrar Sesión</MenuItem>
 							</Menu>

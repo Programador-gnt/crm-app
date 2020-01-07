@@ -7,14 +7,16 @@ import DialogActions from '@material-ui/core/DialogActions';
 import Hidden from '@material-ui/core/Hidden';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
 import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
+import { blue, green, red } from '@material-ui/core/colors';
+import GoogleIcon from 'mdi-material-ui/Google';
+import FacebookIcon from '@material-ui/icons/Facebook';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { green } from '@material-ui/core/colors';
-// import Config from '../Config/Config';
+import Config from '../Config/Config';
+import gapi from 'gapi-client';
+import consumeWSChat from '../Config/WebServiceChat';
 // import { CometChat } from '@cometchat-pro/chat';
-import io from 'socket.io-client';
 
 
 const useStyles = makeStyles(theme => ({
@@ -40,66 +42,91 @@ const useStyles = makeStyles(theme => ({
 		zIndex: 1,
 	},
 	buttonProgress: {
-		color: green[500],
+		color: red[500],
 		position: 'absolute',
 		top: '50%',
 		left: '50%',
 		marginTop: -12,
 		marginLeft: -12,
 	},
+	FacebookProgress: {
+		color: blue[500],
+		position: 'absolute',
+		top: '50%',
+		left: '50%',
+		marginTop: -12,
+		marginLeft: -12,
+	}
 }));
 
+const ColorButton = withStyles(theme => ({
+	root: {
+		color: theme.palette.getContrastText(red[700]),
+		backgroundColor: red[700],
+		'&:hover': {
+			backgroundColor: red[900],
+		},
+	},
+}))(Button);
+
+const FacebookButton = withStyles(theme => ({
+	root: {
+		color: theme.palette.getContrastText(blue[700]),
+		backgroundColor: blue[700],
+		'&:hover': {
+			backgroundColor: blue[900],
+		},
+	},
+}))(Button);
 
 export default function ChatDialog(props) {
-	var socket = io.connect('http://172.19.39.179:5000', { 'forceNew': true })
 	const classes = useStyles();
 	const [loading, setLoading] = React.useState(false);
 	const [success, setSuccess] = React.useState(false);
+	const [loadingF, setLoadingF] = React.useState(false);
+	const [successF, setSuccessF] = React.useState(false);
+	const SCOPES = 'https://mail.google.com https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/calendar https://www.google.com/m8/feeds/ https://www.googleapis.com/auth/contacts.readonly';
 	const timer = React.useRef();
-	const [usuario, setUsuario] = React.useState({})
 	const { dialogProps } = props
 
 	const buttonClassname = clsx({
 		[classes.buttonSuccess]: success,
 	});
 
-	const enviarChange = (e) => {
-		setUsuario({
-			...usuario,
-			[e.target.name]: e.target.value
-		})
-	}
+	const buttonClassnameF = clsx({
+		[classes.buttonSuccess]: successF,
+	});
 
 	const login = () => {
-		if (usuario) {
+		if (!loading) {
 			setSuccess(false);
 			setLoading(true);
 			timer.current = setTimeout(() => {
 				setSuccess(true);
 				setLoading(false);
-				socket.emit('conectado', usuario.uid)
-				socket.on('conectado/respuesta', result => {
-					if (localStorage.getItem('usuarioChat')) {
-						socket.emit('usuarios')
+				consumeWSChat('GET', 'google', '', '')
+					.then(result => {
+						localStorage.setItem('tokenGoogle', JSON.stringify(result))
 						props.funcion()
-					} else {
-						localStorage.setItem('usuarioChat', JSON.stringify(result))
-						socket.emit('usuarios')
-						props.funcion()
-					}
-				})
+					})
+			}, 2000)
+		}
+	}
+
+	const loginF = () => {
+		if (!loadingF) {
+			setSuccessF(false);
+			setLoadingF(true);
+			timer.current = setTimeout(() => {
+				setSuccessF(true);
+				setLoadingF(false);
+				props.funcion()
 				// CometChat.login(usuario.uid, Config.chatKey)
 				// 	.then(result => {
 				// 		localStorage.setItem('usuarioChat', JSON.stringify(result))
 				// 		props.funcion()
 				// 	})
 			}, 2000)
-		}
-	}
-
-	const tecla = (e) => {
-		if (e.keyCode === 13) {
-			login()
 		}
 	}
 
@@ -114,7 +141,7 @@ export default function ChatDialog(props) {
 			<CssBaseline />
 			<Dialog {...dialogProps} open={props.abrir} onClose={props.funcion}>
 				<DialogTitle>
-					Login chat
+					Configuraciones
                 </DialogTitle>
 
 				<DialogContent>
@@ -123,18 +150,28 @@ export default function ChatDialog(props) {
 							<Grid item xs={12}>
 								<Grid container direction="column" spacing={2}>
 									<Grid item>
-										<TextField
-											autoComplete="uid"
-											name='uid'
-											autoFocus
-											label="Nickname"
-											placeholder="Nombre de usuario"
-											required
-											onKeyDown={tecla}
-											onChange={enviarChange.bind()}
-											type="text"
-											variant="outlined"
-										/>
+										<ColorButton
+											fullWidth
+											className={buttonClassname}
+											onClick={() => login()}
+											disabled={loading}
+											startIcon={<GoogleIcon />}
+											variant="contained">
+											{loading && <CircularProgress size={24} className={classes.buttonProgress} />}
+											Ingresar con Google
+										</ColorButton>
+									</Grid>
+									<Grid item>
+										<FacebookButton
+											fullWidth
+											className={buttonClassnameF}
+											onClick={() => loginF()}
+											disabled={loadingF}
+											startIcon={<FacebookIcon />}
+											variant="contained">
+											{loadingF && <CircularProgress size={24} className={classes.FacebookProgress} />}
+											Ingresar con Facebook
+										</FacebookButton>
 									</Grid>
 								</Grid>
 							</Grid>
@@ -143,34 +180,34 @@ export default function ChatDialog(props) {
 					<Hidden smUp>
 						<Grid container direction="column" spacing={2}>
 							<Grid item xs>
-								<TextField
-									autoComplete="uid"
-									name='uid'
+								<ColorButton
 									fullWidth
-									autoFocus
-									onKeyDown={tecla}
-									label="Nickname"
-									placeholder="Nombre de usuario"
-									onChange={enviarChange.bind()}
-									required
-									type="text"
-									variant="outlined"
-								/>
+									className={buttonClassname}
+									onClick={() => login()}
+									disabled={loading}
+									startIcon={<GoogleIcon />}
+									variant="contained">
+									{loading && <CircularProgress size={24} className={classes.buttonProgress} />}
+									Ingresar con Google
+								</ColorButton>
+							</Grid>
+							<Grid item xs>
+								<FacebookButton
+									fullWidth
+									className={buttonClassnameF}
+									onClick={() => loginF()}
+									disabled={loadingF}
+									startIcon={<FacebookIcon />}
+									variant="contained">
+									{loadingF && <CircularProgress size={24} className={classes.FacebookProgress} />}
+									Ingresar con Facebook
+								</FacebookButton>
 							</Grid>
 						</Grid>
 					</Hidden>
 				</DialogContent>
 				<DialogActions>
 					<Button color="secondary" onClick={props.funcion}>Cerrar</Button>
-					<Button
-						onClick={() => login()}
-						color="primary"
-						className={buttonClassname}
-						disabled={loading}
-						variant="contained">
-						{loading && <CircularProgress size={24} className={classes.buttonProgress} />}
-						Conectar
-                    </Button>
 				</DialogActions>
 			</Dialog>
 		</React.Fragment>
