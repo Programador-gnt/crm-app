@@ -104,11 +104,26 @@ export default function ChatDialog(props) {
 			timer.current = setTimeout(() => {
 				setSuccess(true);
 				setLoading(false);
-				consumeWSChat('GET', 'google', '', '')
-					.then(result => {
-						localStorage.setItem('tokenGoogle', JSON.stringify(result))
-						props.funcion()
-					})
+				// consumeWSChat('GET', 'google', '', '')
+				// 	.then(result => {
+				// 		localStorage.setItem('tokenGoogle', JSON.stringify(result.access_token))
+				// 	})
+				gapi.load('auth2', initClient)
+				function initClient() {
+					gapi.auth2.authorize({
+						apiKey: `${Config.api_key}`,
+						client_id: `${Config.client_id}`,
+						scope: SCOPES,
+						cookie_policy: 'none'
+					}, response => {
+						if (response.hasOwnProperty('error')) {
+
+						} else {
+							localStorage.setItem('tokenGoogle', JSON.stringify(response.access_token))
+							props.funcion()
+						}
+					});
+				}
 			}, 2000)
 		}
 	}

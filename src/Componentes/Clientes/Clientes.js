@@ -26,6 +26,8 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
 import Button from '@material-ui/core/Button';
 import FindInPageOutlinedIcon from '@material-ui/icons/FindInPageOutlined';
+import consumeWSChat from '../Config/WebServiceChat';
+import { Link } from 'react-router-dom'
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -47,24 +49,6 @@ const useStyles = makeStyles(theme => ({
 	},
 }));
 
-const clientes = [
-	{ id: 0, nombre: 'Bruno Zumaeta', empresa: 'New Transport S.A.' },
-	{ id: 1, nombre: 'Juan Lizama', empresa: 'GNT S.A.' },
-	{ id: 2, nombre: 'Alexander Rodríguez', empresa: 'GNT S.A.' },
-	{ id: 3, nombre: 'Wilder Lizama', empresa: 'GNT S.A.' },
-	{ id: 4, nombre: 'Carol Cajal', empresa: 'GNT S.A.' },
-	{ id: 5, nombre: 'Jorge Sevillano', empresa: 'GNT S.A.' },
-	{ id: 6, nombre: 'Aquaman', empresa: 'Super amigos' },
-	{ id: 7, nombre: 'Superman', empresa: 'Super amigos' },
-	{ id: 8, nombre: 'Spiderman', empresa: 'Avengers' },
-	{ id: 9, nombre: 'Capitan américa', empresa: 'Avengers' },
-	{ id: 10, nombre: 'Luigi', empresa: 'Nintendo' },
-	{ id: 11, nombre: 'Superman', empresa: 'Super amigos' },
-	{ id: 12, nombre: 'Spiderman', empresa: 'Avengers' },
-	{ id: 13, nombre: 'Capitan américa', empresa: 'Avengers' },
-	{ id: 14, nombre: 'Luigi', empresa: 'Nintendo' }
-]
-
 const actions = [
 	{ name: 'Nuevo' }
 ]
@@ -78,6 +62,7 @@ export default function Clientes() {
 	const [open, setOpen] = React.useState(false)
 	const [nuevo, setNuevo] = React.useState(false)
 	const [openDialog, setOpenDialog] = React.useState(false);
+	const [clientes, setClientes] = React.useState([])
 	const classes = useStyles()
 
 	const handleOpen = () => {
@@ -87,6 +72,15 @@ export default function Clientes() {
 	const handleCloseButton = () => {
 		setOpen(false);
 	};
+
+	const usuarios = () => {
+		consumeWSChat('GET', 'contactos', '', '')
+			.then(result => {
+				setClientes(result)
+			})
+	}
+
+	React.useEffect(usuarios, [])
 
 	if (usuario === true) {
 		return (<Redirect to='/clientes/info' />)
@@ -147,17 +141,13 @@ export default function Clientes() {
 						{clientes.map((client, index) => (
 							<ListItem key={index} button divider={true}>
 								<ListItemAvatar>
-									<Avatar className={classes.avatar}>
-										<Typography variant='h6'>
-											{client.nombre.substr(0, 1)}
-										</Typography>
-									</Avatar>
+									<Avatar className={classes.avatar} src={client.avatar} />
 								</ListItemAvatar>
-								<ListItemText primary={client.nombre} secondary={client.empresa} />
-								<IconButton aria-label="información" onClick={() => setUsuario(true)}>
+								<ListItemText primary={client.name} secondary={client.empresa} />
+								<Link to={`/clientes/info?id=${client.id_usuarios}`}><IconButton aria-label="información">
 									<FindInPageOutlinedIcon color='primary' />
-								</IconButton>
-								<IconButton aria-label="editar" onClick={() => alert('editar contacto ' + client.id)}>
+								</IconButton></Link>
+								<IconButton aria-label="editar" onClick={() => alert('editar contacto ' + client.id_usuarios)}>
 									<EditOutlinedIcon color='primary' />
 								</IconButton>
 								<IconButton aria-label="eliminar" onClick={() => setOpenDialog(true)}>

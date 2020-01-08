@@ -143,7 +143,7 @@ export default function Login() {
 		// <ThemeProvider theme={theme}>
 		<Grid container component="main" className={classes.root}>
 			<CssBaseline />
-			<Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }} open={aviso} autoHideDuration={3000} onClose={handleCloseMensaje} style={{ opacity: '0.9' }}
+			<Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }} open={aviso} autoHideDuration={3000} onClose={handleCloseMensaje} style={{ opacity: '0.8' }}
 				ContentProps={{ 'aria-describedby': 'mensaje' }}
 				message={<Typography id="mensaje" variant='button'>Error al autenticar</Typography>}
 				action={[
