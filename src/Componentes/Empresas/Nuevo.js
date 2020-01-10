@@ -226,7 +226,7 @@ export default function Nuevo(props) {
 			<CssBaseline />
 			<main className={classes.layout}>
 				<Paper elevation={4} className={classes.root}>
-					<Typography variant='h6' color='textPrimary'  >Nueva empresa</Typography>
+					<Typography variant='h6' color='textPrimary'>Nueva empresa</Typography>
 					<Dialog fullWidth open={dialogDireccion} onClose={() => setDialogDireccion(false)}>
 						<DialogTitle disableTypography>
 							<Paper elevation={24}>
@@ -530,7 +530,7 @@ export default function Nuevo(props) {
 									))
 									:
 									<ListItem>
-										<ListItemText primary='No hay números agregados' />
+										<ListItemText primary='No hay direcciones agregadas' />
 									</ListItem>
 								}
 							</List>

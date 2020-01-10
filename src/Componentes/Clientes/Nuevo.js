@@ -41,6 +41,7 @@ import Dialog from '@material-ui/core/Dialog';
 import SaveOutlinedIcon from '@material-ui/icons/SaveOutlined';
 import PhotoIcon from '@material-ui/icons/Photo';
 import Zoom from '@material-ui/core/Zoom';
+import consumeWSChat from '../Config/WebServiceChat'
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -118,6 +119,7 @@ export default function Nuevo(props) {
 	const [informacion1, setInformacion1] = React.useState({})
 	const [informacion2, setInformacion2] = React.useState({})
 	const [imagenAvatar, setImagenAvatar] = React.useState('')
+	const [avatarGuardar, setAvatarGuardar] = React.useState('')
 	const [telefonos, setTelefonos] = React.useState({ tipo: 'personal' })
 	const [arrayTelefono, setArrayTelefono] = React.useState([])
 	const [correos, setCorreos] = React.useState({ tipo: 'personal' })
@@ -288,6 +290,8 @@ export default function Nuevo(props) {
 		}
 
 		setImagenAvatar(URL.createObjectURL(avatar))
+		setAvatarGuardar(avatar.name)
+		console.log(avatarGuardar)
 
 		// this.setState({
 		//     avatar: avatar,
@@ -296,6 +300,13 @@ export default function Nuevo(props) {
 		//     this.props.openSnackbar(`Selected image “${avatar.name}”`, 5);
 		// });
 	};
+
+	const guardar = () => {
+		consumeWSChat('POST', 'contacto/nuevo', { avatarGuardar }, '')
+			.then(result => {
+				console.log(result)
+			})
+	}
 
 	return (
 		<React.Fragment>
@@ -526,7 +537,7 @@ export default function Nuevo(props) {
 								key={action.name}
 								icon={action.name === 'Volver' ? <ArrowBackOutlinedIcon /> : action.name === 'Guardar' ? <SaveOutlinedIcon /> : ''}
 								tooltipTitle={action.name}
-								onClick={action.name === 'Volver' ? () => props.history.push('/clientes') : action.name === 'Guardar' ? () => alert('guardado') : ''}
+								onClick={action.name === 'Volver' ? () => props.history.push('/clientes') : action.name === 'Guardar' ? () => guardar() : ''}
 							/>
 						))}
 					</SpeedDial>
@@ -641,7 +652,16 @@ export default function Nuevo(props) {
                                 <AddIcon />
                             </Fab>
                         </Grid> */}
-						<Grid item xs={12} sm={6} />
+						<Grid item xs={12} sm={6}>
+							<TextField
+								name='cargo'
+								margin='normal'
+								fullWidth
+								helperText="Cargo que ocupa"
+								placeholder="Cargo"
+								type="text"
+							/>
+						</Grid>
 						<Divider />
 						{/* <Grid item xs={12} sm={12}>
                             <List>

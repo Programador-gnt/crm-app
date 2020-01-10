@@ -2,10 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import { Card, CardContent, Grid, Typography, Avatar } from '@material-ui/core';
-import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import PeopleIcon from '@material-ui/icons/PeopleOutlined';
 import { green } from '@material-ui/core/colors';
-import { Redirect } from 'react-router-dom'
+import { Redirect } from 'react-router-dom';
 
 const useStyles = makeStyles(() => ({
 	root: {
@@ -40,9 +39,10 @@ const useStyles = makeStyles(() => ({
 	}
 }));
 
-const Usuarios = () => {
+const Usuarios = (props) => {
 	const [clientes, setClientes] = React.useState(false)
 	const classes = useStyles();
+
 
 	if (clientes === true) {
 		return (<Redirect to='/clientes' />)
@@ -62,7 +62,7 @@ const Usuarios = () => {
 							variant="body2">
 							TOTAL CONTACTOS
             </Typography>
-						<Typography variant="h3">100</Typography>
+						<Typography variant="h3">{props.total}</Typography>
 					</Grid>
 					<Grid item onClick={() => setClientes(true)} style={{ cursor: 'pointer' }}>
 						<Avatar className={classes.avatar}>
@@ -70,15 +70,9 @@ const Usuarios = () => {
 						</Avatar>
 					</Grid>
 				</Grid>
-				<div className={classes.difference}>
-					<ArrowDownwardIcon className={classes.differenceIcon} />
-					<Typography
-						className={classes.caption}
-						variant="caption"
-					>
-						10% Ùltima semana
-          </Typography>
-				</div>
+				{/* <div className={classes.difference}>
+					<Typography className={classes.caption} variant="caption">5 Ùltima semana</Typography>
+				</div> */}
 			</CardContent>
 		</Card>
 	);

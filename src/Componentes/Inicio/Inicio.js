@@ -11,7 +11,8 @@ import BarraUsuario from './Usuarios/Usuario';
 import TortaReuniones from './Usuarios/Reuniones';
 import Zoom from '@material-ui/core/Zoom';
 import LineaLlamadas from './Usuarios/Llamadas';
-import AreaGmail from './Usuarios/Gmail'
+import AreaGmail from './Usuarios/Gmail';
+import consumeWSChat from '../Config/WebServiceChat';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -27,7 +28,17 @@ const useStyles = makeStyles((theme) => ({
 
 
 export default function Inicio() {
+	const [total, setTotal] = React.useState(null)
 	const classes = useStyles()
+
+	const consultarUsuarios = () => {
+		consumeWSChat('GET', 'contactos', '', '')
+			.then(result => {
+				setTotal(result.length)
+			})
+	}
+
+	React.useEffect(consultarUsuarios, [])
 
 	return (
 		<React.Fragment>
@@ -39,7 +50,7 @@ export default function Inicio() {
 							sm={6}
 							xl={3}
 							xs={12} className={classes.usuarios}>
-							<Usuarios />
+							<Usuarios total={total} />
 						</Grid>
 					</Zoom>
 					<Zoom in={true} timeout={500}>
@@ -67,7 +78,20 @@ export default function Inicio() {
 						</Grid>
 					</Zoom>
 					<Grid item xs={12} sm={6} xl={3} lg={3}>
-						<BarraUsuario />
+						<BarraUsuario
+							enero={total}
+							febrero={5}
+							marzo={2}
+							abril={1}
+							mayo={6}
+							junio={7}
+							julio={1}
+							agosto={6}
+							septiembre={3}
+							octubre={1}
+							noviembre={7}
+							diciembre={4}
+						/>
 					</Grid>
 					<Grid item xs={12} sm={6} xl={3} lg={3}>
 						<TortaReuniones />

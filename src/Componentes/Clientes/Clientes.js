@@ -9,7 +9,6 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
 import { Redirect } from 'react-router-dom';
 import Fade from '@material-ui/core/Fade';
-import Typography from '@material-ui/core/Typography';
 import AddIcon from '@material-ui/icons/Add';
 import SpeedDial from '@material-ui/lab/SpeedDial';
 import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
@@ -54,15 +53,16 @@ const actions = [
 ]
 
 const Transition = React.forwardRef(function Transition(props, ref) {
-	return <Slide direction="up" ref={ref} {...props} />;
+	return <Slide direction="up" ref={ref} {...props} timeout={500} />;
 });
 
 export default function Clientes() {
-	const [usuario, setUsuario] = React.useState(false)
 	const [open, setOpen] = React.useState(false)
 	const [nuevo, setNuevo] = React.useState(false)
 	const [openDialog, setOpenDialog] = React.useState(false);
 	const [clientes, setClientes] = React.useState([])
+	const [id, setId] = React.useState(null)
+	const [nombre, setNombre] = React.useState(null)
 	const classes = useStyles()
 
 	const handleOpen = () => {
@@ -80,11 +80,14 @@ export default function Clientes() {
 			})
 	}
 
-	React.useEffect(usuarios, [])
-
-	if (usuario === true) {
-		return (<Redirect to='/clientes/info' />)
+	const MensajeEliminar = (ID, NOMBRE) => {
+		setId(ID)
+		console.log(id)
+		setNombre(NOMBRE)
+		setOpenDialog(true)
 	}
+
+	React.useEffect(usuarios, [])
 
 	if (nuevo === true) {
 		return (<Redirect to='/clientes/nuevo' />)
@@ -120,7 +123,7 @@ export default function Clientes() {
 				aria-labelledby="alert-dialog-slide-title"
 				aria-describedby="alert-dialog-slide-description"
 			>
-				<DialogTitle id="alert-dialog-slide-title">{"¿Seguro que deseas eliminar?"}</DialogTitle>
+				<DialogTitle id="alert-dialog-slide-title">{`¿Seguro que deseas eliminar a ${nombre}?`}</DialogTitle>
 				<DialogContent>
 					<DialogContentText id="alert-dialog-slide-description">
 						Una vez eliminado se perderá toda la información de este contacto.
@@ -130,7 +133,7 @@ export default function Clientes() {
 					<Button onClick={() => setOpenDialog(false)} color="secondary">
 						Cancelar
           			</Button>
-					<Button variant='contained' onClick={() => setOpenDialog(false)} color="secondary">
+					<Button variant='contained' onClick={() => setOpenDialog(false)} color="primary">
 						Confirmar
           			</Button>
 				</DialogActions>
@@ -150,7 +153,7 @@ export default function Clientes() {
 								<IconButton aria-label="editar" onClick={() => alert('editar contacto ' + client.id_usuarios)}>
 									<EditOutlinedIcon color='primary' />
 								</IconButton>
-								<IconButton aria-label="eliminar" onClick={() => setOpenDialog(true)}>
+								<IconButton aria-label="eliminar" onClick={() => MensajeEliminar(client.id_usuarios, client.name)}>
 									<DeleteOutlineOutlinedIcon color='error' />
 								</IconButton>
 							</ListItem>

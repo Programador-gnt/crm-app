@@ -4,20 +4,20 @@ import { Chart, BarSeries, Title, ArgumentAxis, ValueAxis } from '@devexpress/dx
 import { Animation } from '@devexpress/dx-react-chart';
 
 
-export default function BarraUsuario() {
+export default function BarraUsuario(props) {
 	const data = [
-		{ mes: 'Ene', contactos: 22 },
-		{ mes: 'Feb', contactos: 25 },
-		{ mes: 'Mar', contactos: 21 },
-		{ mes: 'Abr', contactos: 23 },
-		{ mes: 'May', contactos: 13 },
-		{ mes: 'Jun', contactos: 33 },
-		{ mes: 'Jul', contactos: 45 },
-		{ mes: 'Ags', contactos: 79 },
-		{ mes: 'Sep', contactos: 13 },
-		{ mes: 'Oct', contactos: 90 },
-		{ mes: 'Nov', contactos: 50 },
-		{ mes: 'Dic', contactos: 16 }
+		{ mes: 'Ene', contactos: props.enero },
+		{ mes: 'Feb', contactos: props.febrero },
+		{ mes: 'Mar', contactos: props.marzo },
+		{ mes: 'Abr', contactos: props.abril },
+		{ mes: 'May', contactos: props.mayo },
+		{ mes: 'Jun', contactos: props.junio },
+		{ mes: 'Jul', contactos: props.julio },
+		{ mes: 'Ags', contactos: props.agosto },
+		{ mes: 'Sep', contactos: props.septiembre },
+		{ mes: 'Oct', contactos: props.octubre },
+		{ mes: 'Nov', contactos: props.noviembre },
+		{ mes: 'Dic', contactos: props.diciembre }
 	];
 
 	return (
