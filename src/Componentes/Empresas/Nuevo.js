@@ -38,6 +38,10 @@ import Hidden from '@material-ui/core/Hidden';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import SaveOutlinedIcon from '@material-ui/icons/SaveOutlined';
+import consumeWSChat from '../Config/WebServiceChat';
+import Snackbar from '@material-ui/core/Snackbar';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -108,18 +112,20 @@ const actions = [
 
 export default function Nuevo(props) {
 	const [open, setOpen] = React.useState(false)
-	const [ruc, setRuc] = React.useState('')
-	const [selectRuc, setSelectRuc] = React.useState({ tipo: 'ruc' })
-	const [informacion2, setInformacion2] = React.useState({})
-	const [telefonos, setTelefonos] = React.useState({ tipo: 'personal' })
 	const [arrayTelefono, setArrayTelefono] = React.useState([])
-	const [correos, setCorreos] = React.useState({ tipo: 'personal' })
 	const [arrayCorreo, setArrayCorreo] = React.useState([])
-	const [redes, setRedes] = React.useState({ tipo: 'facebook' })
 	const [arrayRedes, setArrayRedes] = React.useState([])
-	const [direccion, setDireccion] = React.useState({ tipo: 'casa', pais: 'peru' })
 	const [arrayDireccion, setArrayDireccion] = React.useState([])
 	const [dialogDireccion, setDialogDireccion] = React.useState(false)
+	const [aviso, setAviso] = React.useState(false)
+	const [empresa, setEmpresa] = React.useState({
+		tdocumento: 1,
+		tdireccion: 1,
+		pais: 1,
+		ttelefono: 1,
+		tcorreo: 1,
+		tsocial: 1
+	})
 	const classes = useStyles()
 
 	const handleOpen = () => {
@@ -130,16 +136,12 @@ export default function Nuevo(props) {
 		setOpen(false);
 	};
 
-	const onChangeRuc = (e) => {
-		setRuc(e.target.value)
-	}
-
 	const teclaRuc = async (e) => {
 		if (e.keyCode === 13) {
-			if (typeof ruc === 'undefined') {
+			if (typeof empresa.ruc === 'undefined') {
 
 			} else {
-				await fetch(`https://dniruc.apisperu.com/api/v1/ruc/${ruc}?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InByb2dyYW1hZG9yQGdudC5wZSJ9.h0kKyOThfiofLhCBJIctabYiQb7dWpk_kOe0hVwUR4g`, {
+				await fetch(`https://dniruc.apisperu.com/api/v1/ruc/${empresa.ruc}?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InByb2dyYW1hZG9yQGdudC5wZSJ9.h0kKyOThfiofLhCBJIctabYiQb7dWpk_kOe0hVwUR4g`, {
 					method: 'GET',
 					headers: {
 						"Content-type": "application/json; charset=UTF-8"
@@ -147,66 +149,41 @@ export default function Nuevo(props) {
 				}).then(respuesta => {
 					return respuesta.json()
 				}).then(json => {
-					setInformacion2(json)
+					setEmpresa({
+						...empresa,
+						razonsocial: json.razonSocial
+					})
 				})
 			}
 		}
 	}
 
-	const onChangeTelefonos = (e) => {
-		setTelefonos({
-			...telefonos,
-			[e.target.name]: e.target.value
-		})
-	}
-
 	const agregarTelefono = () => {
-		setArrayTelefono([...arrayTelefono, telefonos])
+		setArrayTelefono([...arrayTelefono, { numero: empresa.telefono, tipo: empresa.ttelefono }])
 	}
 
 	const eliminarTelefono = (i) => {
 		setArrayTelefono(arrayTelefono.splice(i))
 	}
 
-	const onChangeCorreos = (e) => {
-		setCorreos({
-			...correos,
-			[e.target.name]: e.target.value
-		})
-	}
-
 	const agregarCorreo = () => {
-		setArrayCorreo([...arrayCorreo, correos])
+		setArrayCorreo([...arrayCorreo, { direccion: empresa.correo, tipo: empresa.tcorreo }])
 	}
 
 	const eliminarCorreo = (i) => {
 		setArrayCorreo(arrayCorreo.splice(i))
 	}
 
-	const onChangeRedes = (e) => {
-		setRedes({
-			...redes,
-			[e.target.name]: e.target.value
-		})
-	}
-
 	const agregarRedes = () => {
-		setArrayRedes([...arrayRedes, redes])
+		setArrayRedes([...arrayRedes, { nombre: empresa.social, tipo: empresa.tsocial }])
 	}
 
 	const eliminarRedes = (i) => {
 		setArrayRedes(arrayRedes.splice(i))
 	}
 
-	const onChangeDireccion = (e) => {
-		setDireccion({
-			...direccion,
-			[e.target.name]: e.target.value
-		})
-	}
-
 	const agregarDireccion = () => {
-		setArrayDireccion([...arrayDireccion, direccion])
+		setArrayDireccion([...arrayDireccion, { pais: empresa.pais, direccion1: empresa.direccion1, direccion2: empresa.direccion2, departamento: empresa.departamento, provincia: empresa.provincia, distrito: empresa.distrito }])
 		setDialogDireccion(false)
 	}
 
@@ -214,18 +191,45 @@ export default function Nuevo(props) {
 		setArrayDireccion(arrayDireccion.splice(i))
 	}
 
-	const onchangeSelect = (e) => {
-		setSelectRuc({
-			...selectRuc,
+	const onChangeEmpresa = (e) => {
+		setEmpresa({
+			...empresa,
 			[e.target.name]: e.target.value
 		})
 	}
+
+	const guardar = () => {
+		consumeWSChat('POST', 'empresas/nuevo', empresa, '')
+			.then(result => {
+				console.log(result)
+				setAviso(true)
+			})
+	}
+
+	const handleCloseMensaje = () => {
+		setAviso(false)
+	};
 
 	return (
 		<React.Fragment>
 			<CssBaseline />
 			<main className={classes.layout}>
 				<Paper elevation={4} className={classes.root}>
+					<Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }} open={aviso} autoHideDuration={3000} onClose={handleCloseMensaje} style={{ opacity: '0.8' }}
+						ContentProps={{ 'aria-describedby': 'mensaje' }}
+						message={<Typography id="mensaje" variant='button'>Guardado con éxito</Typography>}
+						action={[
+							<IconButton
+								key="close"
+								aria-label="close"
+								color="inherit"
+								className={classes.close}
+								onClick={handleCloseMensaje}
+							>
+								<CloseIcon />
+							</IconButton>,
+						]}
+					/>
 					<Typography variant='h6' color='textPrimary'>Nueva empresa</Typography>
 					<Dialog fullWidth open={dialogDireccion} onClose={() => setDialogDireccion(false)}>
 						<DialogTitle disableTypography>
@@ -240,7 +244,6 @@ export default function Nuevo(props) {
 								</AppBar>
 							</Paper>
 						</DialogTitle>
-
 						<DialogContent>
 							<Hidden xsDown>
 								<Grid container spacing={1}>
@@ -248,17 +251,17 @@ export default function Nuevo(props) {
 										<Grid container direction="column" spacing={2}>
 											<Grid item sm={6}>
 												<TextField
-													name='tipo'
+													name='tdireccion'
 													select
-													value={direccion.tipo}
+													value={empresa.tdireccion}
 													fullWidth
 													label="Tipo"
 													required
-													onChange={onChangeDireccion}
+													onChange={onChangeEmpresa}
 													type="text"
 												>
-													<MenuItem value='casa'>Casa</MenuItem>
-													<MenuItem value='trabajo'>Trabajo</MenuItem>
+													<MenuItem value={1}>Casa</MenuItem>
+													<MenuItem value={2}>Trabajo</MenuItem>
 												</TextField>
 											</Grid>
 											<Grid item>
@@ -269,7 +272,7 @@ export default function Nuevo(props) {
 													label="Dirección 1"
 													placeholder="Av- ejemplo #número"
 													required
-													onChange={onChangeDireccion}
+													onChange={onChangeEmpresa}
 													type="text"
 												/>
 											</Grid>
@@ -280,7 +283,7 @@ export default function Nuevo(props) {
 													label="Dirección 2"
 													placeholder="Urb ejemplo"
 													required
-													onChange={onChangeDireccion}
+													onChange={onChangeEmpresa}
 													type="text"
 												/>
 											</Grid>
@@ -288,16 +291,16 @@ export default function Nuevo(props) {
 												<TextField
 													name='pais'
 													select
-													value={direccion.pais}
+													value={empresa.pais}
 													fullWidth
 													label="País"
 													required
-													onChange={onChangeDireccion}
+													onChange={onChangeEmpresa}
 													type="text"
 												>
-													<MenuItem value='peru'>Perú</MenuItem>
-													<MenuItem value='eua'>Estados Unidos</MenuItem>
-													<MenuItem value='italia'>Italia</MenuItem>
+													<MenuItem value={1}>Perú</MenuItem>
+													<MenuItem value={2}>Estados Unidos</MenuItem>
+													<MenuItem value={3}>Italia</MenuItem>
 												</TextField>
 											</Grid>
 											<Grid item>
@@ -307,7 +310,7 @@ export default function Nuevo(props) {
 													label="Departamento"
 													placeholder="Lima"
 													required
-													onChange={onChangeDireccion}
+													onChange={onChangeEmpresa}
 													type="text"
 												/>
 											</Grid>
@@ -318,7 +321,7 @@ export default function Nuevo(props) {
 													label="Provincia"
 													placeholder="Lima"
 													required
-													onChange={onChangeDireccion}
+													onChange={onChangeEmpresa}
 													type="text"
 												/>
 											</Grid>
@@ -329,7 +332,7 @@ export default function Nuevo(props) {
 													label="Distrito"
 													placeholder="Miraflores"
 													required
-													onChange={onChangeDireccion}
+													onChange={onChangeEmpresa}
 													type="text"
 												/>
 											</Grid>
@@ -341,13 +344,13 @@ export default function Nuevo(props) {
 								<Grid container direction="column" spacing={2}>
 									<Grid item sm={6}>
 										<TextField
-											name='tipo'
+											name='tdireccion'
 											select
-											value={direccion.tipo}
+											value={empresa.tdireccion}
 											fullWidth
 											label="Tipo"
 											required
-											onChange={onChangeDireccion}
+											onChange={onChangeEmpresa}
 											type="text"
 										>
 											<MenuItem value='casa'>Casa</MenuItem>
@@ -362,7 +365,7 @@ export default function Nuevo(props) {
 											label="Dirección 1"
 											placeholder="Av- ejemplo #número"
 											required
-											onChange={onChangeDireccion}
+											onChange={onChangeEmpresa}
 											type="text"
 										/>
 									</Grid>
@@ -373,7 +376,7 @@ export default function Nuevo(props) {
 											label="Dirección 2"
 											placeholder="Urb ejemplo"
 											required
-											onChange={onChangeDireccion}
+											onChange={onChangeEmpresa}
 											type="text"
 										/>
 									</Grid>
@@ -381,11 +384,11 @@ export default function Nuevo(props) {
 										<TextField
 											name='pais'
 											select
-											value={direccion.pais}
+											value={empresa.pais}
 											fullWidth
 											label="País"
 											required
-											onChange={onChangeDireccion}
+											onChange={onChangeEmpresa}
 											type="text"
 										>
 											<MenuItem value='peru'>Perú</MenuItem>
@@ -400,7 +403,7 @@ export default function Nuevo(props) {
 											label="Departamento"
 											placeholder="Lima"
 											required
-											onChange={onChangeDireccion}
+											onChange={onChangeEmpresa}
 											type="text"
 										/>
 									</Grid>
@@ -411,7 +414,7 @@ export default function Nuevo(props) {
 											label="Provincia"
 											placeholder="Lima"
 											required
-											onChange={onChangeDireccion}
+											onChange={onChangeEmpresa}
 											type="text"
 										/>
 									</Grid>
@@ -422,7 +425,7 @@ export default function Nuevo(props) {
 											label="Distrito"
 											placeholder="Miraflores"
 											required
-											onChange={onChangeDireccion}
+											onChange={onChangeEmpresa}
 											type="text"
 										/>
 									</Grid>
@@ -453,7 +456,7 @@ export default function Nuevo(props) {
 								key={action.name}
 								icon={action.name === 'Volver' ? <ArrowBackOutlinedIcon /> : action.name === 'Guardar' ? <SaveOutlinedIcon /> : ''}
 								tooltipTitle={action.name}
-								onClick={action.name === 'Volver' ? () => props.history.push('/empresas') : action.name === 'Guardar' ? () => alert('guardado') : ''}
+								onClick={action.name === 'Volver' ? () => props.history.push('/empresas') : action.name === 'Guardar' ? () => guardar() : ''}
 							/>
 						))}
 					</SpeedDial>
@@ -462,28 +465,28 @@ export default function Nuevo(props) {
 							<TextField
 								select
 								className={classes.texto}
-								name='tipo'
-								value={selectRuc.tipo}
+								name='tdocumento'
+								value={empresa.tdocumento}
 								margin='normal'
 								fullWidth
-								onChange={onchangeSelect}
+								onChange={onChangeEmpresa}
 								helperText='Tipo'
 								type="text"
 							>
-								<MenuItem value='ruc'>RUC</MenuItem>
-								<MenuItem value='otros'>OTROS</MenuItem>
-								<MenuItem value='dni'>DNI</MenuItem>
+								<MenuItem value={1}>RUC</MenuItem>
+								<MenuItem value={2}>OTROS</MenuItem>
+								<MenuItem value={3}>DNI</MenuItem>
 							</TextField>
 						</Grid>
 						<Grid item xs={12} sm={3}>
 							<TextField
 								name='ruc'
-								value={ruc}
+								value={empresa.ruc}
 								margin='normal'
 								autoFocus
 								fullWidth
 								label="RUC"
-								onChange={onChangeRuc}
+								onChange={onChangeEmpresa}
 								onKeyDown={teclaRuc}
 								placeholder="Ingrese Ruc"
 								helperText='presione enter'
@@ -493,9 +496,10 @@ export default function Nuevo(props) {
 						<Grid item xs={12} sm={6} />
 						<Grid item xs={12} sm={6}>
 							<TextField
-								name='razonSocial'
-								value={informacion2.razonSocial}
+								name='razonsocial'
+								value={empresa.razonsocial}
 								margin='normal'
+								onChange={onChangeEmpresa}
 								fullWidth
 								helperText="Razón social"
 								placeholder="Ingrese razón social"
@@ -545,12 +549,12 @@ export default function Nuevo(props) {
 						</Grid>
 						<Grid item xs={12} sm={4}>
 							<TextField
-								name='numero'
-								value={telefonos.numero}
+								name='telefono'
+								value={empresa.telefono}
 								margin='normal'
 								fullWidth
 								label="Teléfono"
-								onChange={onChangeTelefonos}
+								onChange={onChangeEmpresa}
 								placeholder="Ingrese número de teléfono"
 								helperText='número de teléfono'
 								type="text"
@@ -560,17 +564,17 @@ export default function Nuevo(props) {
 							<TextField
 								select
 								className={classes.texto}
-								name='tipo'
-								value={telefonos.tipo}
+								name='ttelefono'
+								value={empresa.ttelefono}
 								margin='normal'
 								fullWidth
-								onChange={onChangeTelefonos}
+								onChange={onChangeEmpresa}
 								helperText='Tipo'
 								type="text"
 							>
-								<MenuItem value='personal'>Personal</MenuItem>
-								<MenuItem value='trabajo'>Trabajo</MenuItem>
-								<MenuItem value='fijo'>Fijo</MenuItem>
+								<MenuItem value={1}>Personal</MenuItem>
+								<MenuItem value={2}>Trabajo</MenuItem>
+								<MenuItem value={3}>Fijo</MenuItem>
 							</TextField>
 						</Grid>
 						<Grid item xs={12} sm={3}>
@@ -586,7 +590,7 @@ export default function Nuevo(props) {
 											<ListItemAvatar>
 												<PhoneAndroidOutlinedIcon color='secondary' />
 											</ListItemAvatar>
-											<ListItemText primary={tlf.numero} secondary={tlf.tipo} />
+											<ListItemText primary={tlf.numero} secondary={tlf.tipo === 1 ? 'Personal' : tlf.tipo === 2 ? 'Trabajo' : tlf.tipo === 3 ? 'Trabajo' : ''} />
 											<CallOutlinedIcon color='primary' onClick={() => alert('llamando a ' + tlf.numero)} style={{ cursor: 'pointer' }} />
 											<DeleteOutlineOutlinedIcon color='error' onClick={() => eliminarTelefono(index)} style={{ cursor: 'pointer' }} />
 										</ListItem>
@@ -608,12 +612,12 @@ export default function Nuevo(props) {
 						</Grid>
 						<Grid item xs={12} sm={4}>
 							<TextField
-								name='direccion'
-								value={correos.direccion}
+								name='correo'
+								value={empresa.correo}
 								margin='normal'
 								fullWidth
 								label="Correo"
-								onChange={onChangeCorreos}
+								onChange={onChangeEmpresa}
 								placeholder="Ingrese dirección de correo"
 								helperText='Dirección de correo'
 								type="text"
@@ -623,16 +627,16 @@ export default function Nuevo(props) {
 							<TextField
 								select
 								className={classes.texto}
-								name='tipo'
-								value={correos.tipo}
+								name='tcorreo'
+								value={empresa.tcorreo}
 								margin='normal'
 								fullWidth
-								onChange={onChangeCorreos}
+								onChange={onChangeEmpresa}
 								helperText='Tipo'
 								type="text"
 							>
-								<MenuItem value='personal'>Personal</MenuItem>
-								<MenuItem value='trabajo'>Trabajo</MenuItem>
+								<MenuItem value={1}>Personal</MenuItem>
+								<MenuItem value={2}>Trabajo</MenuItem>
 							</TextField>
 						</Grid>
 						<Grid item xs={12} sm={3}>
@@ -648,7 +652,7 @@ export default function Nuevo(props) {
 											<ListItemAvatar>
 												<MailOutlineOutlinedIcon color='secondary' />
 											</ListItemAvatar>
-											<ListItemText primary={crr.direccion} secondary={crr.tipo} />
+											<ListItemText primary={crr.direccion} secondary={crr.tipo === 1 ? 'Personal' : crr.tipo === 2 ? 'Trabajo' : ''} />
 											<DeleteOutlineOutlinedIcon color='error' onClick={() => eliminarCorreo(index)} style={{ cursor: 'pointer' }} />
 										</ListItem>
 									))
@@ -669,12 +673,12 @@ export default function Nuevo(props) {
 						</Grid>
 						<Grid item xs={12} sm={4}>
 							<TextField
-								name='nombre'
-								value={redes.nombre}
+								name='social'
+								value={empresa.social}
 								margin='normal'
 								fullWidth
 								label="Red social"
-								onChange={onChangeRedes}
+								onChange={onChangeEmpresa}
 								placeholder="Ingrese red social"
 								helperText='Red social'
 								type="text"
@@ -684,19 +688,19 @@ export default function Nuevo(props) {
 							<TextField
 								select
 								className={classes.texto}
-								name='tipo'
-								value={redes.tipo}
+								name='tsocial'
+								value={empresa.tsocial}
 								margin='normal'
 								fullWidth
-								onChange={onChangeRedes}
+								onChange={onChangeEmpresa}
 								helperText='Tipo'
 								type="text"
 							>
-								<MenuItem value='facebook'>Facebook</MenuItem>
-								<MenuItem value='instagram'>Instagram</MenuItem>
-								<MenuItem value='twitter'>Twitter</MenuItem>
-								<MenuItem value='linkedin'>Linkedin</MenuItem>
-								<MenuItem value='youtube'>Youtube</MenuItem>
+								<MenuItem value={1}>Facebook</MenuItem>
+								<MenuItem value={2}>Instagram</MenuItem>
+								<MenuItem value={3}>Twitter</MenuItem>
+								<MenuItem value={4}>Linkedin</MenuItem>
+								<MenuItem value={5}>Youtube</MenuItem>
 							</TextField>
 						</Grid>
 						<Grid item xs={12} sm={3}>
@@ -710,13 +714,13 @@ export default function Nuevo(props) {
 									arrayRedes.map((red, index) => (
 										<ListItem key={index}>
 											<ListItemAvatar>
-												{red.tipo === 'instagram' ? <InstagramIcon color='error' /> :
-													red.tipo === 'facebook' ? <FacebookIcon color='primary' /> :
-														red.tipo === 'twitter' ? <TwitterIcon color='primary' /> :
-															red.tipo === 'linkedin' ? <LinkedInIcon /> :
-																red.tipo === 'youtube' ? <YouTubeIcon color='error' /> : ''}
+												{red.tipo === 2 ? <InstagramIcon color='error' /> :
+													red.tipo === 1 ? <FacebookIcon color='primary' /> :
+														red.tipo === 3 ? <TwitterIcon color='primary' /> :
+															red.tipo === 4 ? <LinkedInIcon /> :
+																red.tipo === 5 ? <YouTubeIcon color='error' /> : ''}
 											</ListItemAvatar>
-											<ListItemText primary={red.nombre} secondary={red.tipo} />
+											<ListItemText primary={red.nombre} secondary={red.tipo === 1 ? 'Facebook' : red.tipo === 2 ? 'Instagram' : red.tipo === 3 ? 'Twitter' : red.tipo === 4 ? 'LinkedIn' : red.tipo === 5 ? 'YouTube' : ''} />
 											<DeleteOutlineOutlinedIcon color='error' onClick={() => eliminarRedes(index)} style={{ cursor: 'pointer' }} />
 										</ListItem>
 									))

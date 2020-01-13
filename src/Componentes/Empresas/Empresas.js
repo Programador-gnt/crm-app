@@ -26,6 +26,8 @@ import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined'
 import IconButton from '@material-ui/core/IconButton';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import FindInPageOutlinedIcon from '@material-ui/icons/FindInPageOutlined';
+import consumeWSChat from '../Config/WebServiceChat';
+import { Link } from 'react-router-dom'
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -47,19 +49,6 @@ const useStyles = makeStyles(theme => ({
 	},
 }));
 
-const clientes = [
-	{ id: 0, nombre: 'New Transport S.A.', empresa: 'Perù' },
-	{ id: 1, nombre: 'GNT S.A.', empresa: 'Perù' },
-	{ id: 2, nombre: 'Nintendo', empresa: 'Japòn' },
-	{ id: 3, nombre: 'FIAT', empresa: 'Estados Unidos' },
-	{ id: 4, nombre: 'General Electric', empresa: 'Perù' },
-	{ id: 5, nombre: 'Polar', empresa: 'Venezuela' },
-	{ id: 6, nombre: 'Sony', empresa: 'Estados Unidos' },
-	{ id: 7, nombre: 'Marvel', empresa: 'Estados Unidos' },
-	{ id: 8, nombre: 'Disney', empresa: 'Estados Unidos' },
-	{ id: 9, nombre: 'Honda', empresa: 'Japòn' },
-	{ id: 10, nombre: 'Kawasaki', empresa: 'Japòn' }
-]
 
 const actions = [
 	{ name: 'Nuevo' }
@@ -74,7 +63,9 @@ export default function Clientes() {
 	const [open, setOpen] = React.useState(false)
 	const [nuevo, setNuevo] = React.useState(false)
 	const [openDialog, setOpenDialog] = React.useState(false)
-	const [usuario, setUsuario] = React.useState(false)
+	const [empresas, setEmpresas] = React.useState([])
+	const [id, setId] = React.useState(null)
+	const [razonSocial, setRazonSocial] = React.useState(null)
 	const classes = useStyles()
 
 	const handleOpen = () => {
@@ -85,12 +76,32 @@ export default function Clientes() {
 		setOpen(false);
 	};
 
-	if (nuevo === true) {
-		return (<Redirect to='/empresas/nuevo' />)
+	const consultarEmpresas = () => {
+		consumeWSChat('GET', 'empresas', '', '')
+			.then(result => {
+				setEmpresas(result)
+			})
 	}
 
-	if (usuario === true) {
-		return (<Redirect to='/empresas/info' />)
+	const MensajeEliminar = (ID, RAZONSOCIAL) => {
+		setId(ID)
+		setRazonSocial(RAZONSOCIAL)
+		setOpenDialog(true)
+	}
+
+	const eliminar = async () => {
+		consumeWSChat('GET', 'empresas/eliminar', '', `?id_empresas=${id}`)
+			.then(result => {
+				console.log(result)
+				setOpenDialog(false)
+				consultarEmpresas()
+			})
+	}
+
+	React.useEffect(consultarEmpresas, [])
+
+	if (nuevo === true) {
+		return (<Redirect to='/empresas/nuevo' />)
 	}
 
 	return (
@@ -122,7 +133,7 @@ export default function Clientes() {
 				aria-labelledby="alert-dialog-slide-title"
 				aria-describedby="alert-dialog-slide-description"
 			>
-				<DialogTitle id="alert-dialog-slide-title">{"¿Seguro que deseas eliminar?"}</DialogTitle>
+				<DialogTitle id="alert-dialog-slide-title">{`¿Seguro que deseas eliminar a ${razonSocial}?`}</DialogTitle>
 				<DialogContent>
 					<DialogContentText id="alert-dialog-slide-description">
 						Una vez eliminada se perderá toda la información de esta empresa.
@@ -132,7 +143,7 @@ export default function Clientes() {
 					<Button onClick={() => setOpenDialog(false)} color="secondary">
 						Cancelar
           			</Button>
-					<Button variant='contained' onClick={() => setOpenDialog(false)} color="secondary">
+					<Button variant='contained' onClick={() => eliminar()} color="secondary">
 						Confirmar
           			</Button>
 				</DialogActions>
@@ -140,25 +151,30 @@ export default function Clientes() {
 			<Fade in={true} timeout={1000}>
 				<Paper elevation={4} className={classes.root}>
 					<List>
-						{clientes.map((client, index) => (
-							<ListItem key={index} button divider={true}>
-								<ListItemAvatar>
-									<Avatar className={classes.avatar}>
-										<DomainIcon />
-									</Avatar>
-								</ListItemAvatar>
-								<ListItemText primary={client.nombre} secondary={client.empresa} />
-								<IconButton aria-label="información" onClick={() => setUsuario(true)}>
-									<FindInPageOutlinedIcon color='primary' />
-								</IconButton>
-								<IconButton aria-label="editar" onClick={() => alert('editar empresa ' + client.id)}>
-									<EditOutlinedIcon color='primary' />
-								</IconButton>
-								<IconButton aria-label="eliminar" onClick={() => setOpenDialog(true)}>
-									<DeleteOutlineOutlinedIcon color='error' />
-								</IconButton>
+						{empresas.length ?
+							empresas.map((empr, index) => (
+								<ListItem key={index} button divider={true}>
+									<ListItemAvatar>
+										<Avatar className={classes.avatar}>
+											<DomainIcon />
+										</Avatar>
+									</ListItemAvatar>
+									<ListItemText primary={empr.razonsocial} secondary={empr.pais === '1' ? 'Perú' : empr.pais === '2' ? 'Estados Unídos' : empr.pais === '3' ? 'Italia' : ''} />
+									<Link to={`/empresas/info?id=${empr.id_empresas}`}><IconButton aria-label="información">
+										<FindInPageOutlinedIcon color='primary' />
+									</IconButton></Link>
+									<IconButton aria-label="editar" onClick={() => alert('editar empresa ' + empr.id_empresas)}>
+										<EditOutlinedIcon color='primary' />
+									</IconButton>
+									<IconButton aria-label="eliminar" onClick={() => MensajeEliminar(empr.id_empresas, empr.razonsocial)}>
+										<DeleteOutlineOutlinedIcon color='error' />
+									</IconButton>
+								</ListItem>
+							)) :
+							<ListItem>
+								<ListItemText primary='No hay Empresas agregadas' />
 							</ListItem>
-						))}
+						}
 					</List>
 				</Paper>
 			</Fade>

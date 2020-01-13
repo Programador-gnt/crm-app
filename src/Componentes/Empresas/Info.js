@@ -19,6 +19,7 @@ import Chip from '@material-ui/core/Chip';
 import FaceIcon from '@material-ui/icons/Face';
 import DoneIcon from '@material-ui/icons/Done';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
+import consumeWSChat from '../Config/WebServiceChat'
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -60,6 +61,8 @@ const actions = [
 
 export default function Info(props) {
 	const [open, setOpen] = React.useState(false)
+	const [infor, setInfor] = React.useState({})
+	const id = window.location.hash.split('=')[1]
 	const classes = useStyles()
 
 	const handleOpen = () => {
@@ -69,6 +72,15 @@ export default function Info(props) {
 	const handleCloseButton = () => {
 		setOpen(false);
 	};
+
+	const info = () => {
+		consumeWSChat('GET', 'empresas/info', '', `?id_empresas=${id}`)
+			.then(result => {
+				setInfor(result)
+			})
+	}
+
+	React.useEffect(info, [])
 
 	return (
 		<React.Fragment>
@@ -98,26 +110,26 @@ export default function Info(props) {
 				<Grid container alignItems='center' justify='center'>
 					<Card className={classes.card}>
 						<CardContent>
-							<Avatar className={classes.avatar}><Typography variant='h1'>N</Typography></Avatar>
+							<Avatar className={classes.avatar}><Typography variant='h1'>B</Typography></Avatar>
 							<Typography variant="h5" className={classes.texto} color='secondary'>
-								Nombre Empresa
-                        </Typography>
+								{infor.razonsocial}
+							</Typography>
 							<Typography variant="body1" className={classes.texto} color='textSecondary'>
-								New Transport S.A.
-                        </Typography>
+								{infor.social}
+							</Typography>
 							<Divider />
 							<Typography variant="subtitle2" className={classes.info} color='textPrimary'>
 								Email
                                 {/* Incluso cuando todo es perfecto, siempre puedes mejorarlo. Rompe barreras en tu cabeza, crea algo loco y no olvides que programar es poesía... */}
 							</Typography>
 							<Typography variant="body1" color='textSecondary'>
-								usuario@correo.com
+								{infor.correo}
                             </Typography>
 							<Typography variant="subtitle2" className={classes.info} color='textPrimary'>
 								Teléfono
                             </Typography>
 							<Typography variant="body1" color='textSecondary'>
-								+51928032108
+								{infor.telefono}
                             </Typography>
 							<Typography variant="subtitle2" className={classes.info} color='textPrimary'>
 								Status
