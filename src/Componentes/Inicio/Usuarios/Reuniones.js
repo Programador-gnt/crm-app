@@ -6,7 +6,7 @@ import { Animation } from '@devexpress/dx-react-chart';
 
 export default function TortaReuniones() {
 	const data = [
-		{ mes: 'Ene', contactos: 5 },
+		{ mes: 'Ene', contactos: 50 },
 		{ mes: 'Feb', contactos: 10 },
 		{ mes: 'Mar', contactos: 12 },
 		{ mes: 'Abr', contactos: 9 },
