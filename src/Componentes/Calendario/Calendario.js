@@ -47,7 +47,8 @@ import TextField from '@material-ui/core/TextField';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import InvertColorsIcon from '@material-ui/icons/InvertColors';
-import consumeWSChat from '../Config/WebServiceChat'
+import consumeWSChat from '../Config/WebServiceChat';
+import PersonAddOutlinedIcon from '@material-ui/icons/PersonAddOutlined';
 
 // const SCOPES = 'https://mail.google.com https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/calendar https://www.google.com/m8/feeds/ https://www.googleapis.com/auth/contacts.readonly';
 
@@ -96,7 +97,7 @@ const useStyles = makeStyles(theme => ({
 	invitadoss: {
 		backgroundColor: theme.palette.secondary.main,
 		width: 30,
-		height: 30,
+		height: 30
 	}
 }));
 
@@ -139,8 +140,9 @@ export default function Calendario() {
 	const [loading, setLoading] = React.useState(false);
 	const [success, setSuccess] = React.useState(false);
 	const [eventoNuevo, setEventoNuevo] = React.useState({ creator: perfil.correo, backgroundColor: '#dc2127' })
-	const [attendees, setAttendees] = React.useState([])
-	const [invitados, setInvitados] = React.useState('')
+	const [arrayInvitados, setArrayInvitados] = React.useState([])
+	const [invitados, setInvitados] = React.useState({})
+	const [dialogInvitados, setDialogInvitados] = React.useState(false)
 	// const [colorId, setColorId] = React.useState(11)
 	const timer = React.useRef();
 	const buttonClassname = clsx({
@@ -251,6 +253,14 @@ export default function Calendario() {
 		consultarEvento(informacionEvento.event.id)
 		// setEventoColor(informacionEvento.event.backgroundColor)
 		setIdEventoEliminar(informacionEvento.event.id)
+		consultarInvitados(informacionEvento.event.id)
+	}
+
+	const consultarInvitados = (id) => {
+		consumeWSChat('GET', 'invitados/info', '', `?id_eventos=${id}`)
+			.then(result => {
+				setArrayInvitados(result)
+			})
 	}
 
 	const consultarEvento = (id) => {
@@ -408,21 +418,30 @@ export default function Calendario() {
 		})
 	}
 
-	const handleChangeAttendees = (e) => {
-		setInvitados(e.target.value)
+	const handleChangeInvitados = (e) => {
+		setInvitados({
+			...invitados,
+			id_eventos: idEventoEliminar,
+			[e.target.name]: e.target.value
+		})
 	}
 
 	const tecla = (e) => {
 		if (e.keyCode === 13) {
-			setAttendees([...attendees, { email: invitados, responseStatus: 'accepted' }])
-			setEventoNuevo({
-				...eventoNuevo,
-				"sendUpdates": 'all',
-				attendees: [...attendees, { email: invitados, responseStatus: 'accepted' }]
-			})
+			consumeWSChat('POST', 'invitados/nuevo', invitados, '')
+				.then(() => {
+					consultarInvitados(idEventoEliminar)
+				})
 			var campo = document.activeElement
 			campo.value = ''
 		}
+	}
+
+	const eliminarInivitados = (id) => {
+		consumeWSChat('GET', 'invitados/eliminar', '', `?id=${id}`)
+			.then(() => {
+				consultarInvitados(idEventoEliminar)
+			})
 	}
 
 	// const handleColor = (e) => {
@@ -434,12 +453,12 @@ export default function Calendario() {
 	// }
 
 	const cerrarDialog = () => {
-		setAttendees([])
+		setArrayInvitados([])
 		setAbrirDialog(false)
 	}
 
-	function convert(str) {
-		var date = new Date(str),
+	function convert(fechaa) {
+		var date = new Date(fechaa),
 			mnth = ("0" + (date.getMonth() + 1)).slice(-2),
 			day = ("0" + date.getDate()).slice(-2);
 		return [date.getFullYear(), mnth, day].join("-");
@@ -482,6 +501,94 @@ export default function Calendario() {
 					</IconButton>,
 				]}
 			/>
+			<Dialog fullWidth open={dialogInvitados} onClose={() => setDialogInvitados(false)}>
+				<DialogTitle disableTypography>
+					<Typography variant="h6" className={classes.title}>
+						Agregar invitados
+					</Typography>
+				</DialogTitle>
+				<DialogContent>
+					<Hidden xsDown>
+						<Grid container direction="column" spacing={1}>
+							<Grid item xs={12} sm={12}>
+								<TextField
+									autoComplete="correo"
+									name='correo'
+									autoFocus
+									fullWidth
+									label="Invitado"
+									placeholder="invitado@correo.com"
+									required
+									onChange={handleChangeInvitados}
+									onKeyDown={tecla}
+									type="text"
+									variant="outlined"
+								/>
+							</Grid>
+							<Grid item xs={12} sm={12}>
+								<List>
+									{arrayInvitados.length ?
+										arrayInvitados.map((invit, index) => (
+											<ListItem key={index} button onClick={() => eliminarInivitados(invit.id)}>
+												<ListItemAvatar>
+													<Avatar className={classes.invitadoss} size='small'>
+														{invit.correo.substr(0, 1)}
+													</Avatar>
+												</ListItemAvatar>
+												<ListItemText primary={invit.correo} />
+												<DeleteOutlineIcon color='primary' />
+											</ListItem>
+										))
+										:
+										null
+									}
+								</List>
+							</Grid>
+						</Grid>
+					</Hidden>
+					<Hidden smUp>
+						<Grid container direction="column" spacing={1}>
+							<Grid item xs>
+								<TextField
+									autoComplete="correo"
+									autoFocus
+									name='correo'
+									fullWidth
+									label="Invitado"
+									placeholder="invitado@correo.com"
+									required
+									onKeyDown={tecla}
+									onChange={handleChangeInvitados}
+									type="text"
+									variant="outlined"
+								/>
+							</Grid>
+							<Grid item xs>
+								<List>
+									{arrayInvitados.length ?
+										arrayInvitados.map((invit, index) => (
+											<ListItem key={index} button onClick={() => eliminarInivitados(invit.id)}>
+												<ListItemAvatar>
+													<Avatar className={classes.invitadoss} size='small'>
+														{invit.correo.substr(0, 1)}
+													</Avatar>
+												</ListItemAvatar>
+												<ListItemText primary={invit.correo} />
+												<DeleteOutlineIcon color='primary' />
+											</ListItem>
+										))
+										:
+										null
+									}
+								</List>
+							</Grid>
+						</Grid>
+					</Hidden>
+				</DialogContent>
+				<DialogActions>
+					<Button color="secondary" onClick={() => setDialogInvitados(false)}>Cerrar</Button>
+				</DialogActions>
+			</Dialog>
 			<Dialog fullWidth open={abrirDialog} onClose={() => setAbrirDialog(false)}>
 				<DialogTitle disableTypography>
 					<Paper elevation={24}>
@@ -495,7 +602,6 @@ export default function Calendario() {
 						</AppBar>
 					</Paper>
 				</DialogTitle>
-
 				<DialogContent>
 					<Hidden xsDown>
 						<Grid container direction="column" spacing={2}>
@@ -527,40 +633,6 @@ export default function Calendario() {
 									type="text"
 									variant="outlined"
 								/>
-							</Grid>
-							<Grid item xs={12} sm={12}>
-								<TextField
-									id='email'
-									autoComplete="email"
-									name='email'
-									fullWidth
-									label="Participante"
-									placeholder="participante@correo.com"
-									onKeyDown={tecla}
-									onChange={handleChangeAttendees}
-									type="email"
-									variant="outlined"
-								/>
-							</Grid>
-							<Grid item xs={12} sm={12}>
-								<List>
-									{attendees.length > 0 ?
-										attendees.map((invit, index) => (
-											<ListItem key={index}>
-												<ListItemAvatar>
-													<Avatar className={classes.invitadoss} size='small'>
-														{invit.email.substr(0, 1)}
-													</Avatar>
-												</ListItemAvatar>
-												<ListItemText primary={invit.email} />
-											</ListItem>
-										))
-										:
-										<ListItem>
-											<ListItemText primary='Aún no posee invitados' />
-										</ListItem>
-									}
-								</List>
 							</Grid>
 							<Grid item xs={12} sm={12}>
 								<InvertColorsIcon style={{ color: eventoNuevo.backgroundColor ? eventoNuevo.backgroundColor : '#E10000' }} />
@@ -619,19 +691,6 @@ export default function Calendario() {
 								/>
 							</Grid>
 							<Grid item>
-								<TextField
-									autoComplete="email"
-									name='email'
-									fullWidth
-									label="Participante"
-									placeholder="participante@correo.com"
-									onKeyDown={tecla}
-									onChange={handleChangeAttendees}
-									type="email"
-									variant="outlined"
-								/>
-							</Grid>
-							<Grid item>
 								<InvertColorsIcon style={{ color: eventoNuevo.backgroundColor ? eventoNuevo.backgroundColor : '#E10000' }} />
 								<Select
 									value={eventoNuevo.backgroundColor}
@@ -650,26 +709,6 @@ export default function Calendario() {
 									<MenuItem key={9} value='#51b749'>Verde Manzana</MenuItem>
 									<MenuItem key={10} value='#dc2127'>Carmesí</MenuItem>
 								</Select>
-							</Grid>
-							<Grid item>
-								<List>
-									{attendees.length > 0 ?
-										attendees.map((invit, index) => (
-											<ListItem key={index}>
-												<ListItemAvatar>
-													<Avatar className={classes.invitadoss} size='small'>
-														{invit.email.substr(0, 1)}
-													</Avatar>
-												</ListItemAvatar>
-												<ListItemText primary={invit.email} />
-											</ListItem>
-										))
-										:
-										<ListItem>
-											<ListItemText primary='Aún no posee invitados' />
-										</ListItem>
-									}
-								</List>
 							</Grid>
 							<Grid item >
 								<Typography variant='h6'>Fecha</Typography>
@@ -705,13 +744,14 @@ export default function Calendario() {
 					</Toolbar>
 				</AppBar>
 				<List>
-					<ListItem>
+					<ListItem button onClick={() => setDialogInvitados(true)}>
 						<ListItemAvatar>
 							<Avatar className={classes.avatar}>
 								<GroupIcon />
 							</Avatar>
 						</ListItemAvatar>
-						<ListItemText primary={eventoConsultado.hasOwnProperty('attendees') ? eventoConsultado.attendees.length + ' Invitado(s)' : ''} secondary={eventoConsultado.hasOwnProperty('attendees') ? eventoConsultado.attendees.map(invitados => (invitados.email + ', ')) : 'No posee invitados'} />
+						<ListItemText primary={arrayInvitados.length ? arrayInvitados.length + ' Invitado(s)' : ''} secondary={arrayInvitados.length ? arrayInvitados.map(invitao => (invitao.correo + ', ')) : 'No posee invitados'} />
+						<PersonAddOutlinedIcon color='primary' />
 					</ListItem>
 					<Divider />
 					<ListItem>

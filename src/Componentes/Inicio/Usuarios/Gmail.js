@@ -39,18 +39,18 @@ const LegendItem = withStyles(legendItemStyles, { name: 'LegendItem' })(LegendIt
 
 export default function AreaGmail() {
 	const data = [
-		{ mes: 'Ene', contactos: 5, no: 10 },
-		{ mes: 'Feb', contactos: 10, no: 8 },
-		{ mes: 'Mar', contactos: 12, no: 7 },
-		{ mes: 'Abr', contactos: 9, no: 5 },
-		{ mes: 'May', contactos: 10, no: 20 },
-		{ mes: 'Jun', contactos: 12, no: 25 },
-		{ mes: 'Jul', contactos: 13, no: 8 },
-		{ mes: 'Ags', contactos: 14, no: 6 },
-		{ mes: 'Sep', contactos: 19, no: 18 },
-		{ mes: 'Oct', contactos: 17, no: 8 },
-		{ mes: 'Nov', contactos: 20, no: 7 },
-		{ mes: 'Dic', contactos: 14, no: 16 }
+		{ mes: 'Ene', contactos: 5, no: 10, si: 4 },
+		{ mes: 'Feb', contactos: 10, no: 8, si: 5 },
+		{ mes: 'Mar', contactos: 12, no: 7, si: 7 },
+		{ mes: 'Abr', contactos: 9, no: 5, si: 2 },
+		{ mes: 'May', contactos: 10, no: 20, si: 6 },
+		{ mes: 'Jun', contactos: 12, no: 25, si: 9 },
+		{ mes: 'Jul', contactos: 13, no: 8, si: 7 },
+		{ mes: 'Ags', contactos: 14, no: 6, si: 9 },
+		{ mes: 'Sep', contactos: 19, no: 18, si: 2 },
+		{ mes: 'Oct', contactos: 17, no: 8, si: 1 },
+		{ mes: 'Nov', contactos: 20, no: 7, si: 8 },
+		{ mes: 'Dic', contactos: 14, no: 16, si: 9 }
 	];
 
 	return (
@@ -61,6 +61,7 @@ export default function AreaGmail() {
 				<ValueAxis />
 				<AreaSeries name='Recibidos' valueField="contactos" argumentField="mes" color='#e53a34' />
 				<AreaSeries name='Enviados' valueField="no" argumentField="mes" color='#39a24f' />
+				<AreaSeries name='Papelera' valueField="si" argumentField="mes" color='#000000' />
 				<Title text="Gmail" />
 				<Legend position="bottom" rootComponent={LegendRoot} itemComponent={LegendItem} labelComponent={LegendLabel} />
 				<Animation duration={1000} />

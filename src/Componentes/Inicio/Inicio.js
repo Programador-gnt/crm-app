@@ -29,6 +29,8 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Inicio() {
 	const [total, setTotal] = React.useState(null)
+	const [totalReuniones, setTotalReuniones] = React.useState(null)
+	const perfil = JSON.parse(localStorage.getItem('usuarioChat'))
 	const classes = useStyles()
 
 	const consultarUsuarios = () => {
@@ -38,7 +40,15 @@ export default function Inicio() {
 			})
 	}
 
+	const consultarReuniones = () => {
+		consumeWSChat('GET', 'eventos', '', `?creator=${perfil.correo}`)
+			.then(result => {
+				setTotalReuniones(result.length)
+			})
+	}
+
 	React.useEffect(consultarUsuarios, [])
+	React.useEffect(consultarReuniones, [])
 
 	return (
 		<React.Fragment>
@@ -58,7 +68,7 @@ export default function Inicio() {
 							sm={6}
 							xl={3}
 							xs={12} className={classes.usuarios}>
-							<Reuniones />
+							<Reuniones total={totalReuniones} />
 						</Grid>
 					</Zoom>
 					<Zoom in={true} timeout={1000}>
@@ -94,7 +104,20 @@ export default function Inicio() {
 						/>
 					</Grid>
 					<Grid item xs={12} sm={6} xl={3} lg={3}>
-						<TortaReuniones />
+						<TortaReuniones
+							enero={totalReuniones}
+							febrero={5}
+							marzo={2}
+							abril={1}
+							mayo={6}
+							junio={7}
+							julio={1}
+							agosto={6}
+							septiembre={3}
+							octubre={1}
+							noviembre={7}
+							diciembre={4}
+						/>
 					</Grid>
 					<Grid item xs={12} sm={6} xl={3} lg={3}>
 						<LineaLlamadas />

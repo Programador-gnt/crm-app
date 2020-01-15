@@ -2,10 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import { Card, CardContent, Grid, Typography, Avatar } from '@material-ui/core';
-import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
+// import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import EventIcon from '@material-ui/icons/Event';
 import { blue } from '@material-ui/core/colors';
-import { Redirect } from 'react-router-dom'
+import { Redirect } from 'react-router-dom';
 
 const useStyles = makeStyles(() => ({
 	root: {
@@ -40,7 +40,7 @@ const useStyles = makeStyles(() => ({
 	}
 }));
 
-const Reuniones = () => {
+const Reuniones = (props) => {
 	const [reuniones, setReuniones] = React.useState(false)
 	const classes = useStyles();
 
@@ -53,16 +53,15 @@ const Reuniones = () => {
 			<CardContent>
 				<Grid
 					container
-					justify="space-between"
-				>
+					justify="space-between">
 					<Grid item>
 						<Typography
 							className={classes.title}
 							gutterBottom
 							variant="body2">
 							TOTAL REUNIONES
-            </Typography>
-						<Typography variant="h3">30</Typography>
+            			</Typography>
+						<Typography variant="h3">{props.total}</Typography>
 					</Grid>
 					<Grid item onClick={() => setReuniones(true)} style={{ cursor: 'pointer' }}>
 						<Avatar className={classes.avatar}>
@@ -70,15 +69,6 @@ const Reuniones = () => {
 						</Avatar>
 					</Grid>
 				</Grid>
-				<div className={classes.difference}>
-					<ArrowDownwardIcon className={classes.differenceIcon} />
-					<Typography
-						className={classes.caption}
-						variant="caption"
-					>
-						25% Ùltima semana
-          </Typography>
-				</div>
 			</CardContent>
 		</Card>
 	);
