@@ -62,6 +62,7 @@ const actions = [
 export default function Info(props) {
 	const [open, setOpen] = React.useState(false)
 	const [infor, setInfor] = React.useState({})
+	const [letra, setLetra] = React.useState(null)
 	const id = window.location.hash.split('=')[1]
 	const classes = useStyles()
 
@@ -77,6 +78,7 @@ export default function Info(props) {
 		consumeWSChat('GET', 'empresas/info', '', `?id_empresas=${id}`)
 			.then(result => {
 				setInfor(result)
+				setLetra(result.razonsocial.substr(0, 1))
 			})
 	}
 
@@ -110,7 +112,7 @@ export default function Info(props) {
 				<Grid container alignItems='center' justify='center'>
 					<Card className={classes.card}>
 						<CardContent>
-							<Avatar className={classes.avatar}><Typography variant='h1'>B</Typography></Avatar>
+							<Avatar className={classes.avatar}><Typography variant='h1'>{letra}</Typography></Avatar>
 							<Typography variant="h5" className={classes.texto} color='secondary'>
 								{infor.razonsocial}
 							</Typography>
@@ -124,13 +126,13 @@ export default function Info(props) {
 							</Typography>
 							<Typography variant="body1" color='textSecondary'>
 								{infor.correo}
-                            </Typography>
+							</Typography>
 							<Typography variant="subtitle2" className={classes.info} color='textPrimary'>
 								Teléfono
                             </Typography>
 							<Typography variant="body1" color='textSecondary'>
 								{infor.telefono}
-                            </Typography>
+							</Typography>
 							<Typography variant="subtitle2" className={classes.info} color='textPrimary'>
 								Status
                             </Typography>

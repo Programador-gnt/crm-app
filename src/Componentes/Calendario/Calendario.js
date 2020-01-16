@@ -145,9 +145,7 @@ export default function Calendario() {
 	const [dialogInvitados, setDialogInvitados] = React.useState(false)
 	// const [colorId, setColorId] = React.useState(11)
 	const timer = React.useRef();
-	const buttonClassname = clsx({
-		[classes.buttonSuccess]: success,
-	});
+	const buttonClassname = clsx({ [classes.buttonSuccess]: success });
 
 	const GetEventos = () => {
 		consumeWSChat('GET', 'eventos', '', `?creator=${perfil.correo}`)
@@ -247,7 +245,7 @@ export default function Calendario() {
 
 	const handleCloseMensaje = () => {
 		setAviso(false)
-	};
+	}
 
 	const eventClick = (informacionEvento) => {
 		consultarEvento(informacionEvento.event.id)
@@ -297,7 +295,7 @@ export default function Calendario() {
 		// setEventoColor('')
 		setEventoConsultado({})
 		setIdEventoEliminar('')
-	};
+	}
 
 	const eliminarEvento = async () => {
 		consumeWSChat('GET', 'eventos/eliminar', '', `?id=${idEventoEliminar}`)
@@ -471,6 +469,14 @@ export default function Calendario() {
 			})
 	}
 
+	const teclaGuardar = (e) => {
+		if (e.keyCode === 13) {
+			guardarEvento()
+			var campo = document.activeElement
+			campo.value = ''
+		}
+	}
+
 	React.useEffect(GetEventos, [])
 
 	return (
@@ -629,6 +635,7 @@ export default function Calendario() {
 									name='description'
 									placeholder="Describe tu evento"
 									onChange={handleChange}
+									onKeyDown={teclaGuardar}
 									required
 									type="text"
 									variant="outlined"
@@ -685,6 +692,7 @@ export default function Calendario() {
 									name='description'
 									placeholder="Describe tu evento"
 									onChange={handleChange}
+									onKeyDown={teclaGuardar}
 									required
 									type="text"
 									variant="outlined"
@@ -798,6 +806,7 @@ export default function Calendario() {
 					weekNumbers={true}
 					editable={true}
 					eventDrop={eventDrag}
+					eventResize={eventDrag}
 					defaultView='dayGridMonth'
 					plugins={[dayGridPlugin, interactionPlugin, timeGrid, timelinePlugin, resourceTimelinePlugin, bootstrapPlugin, listPlugin]}
 					themeSystem='standart'

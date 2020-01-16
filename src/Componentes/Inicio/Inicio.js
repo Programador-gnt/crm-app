@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
 export default function Inicio() {
 	const [total, setTotal] = React.useState(null)
 	const [totalReuniones, setTotalReuniones] = React.useState(null)
-	const perfil = JSON.parse(localStorage.getItem('usuarioChat'))
+	const perfil = JSON.parse(localStorage.getItem('perfilGoogle'))
 	const classes = useStyles()
 
 	const consultarUsuarios = () => {
