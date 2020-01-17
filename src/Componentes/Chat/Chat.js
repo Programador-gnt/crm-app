@@ -220,12 +220,11 @@ export default function Chat() {
 			category: 'message',
 			avatar: user.avatar
 		}
-		socket.emit('enviarMensaje', data)
-		socket.on('notificacion/mensaje', () => {
+		var datos = { id1: `${selectedFriend}_user_${user.uid}`, id2: `${user.uid}_user_${selectedFriend}` }
+		socket.emit('enviarMensaje', data, datos)
+		socket.on('mensaje/respuesta', message => {
+			setChat(prevState => [...prevState, message])
 			scrollBottom()
-			setMensaje(null)
-			setNotificacion(false)
-			setNotificacion2(false)
 		})
 	}
 
@@ -380,30 +379,19 @@ export default function Chat() {
 	}
 
 	React.useEffect(() => {
-		//falta poco para dejar de darle ctrlz
 		socket.emit('usuarios')
 		socket.on('usuarios/respuesta', usuarios => {
 			setFriends(usuarios)
 			setFriendisLoading(false)
 		})
+		setChat([])
+		// socket.on('mensaje/respuesta', message => {
+		// 	setInfoNotificacion({ avatar: message.avatar, texto: message.text })
+		// 	setNotificacion(true)
+		// })
 	}, [])
 
 	React.useEffect(() => {
-		if (!selectedFriend) {
-			setChat([])
-			//notificacion de usuario conectado
-			socket.on('notificacion', mensaje => {
-				setInfoNotificacion({ avatar: mensaje.avatar, nombre: mensaje.uid })
-				setNotificacion2(true)
-			})
-
-			//notificacion de mensaje entrante sin seleccionar amigo
-			socket.on('notificacion/mensaje', message => {
-				setInfoNotificacion({ avatar: message.avatar, texto: message.text })
-				setNotificacion(true)
-			})
-		}
-
 		if (selectedFriend) {
 			setInfoNotificacion({})
 			setNotificacion(false)
@@ -413,16 +401,16 @@ export default function Chat() {
 			var data = { id1: `${selectedFriend}_user_${user.uid}`, id2: `${user.uid}_user_${selectedFriend}` }
 			socket.emit('conversation', data)
 			socket.on('conversation/respuesta', result => {
+				console.log('recibi un mensaje')
 				setChat(result)
 				setChatIsLoading(false)
 				scrollBottom()
 			})
 
-			//notificacion mensaje entrante con amigo seleccionado
-			socket.on('notificacion/mensaje', message => {
-				setChat(prevState => [...prevState, message])
-				scrollBottom()
-			})
+			// socket.on('mensaje/respuesta', message => {
+			// 	setChat(prevState => [...prevState, message])
+			// 	scrollBottom()
+			// })
 		}
 	}, [selectedFriend])
 

@@ -32,6 +32,9 @@ import FindInPageOutlinedIcon from '@material-ui/icons/FindInPageOutlined';
 import ChatDialog from '../ChatDialog/ChatDialog';
 import ForumOutlinedIcon from '@material-ui/icons/ForumOutlined';
 import io from 'socket.io-client';
+import Snackbar from '@material-ui/core/Snackbar';
+import Slide from '@material-ui/core/Slide';
+import CloseIcon from '@material-ui/icons/Close';
 // import { CometChat } from '@cometchat-pro/chat';
 
 const drawerWidth = 240;
@@ -117,6 +120,19 @@ const useStyles = makeStyles(theme => ({
 			backgroundColor: theme.palette.primary.main,
 			color: theme.palette.getContrastText(theme.palette.primary.main)
 		}
+	},
+	snack: {
+		opacity: '0.8'
+	},
+	message: {
+		display: 'flex',
+		alignItems: 'center'
+	},
+	avatarMensaje: {
+		marginRight: theme.spacing(1)
+	},
+	close: {
+		padding: theme.spacing(0.5)
 	}
 }));
 
@@ -130,12 +146,18 @@ const MenuNavegacion = [
 	{ nombre: 'Caso', link: '/caso' }
 ]
 
+const Transition = React.forwardRef(function Transition(props, ref) {
+	return <Slide direction="up" ref={ref} {...props} />;
+});
+
 function Cabecera(props) {
 	var socket = io.connect('http://172.19.39.179:5000', { 'forceNew': true })
 	const classes = useStyles();
 	const theme = useTheme();
 	const [open, setOpen] = React.useState(false);
 	const [anchorEl, setAnchorEl] = React.useState(null);
+	const [notificacion, setNotificacion] = React.useState(false)
+	const [infoNotificacion, setInfoNotificacion] = React.useState({})
 	const abrir = Boolean(anchorEl);
 	const [openDialog, setOpenDialog] = React.useState(false)
 	const [openChatDialog, setOpenChatDialog] = React.useState(false)
@@ -189,6 +211,10 @@ function Cabecera(props) {
 			socket.on('conectado/respuesta', result => {
 				if (localStorage.getItem('usuarioChat')) {
 					socket.emit('usuarios')
+					socket.on('notificacion', mensaje => {
+						setInfoNotificacion({ avatar: mensaje.avatar, nombre: mensaje.uid })
+						setNotificacion(mensaje.uid === perfil.nickname ? false : true)
+					})
 				} else {
 					localStorage.setItem('usuarioChat', JSON.stringify(result))
 					socket.emit('usuarios')
@@ -212,6 +238,11 @@ function Cabecera(props) {
 	return (
 		<div className={classes.root}>
 			<CssBaseline />
+			<Snackbar className={classes.snack} anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }} open={notificacion} TransitionComponent={Transition} autoHideDuration={3000} onClose={() => setNotificacion(false)}
+				ContentProps={{ 'aria-describedby': 'mensaje' }}
+				message={<Typography variant='button' className={classes.message}><Avatar src={infoNotificacion.avatar} alt='...' className={classes.avatarMensaje} />
+					{`${infoNotificacion.nombre} se ha conectado`}</Typography>}
+				action={[<IconButton key="close" aria-label="close" color="inherit" className={classes.close} onClick={() => setNotificacion(false)}><CloseIcon /></IconButton>,]} />
 			<ChatDialog abrir={openChatDialog} funcion={() => cerrarChatDialog()} />
 			<TemaDialog abrir={openDialog} funcion={() => cerrar()} />
 			<Backdrop open={open} className={classes.back} onClick={() => handleDrawerClose()} />
