@@ -180,8 +180,8 @@ export default function Chat() {
 	const [dialogSaliente, setDialogSaliente] = React.useState(false)
 	const [idSaliente, setIdSaliente] = React.useState(null)
 	const [dialogEntrante, setDialogEntrante] = React.useState(false)
-	const [idEntrante, setIdEntrante] = React.useState(null)
-	const [avatarEntrante, setAvatarEntrante] = React.useState(null)
+	// const [idEntrante, setIdEntrante] = React.useState(null)
+	// const [avatarEntrante, setAvatarEntrante] = React.useState(null)
 	const [llamadaPantalla, setLlamadaPantalla] = React.useState(false)
 	const classes = useStyles()
 	var socket = io.connect('http://172.19.39.179:5000', { 'forceNew': true })
@@ -190,7 +190,8 @@ export default function Chat() {
 		{ name: 'Audio' },
 		{ name: 'Video' }
 	]
-
+	var idEntrante = null
+	var avatarEntrante = null
 	const archivos = [
 		{ name: 'File' },
 		{ name: 'Images' }
@@ -222,10 +223,6 @@ export default function Chat() {
 		}
 		var datos = { id1: `${selectedFriend}_user_${user.uid}`, id2: `${user.uid}_user_${selectedFriend}` }
 		socket.emit('enviarMensaje', data, datos)
-		socket.on('mensaje/respuesta', message => {
-			setChat(prevState => [...prevState, message])
-			scrollBottom()
-		})
 	}
 
 	const tecla = (e) => {
@@ -378,41 +375,35 @@ export default function Chat() {
 		);
 	}
 
-	React.useEffect(() => {
+	const iniciar = () => {
 		socket.emit('usuarios')
 		socket.on('usuarios/respuesta', usuarios => {
 			setFriends(usuarios)
 			setFriendisLoading(false)
 		})
 		setChat([])
-		// socket.on('mensaje/respuesta', message => {
-		// 	setInfoNotificacion({ avatar: message.avatar, texto: message.text })
-		// 	setNotificacion(true)
-		// })
-	}, [])
+	}
 
-	React.useEffect(() => {
+	const conversacion = () => {
 		if (selectedFriend) {
 			setInfoNotificacion({})
 			setNotificacion(false)
 			setNotificacion2(false)
 
-			//construyo el array de mensajes
 			var data = { id1: `${selectedFriend}_user_${user.uid}`, id2: `${user.uid}_user_${selectedFriend}` }
 			socket.emit('conversation', data)
 			socket.on('conversation/respuesta', result => {
-				console.log('recibi un mensaje')
+				console.log(result)
 				setChat(result)
 				setChatIsLoading(false)
 				scrollBottom()
 			})
-
-			// socket.on('mensaje/respuesta', message => {
-			// 	setChat(prevState => [...prevState, message])
-			// 	scrollBottom()
-			// })
 		}
-	}, [selectedFriend])
+	}
+
+	React.useEffect(iniciar, [])
+
+	React.useEffect(conversacion, [selectedFriend, chat])
 
 	// React.useEffect(() => {
 	// 	CometChat.addCallListener(

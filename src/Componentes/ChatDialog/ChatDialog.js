@@ -15,7 +15,7 @@ import FacebookIcon from '@material-ui/icons/Facebook';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Config from '../Config/Config';
 import gapi from 'gapi-client';
-import consumeWSChat from '../Config/WebServiceChat';
+// import consumeWSChat from '../Config/WebServiceChat';
 // import { CometChat } from '@cometchat-pro/chat';
 
 
