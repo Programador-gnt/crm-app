@@ -221,8 +221,11 @@ export default function Chat() {
 			category: 'message',
 			avatar: user.avatar
 		}
-		var datos = { id1: `${selectedFriend}_user_${user.uid}`, id2: `${user.uid}_user_${selectedFriend}` }
-		socket.emit('enviarMensaje', data, datos)
+		socket.emit('enviarMensaje', data)
+		socket.on('mensaje/respuesta', message => {
+			setChat(prevState => [...prevState, message]);
+			scrollBottom()
+		})
 	}
 
 	const tecla = (e) => {
@@ -235,9 +238,13 @@ export default function Chat() {
 
 	const scrollBottom = () => {
 		var node = document.getElementById("lista");
-		const bottom = node.scrollHeight - node.scrollTop === node.clientHeight;
-		if (!bottom) {
-			node.scrollTop = node.scrollHeight;
+		if (chat.length === 0) {
+
+		} else {
+			const bottom = node.scrollHeight - node.scrollTop === node.clientHeight;
+			if (!bottom) {
+				node.scrollTop = node.scrollHeight;
+			}
 		}
 	}
 
@@ -381,7 +388,6 @@ export default function Chat() {
 			setFriends(usuarios)
 			setFriendisLoading(false)
 		})
-		setChat([])
 	}
 
 	const conversacion = () => {
@@ -393,7 +399,6 @@ export default function Chat() {
 			var data = { id1: `${selectedFriend}_user_${user.uid}`, id2: `${user.uid}_user_${selectedFriend}` }
 			socket.emit('conversation', data)
 			socket.on('conversation/respuesta', result => {
-				console.log(result)
 				setChat(result)
 				setChatIsLoading(false)
 				scrollBottom()
