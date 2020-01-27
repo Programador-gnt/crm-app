@@ -1,6 +1,34 @@
 import React from 'react';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Paper from '@material-ui/core/Paper';
+import {
+	CssBaseline,
+	Paper,
+	Snackbar,
+	IconButton,
+	Typography,
+	LinearProgress,
+	Dialog,
+	ListItemText,
+	ListItem,
+	List,
+	Divider,
+	AppBar,
+	Toolbar,
+	Slide,
+	Fab,
+	Avatar,
+	ListItemAvatar,
+	CircularProgress,
+	DialogTitle,
+	DialogContent,
+	DialogActions,
+	Hidden,
+	Grid,
+	Button,
+	TextField,
+	Select,
+	MenuItem
+} from '@material-ui/core';
+
 import { makeStyles } from '@material-ui/core/styles';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -13,39 +41,14 @@ import timelinePlugin from '@fullcalendar/timeline';
 // import gapi from 'gapi-client';
 // import Config from '../Config/Config';
 // import consumeWSCalendar from '../Config/WebServiceCalendar';
-import Snackbar from '@material-ui/core/Snackbar';
-import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
-import Typography from '@material-ui/core/Typography';
-import LinearProgress from '@material-ui/core/LinearProgress';
-import Dialog from '@material-ui/core/Dialog';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItem from '@material-ui/core/ListItem';
-import List from '@material-ui/core/List';
-import Divider from '@material-ui/core/Divider';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Slide from '@material-ui/core/Slide';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
-import Fab from '@material-ui/core/Fab';
-import Avatar from '@material-ui/core/Avatar';
 import GroupIcon from '@material-ui/icons/Group';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import DescriptionOutlinedIcon from '@material-ui/icons/DescriptionOutlined';
 import EventOutlinedIcon from '@material-ui/icons/EventOutlined';
 import ScheduleOutlinedIcon from '@material-ui/icons/ScheduleOutlined';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import { green } from '@material-ui/core/colors';
 import clsx from 'clsx';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogActions from '@material-ui/core/DialogActions';
-import Hidden from '@material-ui/core/Hidden';
-import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
 import InvertColorsIcon from '@material-ui/icons/InvertColors';
 import consumeWSChat from '../Config/WebServiceChat';
 import PersonAddOutlinedIcon from '@material-ui/icons/PersonAddOutlined';
@@ -55,7 +58,8 @@ import PersonAddOutlinedIcon from '@material-ui/icons/PersonAddOutlined';
 const useStyles = makeStyles(theme => ({
 	root: {
 		width: '100%',
-		marginTop: theme.spacing(10)
+		marginTop: theme.spacing(8),
+		paddingLeft: theme.spacing(4)
 	},
 	close: {
 		padding: theme.spacing(0.5)
@@ -799,33 +803,35 @@ export default function Calendario() {
 					</ListItem>
 				</List>
 			</Dialog>
-			<Paper elevation={4} className={classes.root}>
-				<FullCalendar
-					selectable={true}
-					select={dialogEventoNuevo}
-					weekNumbers={true}
-					editable={true}
-					eventDrop={eventDrag}
-					eventResize={eventDrag}
-					defaultView='dayGridMonth'
-					plugins={[dayGridPlugin, interactionPlugin, timeGrid, timelinePlugin, resourceTimelinePlugin, bootstrapPlugin, listPlugin]}
-					themeSystem='standart'
-					events={eventosGoogle.length ? eventosGoogle : ''}
-					header={header}
-					// locale={datos.locale}
-					locale='es'
-					eventClick={eventClick}
-					eventLimit={true}
-					eventTextColor='#fff'
-					eventBorderColor='rgba(0, 0, 0, 0)'
-					navLinks={true}
-					schedulerLicenseKey='GPL-My-Project-Is-Open-Source'
-					slotDuration='00:15'
-					nowIndicator={true}
-					buttonText={botones}
-					eventTimeFormat={formatoTiempo}
-				/>
-			</Paper>
+			<Grid className={classes.root}>
+				<Grid item xs={12}>
+					<FullCalendar
+						selectable={true}
+						select={dialogEventoNuevo}
+						weekNumbers={true}
+						editable={true}
+						eventDrop={eventDrag}
+						eventResize={eventDrag}
+						defaultView='dayGridMonth'
+						plugins={[dayGridPlugin, interactionPlugin, timeGrid, timelinePlugin, resourceTimelinePlugin, bootstrapPlugin, listPlugin]}
+						themeSystem='standart'
+						events={eventosGoogle.length ? eventosGoogle : ''}
+						header={header}
+						// locale={datos.locale}
+						locale='es'
+						eventClick={eventClick}
+						eventLimit={true}
+						eventTextColor='#fff'
+						eventBorderColor='rgba(0, 0, 0, 0)'
+						navLinks={true}
+						schedulerLicenseKey='GPL-My-Project-Is-Open-Source'
+						slotDuration='00:15'
+						nowIndicator={true}
+						buttonText={botones}
+						eventTimeFormat={formatoTiempo}
+					/>
+				</Grid>
+			</Grid>
 		</React.Fragment>
 	);
 }

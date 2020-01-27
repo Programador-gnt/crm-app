@@ -1,5 +1,5 @@
 import React from 'react';
-import { HashRouter, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Box from '@material-ui/core/Box';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import './App.scss';
@@ -7,7 +7,7 @@ import './App.scss';
 const loading = () => {
 	return (
 		<Box position="absolute" top="50%" left="50%">
-			<CircularProgress color='primary'/>
+			<CircularProgress color='primary' />
 		</Box>
 	);
 }
@@ -17,14 +17,14 @@ function App() {
 	const Layout = React.lazy(() => import('./Componentes/Layout/Layout'));
 
 	return (
-		<HashRouter>
+		<Router>
 			<React.Suspense fallback={loading()}>
 				<Switch>
 					<Route exact path='/login' name='Login' render={props => <Login {...props} />} />
 					<Route path='/' name='Inicio' render={props => <Layout {...props} />} />
 				</Switch>
 			</React.Suspense>
-		</HashRouter>
+		</Router>
 	);
 }
 export default App;

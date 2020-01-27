@@ -19,7 +19,7 @@ import deepOrange from '@material-ui/core/colors/deepOrange';
 import brown from '@material-ui/core/colors/brown';
 import gray from '@material-ui/core/colors/grey';
 import blueGray from '@material-ui/core/colors/blueGrey';
-import Config from '../Config/Config'
+import api from '../constants/api'
 
 const colors = {
 	red: {
@@ -167,9 +167,9 @@ const getType = (typeId) => {
 	return types[typeId];
 };
 
-const defaultPrimaryColor = getColor(`${Config.primary_color}`);
-const defaultSecondaryColor = getColor(`${Config.secondary_color}`);
-const defaultType = getType(`${Config.type}`);
+const defaultPrimaryColor = getColor(`${api.primary_color}`);
+const defaultSecondaryColor = getColor(`${api.secondary_color}`);
+const defaultType = getType(`${api.type}`);
 
 const defaultTheme = createMuiTheme({
 	palette: {

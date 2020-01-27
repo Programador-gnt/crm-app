@@ -1,38 +1,22 @@
 import React from 'react';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Paper from '@material-ui/core/Paper';
+import { Grid, CssBaseline, ListItemText, ListItem, List, ListItemAvatar, Avatar, Fade, Backdrop, Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText, Slide, Button, IconButton } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItem from '@material-ui/core/ListItem';
-import List from '@material-ui/core/List';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import Avatar from '@material-ui/core/Avatar';
-import { Redirect } from 'react-router-dom';
-import Fade from '@material-ui/core/Fade';
+import { Redirect, Link } from 'react-router-dom';
 import AddIcon from '@material-ui/icons/Add';
 import SpeedDial from '@material-ui/lab/SpeedDial';
 import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
-import Backdrop from '@material-ui/core/Backdrop';
 import MenuIcon from '@material-ui/icons/Menu';
 import DomainIcon from '@material-ui/icons/Domain';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Slide from '@material-ui/core/Slide';
-import Button from '@material-ui/core/Button';
 import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
-import IconButton from '@material-ui/core/IconButton';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import FindInPageOutlinedIcon from '@material-ui/icons/FindInPageOutlined';
 import consumeWSChat from '../Config/WebServiceChat';
-import { Link } from 'react-router-dom'
 
 const useStyles = makeStyles(theme => ({
 	root: {
 		width: '100%',
-		marginTop: theme.spacing(10)
+		marginTop: theme.spacing(8),
+		paddingLeft: theme.spacing(4)
 	},
 	avatar: {
 		backgroundColor: theme.palette.secondary.main
@@ -149,34 +133,36 @@ export default function Clientes() {
 				</DialogActions>
 			</Dialog>
 			<Fade in={true} timeout={1000}>
-				<Paper elevation={4} className={classes.root}>
-					<List>
-						{empresas.length ?
-							empresas.map((empr, index) => (
-								<ListItem key={index} button divider={true}>
-									<ListItemAvatar>
-										<Avatar className={classes.avatar}>
-											<DomainIcon />
-										</Avatar>
-									</ListItemAvatar>
-									<ListItemText primary={empr.razonsocial} secondary={empr.pais === '1' ? 'Perú' : empr.pais === '2' ? 'Estados Unídos' : empr.pais === '3' ? 'Italia' : ''} />
-									<Link to={`/empresas/info?id=${empr.id_empresas}`}><IconButton aria-label="información">
-										<FindInPageOutlinedIcon color='primary' />
-									</IconButton></Link>
-									<IconButton aria-label="editar" onClick={() => alert('editar empresa ' + empr.id_empresas)}>
-										<EditOutlinedIcon color='primary' />
-									</IconButton>
-									<IconButton aria-label="eliminar" onClick={() => MensajeEliminar(empr.id_empresas, empr.razonsocial)}>
-										<DeleteOutlineOutlinedIcon color='error' />
-									</IconButton>
+				<Grid className={classes.root}>
+					<Grid item xs={12}>
+						<List>
+							{empresas.length ?
+								empresas.map((empr, index) => (
+									<ListItem key={index} button divider={true}>
+										<ListItemAvatar>
+											<Avatar className={classes.avatar}>
+												<DomainIcon />
+											</Avatar>
+										</ListItemAvatar>
+										<ListItemText primary={empr.razonsocial} secondary={empr.pais === '1' ? 'Perú' : empr.pais === '2' ? 'Estados Unídos' : empr.pais === '3' ? 'Italia' : ''} />
+										<Link to={`/empresas/info?id=${empr.id_empresas}`}><IconButton aria-label="información">
+											<FindInPageOutlinedIcon color='primary' />
+										</IconButton></Link>
+										<IconButton aria-label="editar" onClick={() => alert('editar empresa ' + empr.id_empresas)}>
+											<EditOutlinedIcon color='primary' />
+										</IconButton>
+										<IconButton aria-label="eliminar" onClick={() => MensajeEliminar(empr.id_empresas, empr.razonsocial)}>
+											<DeleteOutlineOutlinedIcon color='error' />
+										</IconButton>
+									</ListItem>
+								)) :
+								<ListItem>
+									<ListItemText primary='No hay Empresas agregadas' />
 								</ListItem>
-							)) :
-							<ListItem>
-								<ListItemText primary='No hay Empresas agregadas' />
-							</ListItem>
-						}
-					</List>
-				</Paper>
+							}
+						</List>
+					</Grid>
+				</Grid>
 			</Fade>
 		</React.Fragment>
 	);

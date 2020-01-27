@@ -1,48 +1,51 @@
 import React from 'react';
-import CssBaseline from '@material-ui/core/CssBaseline';
+import {
+	CssBaseline,
+	Box,
+	CircularProgress,
+	Paper,
+	ListItemText,
+	ListItem,
+	List,
+	ListItemAvatar,
+	Avatar,
+	Fade,
+	AppBar,
+	Toolbar,
+	Slide,
+	Dialog,
+	IconButton,
+	Typography,
+	LinearProgress,
+	TextField,
+	Grid,
+	Zoom,
+	Snackbar,
+	DialogTitle,
+	DialogContent,
+	DialogActions,
+	Button,
+	Link
+} from '@material-ui/core';
 import { CometChat } from '@cometchat-pro/chat';
-import Box from '@material-ui/core/Box';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/core/styles';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItem from '@material-ui/core/ListItem';
-import List from '@material-ui/core/List';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import Avatar from '@material-ui/core/Avatar';
-import Fade from '@material-ui/core/Fade';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Slide from '@material-ui/core/Slide';
-import Dialog from '@material-ui/core/Dialog';
-import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
-import Typography from '@material-ui/core/Typography';
-import LinearProgress from '@material-ui/core/LinearProgress';
-import TextField from '@material-ui/core/TextField';
-import Grid from '@material-ui/core/Grid';
-import Zoom from '@material-ui/core/Zoom';
-import Snackbar from '@material-ui/core/Snackbar';
 import SpeedDial from '@material-ui/lab/SpeedDial';
 import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
 import CallEndOutlinedIcon from '@material-ui/icons/CallEndOutlined';
 import CallOutlinedIcon from '@material-ui/icons/CallOutlined';
 import VideocamOutlinedIcon from '@material-ui/icons/VideocamOutlined';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogActions from '@material-ui/core/DialogActions';
-import Button from '@material-ui/core/Button';
 import AttachFileOutlinedIcon from '@material-ui/icons/AttachFileOutlined';
 import InsertDriveFileOutlinedIcon from '@material-ui/icons/InsertDriveFileOutlined';
 import ImageOutlinedIcon from '@material-ui/icons/ImageOutlined';
-import Link from '@material-ui/core/Link';
 import io from 'socket.io-client';
 // import consumeWSChat from '../Config/WebServiceChat';
 
 const useStyles = makeStyles(theme => ({
 	root: {
 		width: '100%',
-		marginTop: theme.spacing(10)
+		marginTop: theme.spacing(8),
+		paddingLeft: theme.spacing(4)
 	},
 	close: {
 		padding: theme.spacing(0.5)
@@ -410,166 +413,6 @@ export default function Chat() {
 
 	React.useEffect(conversacion, [selectedFriend, chat])
 
-	// React.useEffect(() => {
-	// 	CometChat.addCallListener(
-	// 		listenerID,
-	// 		new CometChat.CallListener({
-	// 			onIncomingCallReceived(call) {
-	// 				var llamadaEntrante = [call]
-	// 				setAvatarEntrante(llamadaEntrante[0].callInitiator.avatar)
-	// 				setDialogEntrante(true)
-	// 				setIdEntrante(llamadaEntrante[0].sessionId)
-	// 			},
-
-	// 			onOutgoingCallAccepted(call) {
-	// 				var sessionID = call.sessionID;
-
-	// 				CometChat.startCall(sessionID, document.getElementById("callScreen"),
-	// 					new CometChat.OngoingCallListener({
-	// 						onUserJoined: () => {
-	// 						},
-	// 						onUserLeft: () => {
-	// 							setLlamadaPantalla(false)
-	// 						},
-	// 						onCallEnded: () => {
-	// 							setLlamadaPantalla(false)
-	// 						}
-	// 					})
-	// 				);
-	// 			},
-
-	// 			onOutgoingCallRejected: () => {
-	// 				setDialogSaliente(false)
-	// 			},
-	// 			onIncomingCallCancelled: () => {
-	// 				setDialogEntrante(false)
-	// 			}
-	// 		})
-	// 	);
-
-	// 	CometChat.addMessageListener(listenerID,
-	// 		new CometChat.MessageListener({
-	// 			onTextMessageReceived: message => {
-	// 				setInfoNotificacion({ avatar: message.sender.avatar, texto: message.text, nombre: message.sender.uid })
-	// 				setNotificacion(true)
-	// 			},
-	// 			onMediaMessageReceived: () => {
-	// 			}
-	// 		})
-	// 	);
-
-	// 	CometChat.addUserListener(
-	// 		listenerID,
-	// 		new CometChat.UserListener({
-	// 			onUserOnline: onlineUser => {
-	// 				setInfoNotificacion({ avatar: onlineUser.avatar, nombre: onlineUser.uid })
-	// 				let usersRequest = new CometChat.UsersRequestBuilder()
-	// 					.setLimit(limit)
-	// 					.build();
-
-	// 				usersRequest.fetchNext().then(
-	// 					userList => {
-	// 						setFriends(userList);
-	// 						setFriendisLoading(false);
-	// 					},
-	// 					error => {
-	// 						console.log('Error al recibir lista: ', error);
-	// 					}
-	// 				);
-	// 				setNotificacion2(true)
-	// 			},
-	// 			onUserOffline: () => {
-	// 				let usersRequest = new CometChat.UsersRequestBuilder()
-	// 					.setLimit(limit)
-	// 					.build();
-
-	// 				usersRequest.fetchNext().then(
-	// 					userList => {
-	// 						setFriends(userList);
-	// 						setFriendisLoading(false);
-	// 					},
-	// 					error => {
-	// 						console.log('Error al recibir lista: ', error);
-	// 					}
-	// 				);
-	// 			}
-	// 		})
-	// 	);
-
-	// 	if (selectedFriend) {
-	// 		let messagesRequest = new CometChat.MessagesRequestBuilder()
-	// 			.setUID(selectedFriend)
-	// 			.setLimit(limit)
-	// 			.build();
-
-	// 		messagesRequest.fetchPrevious().then(
-	// 			messages => {
-	// 				setChat(messages);
-	// 				setChatIsLoading(false);
-	// 				scrollBottom()
-	// 			},
-	// 			error => {
-	// 				console.log('Error la recibir mensajes:', error);
-	// 			}
-	// 		);
-
-	// 		CometChat.removeMessageListener(MESSAGE_LISTENER_KEY);
-
-	// 		CometChat.addCallListener(listenerID,
-	// 			new CometChat.CallListener({
-	// 				onIncomingCallReceived(call) {
-	// 					var llamadaEntrante = [call]
-	// 					setAvatarEntrante(llamadaEntrante[0].callInitiator.avatar)
-	// 					setDialogEntrante(true)
-	// 					setIdEntrante(llamadaEntrante[0].sessionId)
-	// 				},
-
-	// 				onOutgoingCallAccepted(call) {
-	// 					var sessionID = call.sessionID;
-	// 					setDialogSaliente(false)
-	// 					setLlamadaPantalla(true)
-
-	// 					CometChat.startCall(sessionID, document.getElementById("callScreen"),
-	// 						new CometChat.OngoingCallListener({
-	// 							onUserJoined: () => {
-	// 							},
-	// 							onUserLeft: () => {
-	// 								setLlamadaPantalla(false)
-	// 							},
-	// 							onCallEnded: () => {
-	// 								setLlamadaPantalla(false)
-	// 							}
-	// 						})
-	// 					);
-	// 				},
-
-	// 				onOutgoingCallRejected: () => {
-	// 					setDialogSaliente(false)
-	// 				},
-	// 				onIncomingCallCancelled: () => {
-	// 					setDialogEntrante(false)
-	// 					setDialogSaliente(false)
-	// 				}
-	// 			})
-	// 		);
-
-	// 		CometChat.addMessageListener(listenerID,
-	// 			new CometChat.MessageListener({
-	// 				onTextMessageReceived: message => {
-	// 					if (selectedFriend === message.sender.uid) {
-	// 						setChat(prevState => [...prevState, message]);
-	// 						scrollBottom()
-	// 					}
-	// 				},
-	// 				onMediaMessageReceived: mediaMessage => {
-	// 					if (selectedFriend === mediaMessage.sender.uid) {
-	// 						setChat(prevState => [...prevState, mediaMessage]);
-	// 					}
-	// 				},
-	// 			})
-	// 		);
-	// 	}
-	// }, [selectedFriend]);
 
 	if (friendisLoading) {
 		return (
@@ -726,19 +569,21 @@ export default function Chat() {
 					</Grid>
 				</Dialog>
 				<Fade in={true} timeout={1000}>
-					<Paper elevation={4} className={classes.root}>
-						<List>
-							{friends.map((lista, index) => (
-								lista.uid === user.uid ? null :
-									<ListItem key={index} button divider={true} onClick={() => selectFriend(lista.uid, lista.avatar)}>
-										<ListItemAvatar>
-											<Avatar src={lista.avatar} />
-										</ListItemAvatar>
-										<ListItemText primary={lista.name} secondary={`${lista.uid} - ${lista.status}`} />
-									</ListItem>
-							))}
-						</List>
-					</Paper>
+					<Grid className={classes.root}>
+						<Grid item xs={12}>
+							<List>
+								{friends.map((lista, index) => (
+									lista.uid === user.uid ? null :
+										<ListItem key={index} button divider={true} onClick={() => selectFriend(lista.uid, lista.avatar)}>
+											<ListItemAvatar>
+												<Avatar src={lista.avatar} />
+											</ListItemAvatar>
+											<ListItemText primary={lista.name} secondary={`${lista.uid} - ${lista.status}`} />
+										</ListItem>
+								))}
+							</List>
+						</Grid>
+					</Grid>
 				</Fade>
 			</React.Fragment>
 		);

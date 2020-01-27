@@ -21,6 +21,7 @@
 		"@material-ui/icons": "^4.5.1",
 		"@material-ui/lab": "^4.0.0-alpha.39",
 		"@material-ui/pickers": "^3.2.7",
+		"axios": "^0.19.2",
 		"b64-to-blob": "^1.2.19",
 		"buildmail": "^4.0.1",
 		"date-fns": "^2.8.1",
@@ -45,7 +46,7 @@
 	},
 	"homepage": ".",
 	"scripts": {
-		"start": "react-scripts start",
+		"mikitix": "react-scripts start",
 		"build": "react-scripts build",
 		"test": "react-scripts test",
 		"eject": "react-scripts eject",

@@ -9,10 +9,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
-import Divider from '@material-ui/core/Divider';
 import TextField from '@material-ui/core/TextField';
 import Fab from '@material-ui/core/Fab';
-import AddIcon from '@material-ui/icons/Add';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItem from '@material-ui/core/ListItem';
 import List from '@material-ui/core/List';
@@ -23,13 +21,6 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import MenuItem from '@material-ui/core/MenuItem';
 import PhoneAndroidOutlinedIcon from '@material-ui/icons/PhoneAndroidOutlined';
-import MailOutlineOutlinedIcon from '@material-ui/icons/MailOutlineOutlined';
-import FacebookIcon from '@material-ui/icons/Facebook';
-import InstagramIcon from '@material-ui/icons/Instagram';
-import TwitterIcon from '@material-ui/icons/Twitter';
-import LinkedInIcon from '@material-ui/icons/LinkedIn';
-import YouTubeIcon from '@material-ui/icons/YouTube';
-import CallOutlinedIcon from '@material-ui/icons/CallOutlined';
 import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -42,6 +33,14 @@ import consumeWSChat from '../Config/WebServiceChat';
 import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
+import CakeOutlinedIcon from '@material-ui/icons/CakeOutlined';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import GetAppOutlinedIcon from '@material-ui/icons/GetAppOutlined';
+import Checkbox from '@material-ui/core/Checkbox';
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -60,7 +59,7 @@ const useStyles = makeStyles(theme => ({
 		marginRight: theme.spacing(2),
 		marginTop: theme.spacing(12),
 		[theme.breakpoints.up(600 + theme.spacing(2) * 2)]: {
-			width: 1000,
+			width: 800,
 			marginLeft: 'auto',
 			marginRight: 'auto',
 		},
@@ -101,6 +100,9 @@ const useStyles = makeStyles(theme => ({
 	title: {
 		marginLeft: theme.spacing(2),
 		flex: 1,
+	},
+	table: {
+		minWidth: 650,
 	}
 }));
 
@@ -112,19 +114,27 @@ const actions = [
 
 export default function Nuevo(props) {
 	const [open, setOpen] = React.useState(false)
-	const [arrayTelefono, setArrayTelefono] = React.useState([])
-	const [arrayCorreo, setArrayCorreo] = React.useState([])
-	const [arrayRedes, setArrayRedes] = React.useState([])
-	const [arrayDireccion, setArrayDireccion] = React.useState([])
 	const [dialogDireccion, setDialogDireccion] = React.useState(false)
 	const [aviso, setAviso] = React.useState(false)
+	const [listaActiva, setListaActiva] = React.useState(null)
+	const [listaActivaTelefono, setListaActivaTelefono] = React.useState(null)
+	const [listaActivaFechas, setListaActivaFechas] = React.useState(null)
+	const [listaActivaCorreo, setListaActivaCorreo] = React.useState(null)
+	const [listaActivaRedes, setListaActivaRedes] = React.useState(null)
+	const [cargos, setCargos] = React.useState([])
 	const [empresa, setEmpresa] = React.useState({
 		tdocumento: 1,
 		tdireccion: 1,
 		pais: 1,
 		ttelefono: 1,
 		tcorreo: 1,
-		tsocial: 1
+		tsocial: 1,
+		basc: false,
+		cadenasuministros: false,
+		despachocarga: false,
+		trazabilidad: false,
+		personalentrenado: false,
+		apoyoinfo: false
 	})
 	const classes = useStyles()
 
@@ -158,37 +168,81 @@ export default function Nuevo(props) {
 		}
 	}
 
-	const agregarTelefono = () => {
-		setArrayTelefono([...arrayTelefono, { numero: empresa.telefono, tipo: empresa.ttelefono }])
+	const conusltarCargos = () => {
+		consumeWSChat('GET', 'contactos/empresa', '', `?empresa=${empresa.razonsocial}`)
+			.then(respuesta => {
+				setCargos(respuesta)
+			})
 	}
 
-	const eliminarTelefono = (i) => {
-		setArrayTelefono(arrayTelefono.splice(i))
+	const agregarTelefono = () => {
+		setListaActiva(true)
+	}
+
+	const eliminarTelefono = () => {
+		setListaActiva(false)
+		document.getElementById('telefono').focus();
+		setEmpresa({
+			...empresa,
+			telefono: ''
+		})
+	}
+
+	const agregarFechaImportante = () => {
+		setListaActivaFechas(true)
+	}
+
+	const eliminarFechaImportante = () => {
+		setListaActivaFechas(false)
+		document.getElementById('fechaimportante').focus();
+		setEmpresa({
+			...empresa,
+			fechaimportante: ''
+		})
 	}
 
 	const agregarCorreo = () => {
-		setArrayCorreo([...arrayCorreo, { direccion: empresa.correo, tipo: empresa.tcorreo }])
+		setListaActivaCorreo(true)
 	}
 
 	const eliminarCorreo = (i) => {
-		setArrayCorreo(arrayCorreo.splice(i))
+		setListaActivaCorreo(false)
+		document.getElementById('correo').focus();
+		setEmpresa({
+			...empresa,
+			correo: ''
+		})
 	}
 
 	const agregarRedes = () => {
-		setArrayRedes([...arrayRedes, { nombre: empresa.social, tipo: empresa.tsocial }])
+		setListaActivaRedes(true)
 	}
 
 	const eliminarRedes = (i) => {
-		setArrayRedes(arrayRedes.splice(i))
+		setListaActivaRedes(false)
+		document.getElementById('social').focus();
+		setEmpresa({
+			...empresa,
+			social: ''
+		})
 	}
 
 	const agregarDireccion = () => {
-		setArrayDireccion([...arrayDireccion, { pais: empresa.pais, direccion1: empresa.direccion1, direccion2: empresa.direccion2, departamento: empresa.departamento, provincia: empresa.provincia, distrito: empresa.distrito }])
+		setListaActivaTelefono(true)
 		setDialogDireccion(false)
 	}
 
-	const eliminarDireccion = (i) => {
-		setArrayDireccion(arrayDireccion.splice(i))
+	const eliminarDireccion = () => {
+		setListaActivaTelefono(false)
+		setDialogDireccion(true)
+		setEmpresa({
+			...empresa,
+			direccion1: '',
+			direccion2: '',
+			departamento: '',
+			provincia: '',
+			distrito: ''
+		})
 	}
 
 	const onChangeEmpresa = (e) => {
@@ -209,6 +263,7 @@ export default function Nuevo(props) {
 	const handleCloseMensaje = () => {
 		setAviso(false)
 	};
+
 
 	return (
 		<React.Fragment>
@@ -493,11 +548,11 @@ export default function Nuevo(props) {
 								type="text"
 							/>
 						</Grid>
-						<Grid item xs={12} sm={6} />
 						<Grid item xs={12} sm={6}>
 							<TextField
 								name='razonsocial'
 								value={empresa.razonsocial}
+								className={classes.texto}
 								margin='normal'
 								onChange={onChangeEmpresa}
 								fullWidth
@@ -506,60 +561,37 @@ export default function Nuevo(props) {
 								type="text"
 							/>
 						</Grid>
-						<Grid item xs={12} sm={6} />
-						<Divider />
 					</Grid>
 					<Grid container spacing={2}>
 						<Grid item xs={12}>
 							<Typography variant="h6"  >
-								Direcciones
+								Dirección
 						    </Typography>
 						</Grid>
-						<Grid item xs={12} sm={4}>
+						<Grid item xs={12} sm={1}>
 							<Fab color='secondary' size='small' className={classes.texto} aria-label='agregar' onClick={() => setDialogDireccion(true)}>
 								<HomeOutlinedIcon />
 							</Fab>
 						</Grid>
-						<Grid item xs={12} sm={12}>
+						<Grid item xs={12} sm={11}>
 							<List>
-								{arrayDireccion.length > 0 ?
-									arrayDireccion.map((drc, index) => (
-										<ListItem key={index}>
-											<ListItemAvatar>
-												<DomainIcon color='secondary' />
-											</ListItemAvatar>
-											<ListItemText primary={`${drc.direccion1}, ${drc.direccion2}`} secondary={`${drc.distrito}, ${drc.provincia}, ${drc.pais}`} />
-											<DeleteOutlineOutlinedIcon color='error' onClick={() => eliminarDireccion(index)} style={{ cursor: 'pointer' }} />
-										</ListItem>
-									))
+								{listaActivaTelefono ?
+									<ListItem>
+										<ListItemAvatar>
+											<DomainIcon color='secondary' />
+										</ListItemAvatar>
+										<ListItemText primary={`${empresa.direccion1}, ${empresa.direccion2}`} secondary={`${empresa.distrito}, ${empresa.provincia}, ${empresa.pais === 1 ? 'Perú' : 'otro país'}`} />
+										<DeleteOutlineOutlinedIcon color='error' onClick={() => eliminarDireccion()} style={{ cursor: 'pointer' }} />
+									</ListItem>
 									:
 									<ListItem>
 										<ListItemText primary='No hay direcciones agregadas' />
 									</ListItem>
 								}
 							</List>
-							<Divider />
 						</Grid>
 					</Grid>
 					<Grid container spacing={2}>
-						<Grid item xs={12}>
-							<Typography variant="h6"  >
-								Teléfonos
-						    </Typography>
-						</Grid>
-						<Grid item xs={12} sm={4}>
-							<TextField
-								name='telefono'
-								value={empresa.telefono}
-								margin='normal'
-								fullWidth
-								label="Teléfono"
-								onChange={onChangeEmpresa}
-								placeholder="Ingrese número de teléfono"
-								helperText='número de teléfono'
-								type="text"
-							/>
-						</Grid>
 						<Grid item xs={12} sm={4}>
 							<TextField
 								select
@@ -577,52 +609,539 @@ export default function Nuevo(props) {
 								<MenuItem value={3}>Fijo</MenuItem>
 							</TextField>
 						</Grid>
-						<Grid item xs={12} sm={3}>
-							<Fab color='secondary' size='small' className={classes.texto} aria-label='agregar' onClick={() => agregarTelefono()}>
-								<AddIcon />
-							</Fab>
+						<Grid item xs={12} sm={4}>
+							<TextField
+								name='telefono'
+								id='telefono'
+								value={empresa.telefono}
+								margin='normal'
+								fullWidth
+								label="Teléfono"
+								onKeyDown={e => { if (e.keyCode === 13) { agregarTelefono() } }}
+								onChange={onChangeEmpresa}
+								placeholder="Ingrese número de teléfono"
+								helperText='presiona Enter'
+								type="text"
+							/>
 						</Grid>
-						<Grid item xs={12} sm={12}>
+						<Grid item xs={12} sm={4}>
 							<List>
-								{arrayTelefono.length > 0 ?
-									arrayTelefono.map((tlf, index) => (
-										<ListItem key={index}>
-											<ListItemAvatar>
-												<PhoneAndroidOutlinedIcon color='secondary' />
-											</ListItemAvatar>
-											<ListItemText primary={tlf.numero} secondary={tlf.tipo === 1 ? 'Personal' : tlf.tipo === 2 ? 'Trabajo' : tlf.tipo === 3 ? 'Trabajo' : ''} />
-											<CallOutlinedIcon color='primary' onClick={() => alert('llamando a ' + tlf.numero)} style={{ cursor: 'pointer' }} />
-											<DeleteOutlineOutlinedIcon color='error' onClick={() => eliminarTelefono(index)} style={{ cursor: 'pointer' }} />
-										</ListItem>
-									))
-									:
+								{listaActiva ?
 									<ListItem>
-										<ListItemText primary='No hay números agregados' />
+										<ListItemAvatar>
+											<PhoneAndroidOutlinedIcon color='primary' />
+										</ListItemAvatar>
+										<ListItemText primary={empresa.telefono} secondary={empresa.ttelefono === 1 ? 'Personal' : empresa.ttelefono === 2 ? 'Trabajo' : empresa.ttelefono === 3 ? 'Trabajo' : ''} />
+										<DeleteOutlineOutlinedIcon color='error' onClick={() => eliminarTelefono()} style={{ cursor: 'pointer' }} />
 									</ListItem>
-								}
+									: null}
 							</List>
-							<Divider />
 						</Grid>
 					</Grid>
 					<Grid container spacing={2}>
-						<Grid item xs={12}>
+						<Grid item xs={12} sm={4}>
+							<TextField
+								name='fechaactividades'
+								value={empresa.fechaactividades}
+								margin='normal'
+								fullWidth
+								label="Fecha de inicio de actividades"
+								onChange={onChangeEmpresa}
+								placeholder="Ingrese fecha"
+								helperText='ejemplo: 2016'
+								type="text"
+							/>
+						</Grid>
+						<Grid item xs={12} sm={4}>
+							<TextField
+								name='rubro'
+								value={empresa.rubro}
+								margin='normal'
+								fullWidth
+								label="Rubro"
+								onChange={onChangeEmpresa}
+								placeholder="Ingrese rubro"
+								helperText='ej: logística etc...'
+								type="text"
+							/>
+						</Grid>
+						<Grid item xs={12} sm={4}>
+							<TextField
+								name='pproductos'
+								value={empresa.pproductos}
+								margin='normal'
+								fullWidth
+								label="Principales productos"
+								onChange={onChangeEmpresa}
+								placeholder="servicios que comercializan"
+								helperText='productos que comercializan'
+								type="text"
+							/>
+						</Grid>
+					</Grid>
+					<Grid container spacing={2}>
+						<Grid item xs={12} sm={12}>
 							<Typography variant="h6"  >
-								Correos
+								Fechas importantes
 						    </Typography>
 						</Grid>
 						<Grid item xs={12} sm={4}>
 							<TextField
-								name='correo'
-								value={empresa.correo}
+								name='tfechaimportante'
+								value={empresa.tfechaimportante}
 								margin='normal'
 								fullWidth
-								label="Correo"
+								label="Tipo fecha"
 								onChange={onChangeEmpresa}
-								placeholder="Ingrese dirección de correo"
-								helperText='Dirección de correo'
+								placeholder="Ingrese fecha importante"
+								helperText='eje: aniversario'
 								type="text"
 							/>
 						</Grid>
+						<Grid item xs={12} sm={4}>
+							<TextField
+								name='fechaimportante'
+								id='fechaimportante'
+								value={empresa.fechaimportante}
+								margin='normal'
+								fullWidth
+								label="Fecha importante"
+								onChange={onChangeEmpresa}
+								onKeyDown={e => { if (e.keyCode === 13) { agregarFechaImportante() } }}
+								placeholder="dd/mm/YY"
+								helperText='presione Enter'
+								type="text"
+							/>
+						</Grid>
+						<Grid item xs={12} sm={4}>
+							<List>
+								{listaActivaFechas ?
+									<ListItem>
+										<ListItemAvatar>
+											<CakeOutlinedIcon color='primary' />
+										</ListItemAvatar>
+										<ListItemText primary={empresa.fechaimportante} secondary={empresa.tfechaimportante} />
+										<DeleteOutlineOutlinedIcon color='error' onClick={() => eliminarFechaImportante()} style={{ cursor: 'pointer' }} />
+									</ListItem>
+									: null}
+							</List>
+						</Grid>
+					</Grid>
+					<Grid container spacing={2}>
+						<Grid item xs={12} sm={12}>
+							<Table className={classes.table} aria-label="simple table">
+								<TableHead>
+									<TableRow>
+										<TableCell>Cargo</TableCell>
+										<TableCell align="right">Nombre</TableCell>
+										<TableCell align="right">DNI</TableCell>
+										<TableCell align="right">Correo</TableCell>
+										<TableCell align="right">Celular</TableCell>
+										<TableCell align="right"><GetAppOutlinedIcon color='secondary' style={{ cursor: 'pointer' }} onClick={() => conusltarCargos()} /></TableCell>
+									</TableRow>
+								</TableHead>
+								<TableBody>
+									{cargos.length ?
+										cargos.map((contactos, index) => (
+											<TableRow key={index}>
+												<TableCell component="th">{contactos.cargo}</TableCell>
+												<TableCell align="right">{contactos.name}</TableCell>
+												<TableCell align="right">{contactos.dni}</TableCell>
+												<TableCell align="right">{contactos.correo}</TableCell>
+												<TableCell align="right">{contactos.telefono}</TableCell>
+											</TableRow>
+										))
+										: null}
+								</TableBody>
+							</Table>
+						</Grid>
+					</Grid>
+					<Grid container spacing={2}>
+						<Grid item xs={12} sm={4}>
+							<TextField
+								name='emailfacturaelectronica'
+								value={empresa.emailfacturaelectronica}
+								margin='normal'
+								fullWidth
+								label="Envío de factura electrónica"
+								onChange={onChangeEmpresa}
+								placeholder="email@ejemplo.com"
+								helperText='ingrese un email'
+								type="text"
+							/>
+						</Grid>
+						<Grid item xs={12} sm={4}>
+							<TextField
+								name='empleados'
+								value={empresa.empleados}
+								margin='normal'
+								fullWidth
+								label="Cantidad de empleados"
+								onChange={onChangeEmpresa}
+								placeholder="Cantidad"
+								helperText='ingrese una cantidad'
+								type="text"
+							/>
+						</Grid>
+						<Grid item xs={12} sm={4}>
+							<TextField
+								name='obreros'
+								value={empresa.obreros}
+								margin='normal'
+								fullWidth
+								label="Cantidad de obreros"
+								onChange={onChangeEmpresa}
+								placeholder="Cantidad"
+								helperText='ingrese una cantidad'
+								type="text"
+							/>
+						</Grid>
+					</Grid>
+					<Grid container spacing={2}>
+						<Grid item xs={12}>
+							<Typography variant='h6'>Datos de seguridad</Typography>
+						</Grid>
+						<Grid item xs={12}>
+							<List>
+								<ListItem button>
+									<ListItemText primary='Cuenta con certificación BASC' />
+									<Checkbox
+										checked={empresa.basc}
+										name='basc'
+										onChange={e => { setEmpresa({ ...empresa, [e.target.name]: e.target.checked }) }}
+										color='primary'
+									/>
+								</ListItem>
+								<ListItem button>
+									<ListItemText primary='Cuenta con alguna certificación de seguridad en la cadena de suministros' />
+									<Checkbox
+										checked={empresa.cadenasuministros}
+										name='cadenasuministros'
+										onChange={e => { setEmpresa({ ...empresa, [e.target.name]: e.target.checked }) }}
+										color='primary'
+									/>
+								</ListItem>
+								<ListItem button>
+									<ListItemText primary='Cuenta con protocolos de seguridad para la manipulación de y despacho de carga' />
+									<Checkbox
+										checked={empresa.despachocarga}
+										name='despachocarga'
+										onChange={e => { setEmpresa({ ...empresa, [e.target.name]: e.target.checked }) }}
+										color='primary'
+									/>
+								</ListItem>
+								<ListItem button>
+									<ListItemText primary='Cuenta con procedimiento de trazabilidad de la carga de exportación e importación' />
+									<Checkbox
+										checked={empresa.trazabilidad}
+										name='trazabilidad'
+										onChange={e => { setEmpresa({ ...empresa, [e.target.name]: e.target.checked }) }}
+										color='primary'
+									/>
+								</ListItem>
+								<ListItem button>
+									<ListItemText primary='Cuenta con personal seleccionado y entrenado en seguridad en la cadena de suministros' />
+									<Checkbox
+										checked={empresa.personalentrenado}
+										name='personalentrenado'
+										onChange={e => { setEmpresa({ ...empresa, [e.target.name]: e.target.checked }) }}
+										color='primary'
+									/>
+								</ListItem>
+								<ListItem button>
+									<ListItemText primary='Desearía que NEW TRANSPORT apoyara con información de seguridad en sus operaciones' />
+									<Checkbox
+										checked={empresa.apoyoinfo}
+										name='apoyoinfo'
+										onChange={e => { setEmpresa({ ...empresa, [e.target.name]: e.target.checked }) }}
+										color='primary'
+									/>
+								</ListItem>
+							</List>
+						</Grid>
+					</Grid>
+					<Grid container spacing={2}>
+						<Grid item xs={12}>
+							<Typography variant='h6'>Datos financieros</Typography>
+						</Grid>
+						<Grid item xs={12} sm={6}>
+							<TextField
+								name='capitalsocial'
+								value={empresa.capitalsocial}
+								margin='normal'
+								fullWidth
+								label="Capital social"
+								onChange={onChangeEmpresa}
+								placeholder="capital social"
+								helperText='ingrese capital social'
+								type="text"
+							/>
+						</Grid>
+						<Grid item xs={12} sm={6}>
+							<TextField
+								name='fechadecorte'
+								value={empresa.fechadecorte}
+								margin='normal'
+								fullWidth
+								label="Fecha de corte"
+								onChange={onChangeEmpresa}
+								placeholder="01/01/2020"
+								helperText='ingrese una fecha'
+								type="text"
+							/>
+						</Grid>
+					</Grid>
+					<Grid container spacing={2}>
+						<Grid item xs={12} sm={4}>
+							<TextField
+								name='activocorriente'
+								value={empresa.activocorriente}
+								margin='normal'
+								fullWidth
+								label="Activo corriente"
+								onChange={onChangeEmpresa}
+								placeholder="activo corriente"
+								helperText='ingrese el activo corriente'
+								type="text"
+							/>
+						</Grid>
+						<Grid item xs={12} sm={4}>
+							<TextField
+								name='activototal'
+								value={empresa.activototal}
+								margin='normal'
+								fullWidth
+								label="Activo total"
+								onChange={onChangeEmpresa}
+								placeholder="activo total"
+								helperText='ingrese el activo total'
+								type="text"
+							/>
+						</Grid>
+						<Grid item xs={12} sm={4}>
+							<TextField
+								name='pasivocorriente'
+								value={empresa.pasivocorriente}
+								margin='normal'
+								fullWidth
+								label="Pasivo corriente"
+								onChange={onChangeEmpresa}
+								placeholder="pasivo corriente"
+								helperText='ingrese el pasivo corriente'
+								type="text"
+							/>
+						</Grid>
+					</Grid>
+					<Grid container spacing={2}>
+						<Grid item xs={12} sm={4}>
+							<TextField
+								name='patrimonio'
+								value={empresa.patrimonio}
+								margin='normal'
+								fullWidth
+								label="Patrimonio"
+								onChange={onChangeEmpresa}
+								placeholder="patrimonio"
+								helperText='ingrese el patrimonio'
+								type="text"
+							/>
+						</Grid>
+						<Grid item xs={12} sm={4}>
+							<TextField
+								name='ventas'
+								value={empresa.ventas}
+								margin='normal'
+								fullWidth
+								label="Ventas"
+								onChange={onChangeEmpresa}
+								placeholder="ventas"
+								helperText='ingrese las ventas'
+								type="text"
+							/>
+						</Grid>
+						<Grid item xs={12} sm={4}>
+							<TextField
+								name='resultadoneto'
+								value={empresa.resultadoneto}
+								margin='normal'
+								fullWidth
+								label="Resultado neto"
+								onChange={onChangeEmpresa}
+								placeholder="resultado neto"
+								helperText='ingrese el resultado neto'
+								type="text"
+							/>
+						</Grid>
+					</Grid>
+					<Grid container spacing={2}>
+						<Grid item xs={12} sm={3}>
+							<TextField
+								name='formadepago'
+								value={empresa.formadepago}
+								margin='normal'
+								fullWidth
+								label="Forma de pago"
+								onChange={onChangeEmpresa}
+								placeholder="forma de pago"
+								helperText='ingrese la forma de pago'
+								type="text"
+							/>
+						</Grid>
+						<Grid item xs={12} sm={3}>
+							<TextField
+								name='garantia'
+								value={empresa.garantia}
+								margin='normal'
+								fullWidth
+								label="Garantía"
+								onChange={onChangeEmpresa}
+								placeholder="garantía"
+								helperText='ingrese la garantía'
+								type="text"
+							/>
+						</Grid>
+						<Grid item xs={12} sm={3}>
+							<TextField
+								name='credito'
+								value={empresa.credito}
+								margin='normal'
+								fullWidth
+								label="Crédito"
+								onChange={onChangeEmpresa}
+								placeholder="crédito"
+								helperText='ingrese plazo en días'
+								type="text"
+							/>
+						</Grid>
+						<Grid item xs={12} sm={3}>
+							<TextField
+								name='montopromedio'
+								value={empresa.montopromedio}
+								margin='normal'
+								fullWidth
+								label="Monto promedio"
+								onChange={onChangeEmpresa}
+								placeholder="embarque mensual"
+								helperText='ingrese embarques mensuales'
+								type="text"
+							/>
+						</Grid>
+					</Grid>
+					<Grid container spacing={2}>
+						<Grid item xs={12}>
+							<Typography variant='h6'>Referencias bancarias</Typography>
+						</Grid>
+						<Grid item xs={12}>
+							<Table className={classes.table} aria-label="simple table">
+								<TableHead>
+									<TableRow>
+										<TableCell>Banco</TableCell>
+										<TableCell align="right">Tipo de cta.</TableCell>
+										<TableCell align="right">N° de cta.</TableCell>
+										<TableCell align="right">Sectorista</TableCell>
+										<TableCell align="right">Telefono</TableCell>
+									</TableRow>
+								</TableHead>
+								<TableBody>
+									<TableRow key={1}>
+										<TableCell component="th"><TextField
+											name='banco1'
+											value={empresa.banco1}
+											fullWidth
+											label="banco"
+											onChange={onChangeEmpresa}
+											placeholder="banco"
+											type="text"
+										/></TableCell>
+										<TableCell align="right"><TextField
+											name='tipo1'
+											value={empresa.tipo1}
+											fullWidth
+											label="Tipo"
+											onChange={onChangeEmpresa}
+											placeholder="Tipo"
+											type="text"
+										/></TableCell>
+										<TableCell align="right"><TextField
+											name='cuenta1'
+											value={empresa.cuenta1}
+											fullWidth
+											label="cuenta"
+											onChange={onChangeEmpresa}
+											placeholder="cuenta"
+											type="text"
+										/></TableCell>
+										<TableCell align="right"><TextField
+											name='sectorista1'
+											value={empresa.sectorista1}
+											fullWidth
+											label="sectorista"
+											onChange={onChangeEmpresa}
+											placeholder="sectorista"
+											type="text"
+										/></TableCell>
+										<TableCell align="right"><TextField
+											name='telefono1'
+											value={empresa.telefono1}
+											fullWidth
+											label="telefono"
+											onChange={onChangeEmpresa}
+											placeholder="telefono"
+											type="text"
+										/></TableCell>
+									</TableRow>
+									<TableRow key={2}>
+										<TableCell component="th"><TextField
+											name='banco2'
+											value={empresa.banco2}
+											fullWidth
+											label="banco"
+											onChange={onChangeEmpresa}
+											placeholder="banco"
+											type="text"
+										/></TableCell>
+										<TableCell align="right"><TextField
+											name='tipo2'
+											value={empresa.Tipo2}
+											fullWidth
+											label="Tipo"
+											onChange={onChangeEmpresa}
+											placeholder="Tipo"
+											type="text"
+										/></TableCell>
+										<TableCell align="right"><TextField
+											name='cuenta2'
+											value={empresa.cuenta2}
+											fullWidth
+											label="cuenta"
+											onChange={onChangeEmpresa}
+											placeholder="cuenta"
+											type="text"
+										/></TableCell>
+										<TableCell align="right"><TextField
+											name='sectorista2'
+											value={empresa.sectorista2}
+											fullWidth
+											label="sectorista"
+											onChange={onChangeEmpresa}
+											placeholder="sectorista"
+											type="text"
+										/></TableCell>
+										<TableCell align="right"><TextField
+											name='telefono2'
+											value={empresa.telefono2}
+											fullWidth
+											label="telefono"
+											onChange={onChangeEmpresa}
+											placeholder="telefono"
+											type="text"
+										/></TableCell>
+									</TableRow>
+								</TableBody>
+							</Table>
+						</Grid>
+					</Grid>
+					<Grid container spacing={2}>
 						<Grid item xs={12} sm={4}>
 							<TextField
 								select
@@ -639,51 +1158,32 @@ export default function Nuevo(props) {
 								<MenuItem value={2}>Trabajo</MenuItem>
 							</TextField>
 						</Grid>
-						<Grid item xs={12} sm={3}>
-							<Fab color='secondary' size='small' className={classes.texto} aria-label='agregar' onClick={() => agregarCorreo()}>
-								<AddIcon />
-							</Fab>
-						</Grid>
-						<Grid item xs={12} sm={12}>
-							<List>
-								{arrayCorreo.length > 0 ?
-									arrayCorreo.map((crr, index) => (
-										<ListItem key={index}>
-											<ListItemAvatar>
-												<MailOutlineOutlinedIcon color='secondary' />
-											</ListItemAvatar>
-											<ListItemText primary={crr.direccion} secondary={crr.tipo === 1 ? 'Personal' : crr.tipo === 2 ? 'Trabajo' : ''} />
-											<DeleteOutlineOutlinedIcon color='error' onClick={() => eliminarCorreo(index)} style={{ cursor: 'pointer' }} />
-										</ListItem>
-									))
-									:
-									<ListItem>
-										<ListItemText primary='No hay correos agregados' />
-									</ListItem>
-								}
-							</List>
-							<Divider />
-						</Grid>
-					</Grid>
-					<Grid container spacing={2}>
-						<Grid item xs={12}>
-							<Typography variant="h6"  >
-								Redes sociales
-						    </Typography>
-						</Grid>
 						<Grid item xs={12} sm={4}>
 							<TextField
-								name='social'
-								value={empresa.social}
+								name='correo'
+								id='correo'
+								value={empresa.correo}
 								margin='normal'
 								fullWidth
-								label="Red social"
+								label="Correo"
 								onChange={onChangeEmpresa}
-								placeholder="Ingrese red social"
-								helperText='Red social'
+								onKeyDown={e => { if (e.keyCode === 13) { agregarCorreo() } }}
+								placeholder="Ingrese dirección de correo"
+								helperText='presiona Enter'
 								type="text"
 							/>
 						</Grid>
+						<Grid item xs={12} sm={4}>
+							<List>
+								{listaActivaCorreo ?
+									<ListItem button onClick={() => eliminarCorreo()}>
+										<ListItemText primary={empresa.correo} secondary={empresa.tcorreo === 1 ? 'Personal' : empresa.tcorreo === 2 ? 'Trabajo' : ''} />
+									</ListItem>
+									: null}
+							</List>
+						</Grid>
+					</Grid>
+					<Grid container spacing={2}>
 						<Grid item xs={12} sm={4}>
 							<TextField
 								select
@@ -703,32 +1203,28 @@ export default function Nuevo(props) {
 								<MenuItem value={5}>Youtube</MenuItem>
 							</TextField>
 						</Grid>
-						<Grid item xs={12} sm={3}>
-							<Fab color='secondary' size='small' className={classes.texto} aria-label='agregar' onClick={() => agregarRedes()}>
-								<AddIcon />
-							</Fab>
+						<Grid item xs={12} sm={4}>
+							<TextField
+								name='social'
+								id='social'
+								value={empresa.social}
+								margin='normal'
+								fullWidth
+								label="Red social"
+								onChange={onChangeEmpresa}
+								onKeyDown={e => { if (e.keyCode === 13) { agregarRedes() } }}
+								placeholder="Ingrese red social"
+								helperText='Red social'
+								type="text"
+							/>
 						</Grid>
-						<Grid item xs={12} sm={12}>
+						<Grid item xs={12} sm={4}>
 							<List>
-								{arrayRedes.length > 0 ?
-									arrayRedes.map((red, index) => (
-										<ListItem key={index}>
-											<ListItemAvatar>
-												{red.tipo === 2 ? <InstagramIcon color='error' /> :
-													red.tipo === 1 ? <FacebookIcon color='primary' /> :
-														red.tipo === 3 ? <TwitterIcon color='primary' /> :
-															red.tipo === 4 ? <LinkedInIcon /> :
-																red.tipo === 5 ? <YouTubeIcon color='error' /> : ''}
-											</ListItemAvatar>
-											<ListItemText primary={red.nombre} secondary={red.tipo === 1 ? 'Facebook' : red.tipo === 2 ? 'Instagram' : red.tipo === 3 ? 'Twitter' : red.tipo === 4 ? 'LinkedIn' : red.tipo === 5 ? 'YouTube' : ''} />
-											<DeleteOutlineOutlinedIcon color='error' onClick={() => eliminarRedes(index)} style={{ cursor: 'pointer' }} />
-										</ListItem>
-									))
-									:
-									<ListItem>
-										<ListItemText primary='No hay red social agregada' />
+								{listaActivaRedes ?
+									<ListItem button onClick={() => eliminarRedes()}>
+										<ListItemText primary={empresa.social} secondary={empresa.tsocial === 1 ? 'Facebook' : empresa.tsocial === 2 ? 'Instagram' : empresa.tsocial === 3 ? 'Twitter' : empresa.tsocial === 4 ? 'LinkedIn' : empresa.tsocial === 5 ? 'YouTube' : ''} />
 									</ListItem>
-								}
+									: null}
 							</List>
 						</Grid>
 					</Grid>
