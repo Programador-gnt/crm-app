@@ -1,9 +1,9 @@
 import React from 'react';
-import { CssBaseline, Backdrop, Card, CardContent, CardActions, Avatar, Typography, Grid, Divider, Chip } from '@material-ui/core';
+import { CssBaseline, Card, CardContent, CardActions, Avatar, Typography, Grid, Divider, Chip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import SpeedDial from '@material-ui/lab/SpeedDial';
+import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
 import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
-import MenuIcon from '@material-ui/icons/Menu';
 import ArrowBackOutlinedIcon from '@material-ui/icons/ArrowBackOutlined';
 import GoogleIcon from 'mdi-material-ui/Google';
 import EventIcon from '@material-ui/icons/Event';
@@ -12,7 +12,8 @@ import IconButton from '@material-ui/core/IconButton';
 import FaceIcon from '@material-ui/icons/Face';
 import DoneIcon from '@material-ui/icons/Done';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
-import consumeWSChat from '../Config/WebServiceChat'
+import consumeWSChat from '../Config/WebServiceChat';
+import { useHistory } from 'react-router-dom'
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -24,11 +25,6 @@ const useStyles = makeStyles(theme => ({
 		position: 'fixed',
 		bottom: theme.spacing(7),
 		right: theme.spacing(2),
-	},
-	back: {
-		transform: 'translateZ(0px)',
-		position: 'fixed',
-		zIndex: 100
 	},
 	card: {
 		width: 400,
@@ -53,25 +49,26 @@ const actions = [
 	{ name: 'Volver' }
 ];
 
-export default function Info(props) {
-	const [open, setOpen] = React.useState(false)
+export default function Info() {
+	const history = useHistory()
+	const [open, setOpen] = React.useState(true)
 	const id = window.location.search.split('=')[1]
 	const [infor, setInfor] = React.useState({})
 	const classes = useStyles()
-
-	const handleOpen = () => {
-		setOpen(true);
-	};
-
-	const handleCloseButton = () => {
-		setOpen(false);
-	};
 
 	const info = () => {
 		consumeWSChat('GET', 'contactos/info', '', `?id_usuarios=${id}`)
 			.then(result => {
 				setInfor(result)
 			})
+	}
+
+	const preventActionClickClose = (evt, action) => {
+		evt.preventDefault()
+		evt.stopPropagation()
+		if (action.name === 'Volver') {
+			history.push('/contactos')
+		}
 	}
 
 	React.useEffect(info, [])
@@ -84,21 +81,20 @@ export default function Info(props) {
 					<Typography component="h1" variant="h4" align="center" color='textSecondary'>
 						Información de contacto
           			</Typography>
-					<Backdrop open={open} className={classes.back} />
 					<SpeedDial
 						ariaLabel="SpeedDial tooltip example"
 						className={classes.speedDial}
-						icon={<MenuIcon />}
-						onClose={handleCloseButton}
-						onOpen={handleOpen}
+						icon={<SpeedDialIcon />}
+						onClick={() => setOpen(!open)}
 						open={open}>
 
 						{actions.map(action => (
 							<SpeedDialAction
+								tooltipOpen
 								key={action.name}
 								icon={action.name === 'Volver' ? <ArrowBackOutlinedIcon /> : ''}
 								tooltipTitle={action.name}
-								onClick={action.name === 'Volver' ? () => props.history.push('/clientes') : ''}
+								onClick={evt => preventActionClickClose(evt, action)}
 							/>
 						))}
 					</SpeedDial>

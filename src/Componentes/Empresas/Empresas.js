@@ -1,16 +1,16 @@
 import React from 'react';
-import { Grid, CssBaseline, ListItemText, ListItem, List, ListItemAvatar, Avatar, Fade, Backdrop, Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText, Slide, Button, IconButton } from '@material-ui/core';
+import { Grid, CssBaseline, ListItemText, ListItem, List, ListItemAvatar, Avatar, Fade, Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText, Slide, Button, IconButton } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { Redirect, Link } from 'react-router-dom';
+import { useHistory, Link } from 'react-router-dom';
 import AddIcon from '@material-ui/icons/Add';
 import SpeedDial from '@material-ui/lab/SpeedDial';
 import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
-import MenuIcon from '@material-ui/icons/Menu';
+import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
 import DomainIcon from '@material-ui/icons/Domain';
 import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import FindInPageOutlinedIcon from '@material-ui/icons/FindInPageOutlined';
-import consumeWSChat from '../Config/WebServiceChat';
+import { AuthTokenRequest } from '../helpers/AxiosInstance';
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -25,12 +25,7 @@ const useStyles = makeStyles(theme => ({
 		position: 'fixed',
 		bottom: theme.spacing(7),
 		right: theme.spacing(2),
-	},
-	back: {
-		transform: 'translateZ(0px)',
-		position: 'fixed',
-		zIndex: 100
-	},
+	}
 }));
 
 
@@ -44,27 +39,20 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 
 export default function Clientes() {
-	const [open, setOpen] = React.useState(false)
-	const [nuevo, setNuevo] = React.useState(false)
+	const history = useHistory()
+	const [open, setOpen] = React.useState(true)
 	const [openDialog, setOpenDialog] = React.useState(false)
 	const [empresas, setEmpresas] = React.useState([])
 	const [id, setId] = React.useState(null)
 	const [razonSocial, setRazonSocial] = React.useState(null)
 	const classes = useStyles()
 
-	const handleOpen = () => {
-		setOpen(true);
-	};
-
-	const handleCloseButton = () => {
-		setOpen(false);
-	};
-
 	const consultarEmpresas = () => {
-		consumeWSChat('GET', 'empresas', '', '')
+		AuthTokenRequest.get('empresas')
 			.then(result => {
-				setEmpresas(result)
+				setEmpresas(result.data)
 			})
+
 	}
 
 	const MensajeEliminar = (ID, RAZONSOCIAL) => {
@@ -73,39 +61,45 @@ export default function Clientes() {
 		setOpenDialog(true)
 	}
 
-	const eliminar = async () => {
-		consumeWSChat('GET', 'empresas/eliminar', '', `?id_empresas=${id}`)
-			.then(result => {
-				console.log(result)
+	const eliminar = () => {
+		AuthTokenRequest.get('empresas/eliminar', {
+			params: {
+				id_empresas: id
+			}
+		})
+			.then(() => {
 				setOpenDialog(false)
 				consultarEmpresas()
 			})
 	}
 
-	React.useEffect(consultarEmpresas, [])
-
-	if (nuevo === true) {
-		return (<Redirect to='/empresas/nuevo' />)
+	const preventActionClickClose = (evt, action) => {
+		evt.preventDefault()
+		evt.stopPropagation()
+		if (action.name === 'Nuevo') {
+			history.push('/empresas/nuevo')
+		}
 	}
+
+	React.useEffect(consultarEmpresas, [])
 
 	return (
 		<React.Fragment>
 			<CssBaseline />
-			<Backdrop open={open} className={classes.back} />
 			<SpeedDial
 				ariaLabel="Speedial"
 				className={classes.speedDial}
-				icon={<MenuIcon />}
-				onClose={handleCloseButton}
-				onOpen={handleOpen}
+				icon={<SpeedDialIcon />}
+				onClick={() => setOpen(!open)}
 				open={open}>
 
 				{actions.map(action => (
 					<SpeedDialAction
+						tooltipOpen
 						key={action.name}
 						icon={action.name === 'Nuevo' ? <AddIcon /> : ''}
 						tooltipTitle={action.name}
-						onClick={action.name === 'Nuevo' ? () => setNuevo(true) : ''}
+						onClick={evt => preventActionClickClose(evt, action)}
 					/>
 				))}
 			</SpeedDial>

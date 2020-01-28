@@ -33,6 +33,7 @@
 		"gh-pages": "^2.1.1",
 		"jspdf": "^1.5.3",
 		"jspdf-autotable": "^3.2.10",
+		"material-table": "^1.56.1",
 		"material-ui-popup-state": "^1.4.1",
 		"mdi-material-ui": "^6.8.0",
 		"node-sass": "^4.13.0",

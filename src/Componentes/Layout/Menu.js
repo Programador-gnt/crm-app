@@ -46,15 +46,21 @@ const useStyles = makeStyles(theme => ({
 	nombreMenu: {
 		marginLeft: 'auto',
 		marginRight: 'auto'
+	},
+	lista: {
+		'&:hover': {
+			backgroundColor: theme.palette.primary.main,
+			color: theme.palette.getContrastText(theme.palette.primary.main)
+		}
 	}
 }));
 
 function Menu() {
 	const MenuNavegacion = [
 		{ nombre: 'Inicio', link: '/inicio' },
-		{ nombre: 'Contactos', link: '/clientes' },
+		{ nombre: 'Contactos', link: '/contactos' },
 		{ nombre: 'Empresas', link: '/empresas' },
-		{ nombre: 'Agenda', link: '/calendario' },
+		{ nombre: 'Agenda', link: '/agenda' },
 		{ nombre: 'Chat', link: '/chat' },
 		{ nombre: 'Cobranza', link: '/cobranza' },
 		{ nombre: 'Caso', link: '/caso' }
@@ -74,7 +80,7 @@ function Menu() {
 				<img alt='...' src={Logo} className={classes.bigAvatar} />
 			</div>
 			<Typography variant='button' className={classes.nombreMenu}>NEW TRANSPORT S.A.</Typography>
-			<Typography variant='body1' className={classes.nombreMenu}>CRM</Typography>
+			<Typography variant='body1' className={classes.nombreMenu}>CRM V1.0</Typography>
 			<Divider />
 			<List>
 				{MenuNavegacion.map((items, index) => (

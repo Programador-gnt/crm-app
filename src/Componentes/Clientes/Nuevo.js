@@ -2,8 +2,6 @@ import React from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import SpeedDial from '@material-ui/lab/SpeedDial';
 import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
-import Backdrop from '@material-ui/core/Backdrop';
-import MenuIcon from '@material-ui/icons/Menu';
 import ArrowBackOutlinedIcon from '@material-ui/icons/ArrowBackOutlined';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
@@ -41,7 +39,9 @@ import Dialog from '@material-ui/core/Dialog';
 import SaveOutlinedIcon from '@material-ui/icons/SaveOutlined';
 import PhotoIcon from '@material-ui/icons/Photo';
 import Zoom from '@material-ui/core/Zoom';
-import consumeWSChat from '../Config/WebServiceChat'
+// import consumeWSChat from '../Config/WebServiceChat';
+import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
+import { useHistory } from 'react-router-dom'
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -69,11 +69,6 @@ const useStyles = makeStyles(theme => ({
 		position: 'fixed',
 		bottom: theme.spacing(7),
 		right: theme.spacing(2),
-	},
-	back: {
-		transform: 'translateZ(0px)',
-		position: 'fixed',
-		zIndex: 100
 	},
 	card: {
 		width: 400,
@@ -112,8 +107,9 @@ const actions = [
 	{ name: 'Guardar' }
 ];
 
-export default function Nuevo(props) {
-	const [open, setOpen] = React.useState(false)
+export default function Nuevo() {
+	const history = useHistory()
+	const [open, setOpen] = React.useState(true)
 	const [denei, setDenei] = React.useState('')
 	const [ruc, setRuc] = React.useState('')
 	const [informacion1, setInformacion1] = React.useState({})
@@ -132,14 +128,6 @@ export default function Nuevo(props) {
 	const [dialogDireccion, setDialogDireccion] = React.useState(false)
 	const classes = useStyles()
 	const perfil = JSON.parse(localStorage.getItem('perfilGoogle'))
-
-	const handleOpen = () => {
-		setOpen(true);
-	};
-
-	const handleCloseButton = () => {
-		setOpen(false);
-	};
 
 	const onChange = (e) => {
 		setDenei(e.target.value)
@@ -302,10 +290,22 @@ export default function Nuevo(props) {
 	};
 
 	const guardar = () => {
-		consumeWSChat('POST', 'contacto/nuevo', { avatarGuardar }, '')
-			.then(result => {
-				console.log(result)
-			})
+		// consumeWSChat('POST', 'contacto/nuevo', { avatarGuardar }, '')
+		// 	.then(result => {
+		// 		console.log(result)
+		// 	})
+		console.log('guardar')
+	}
+
+	const preventActionClickClose = (evt, action) => {
+		evt.preventDefault()
+		evt.stopPropagation()
+		if (action.name === 'Volver') {
+			history.push('/contactos')
+		}
+		if (action.name === 'Guardar') {
+			guardar()
+		}
 	}
 
 	return (
@@ -523,21 +523,20 @@ export default function Nuevo(props) {
                     </Button>
 						</DialogActions>
 					</Dialog>
-					<Backdrop open={open} className={classes.back} />
 					<SpeedDial
 						ariaLabel="SpeedDial tooltip example"
 						className={classes.speedDial}
-						icon={<MenuIcon />}
-						onClose={handleCloseButton}
-						onOpen={handleOpen}
+						icon={<SpeedDialIcon />}
+						onClick={() => setOpen(!open)}
 						open={open}>
 
 						{actions.map(action => (
 							<SpeedDialAction
+								tooltipOpen
 								key={action.name}
 								icon={action.name === 'Volver' ? <ArrowBackOutlinedIcon /> : action.name === 'Guardar' ? <SaveOutlinedIcon /> : ''}
 								tooltipTitle={action.name}
-								onClick={action.name === 'Volver' ? () => props.history.push('/clientes') : action.name === 'Guardar' ? () => guardar() : ''}
+								onClick={evt => preventActionClickClose(evt, action)}
 							/>
 						))}
 					</SpeedDial>

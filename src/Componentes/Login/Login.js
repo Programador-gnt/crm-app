@@ -14,17 +14,18 @@ import { Redirect } from 'react-router-dom';
 import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
-import consumeWSChat from '../Config/WebServiceChat';
 import Copyright from './Copyright';
 import Container from '@material-ui/core/Container';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import { AuthTokenRequest } from '../helpers/AxiosInstance'
 
 
 const useStyles = makeStyles(theme => ({
 	root: {
-		backgroundImage: 'url(https://i.imgur.com/5opar7w.jpg)',
+		backgroundImage: 'url(https://i.imgur.com/lCikkLi.jpg)',
 		backgroundRepeat: 'no-repeat',
 		backgroundSize: 'cover',
 		backgroundPosition: 'center',
@@ -56,7 +57,11 @@ const useStyles = makeStyles(theme => ({
 		opacity: '0.8',
 		height: '60%',
 		marginTop: theme.spacing(10),
-		// borderRadius: '0 0 0 10'
+		[theme.breakpoints.down(400 + theme.spacing(2) * 2)]: {
+			marginTop: 0,
+			width: '100%',
+			height: '100%'
+		}
 	}
 }));
 
@@ -64,6 +69,7 @@ export default function Login() {
 	const [irInicio, setIrInicio] = React.useState(false)
 	const [aviso, setAviso] = React.useState(false)
 	const [cuerpo, setCuerpo] = React.useState({})
+	const [isLoading, setIsLoading] = React.useState(false)
 	const classes = useStyles();
 
 	const handleCloseMensaje = () => {
@@ -84,14 +90,22 @@ export default function Login() {
 	}
 
 	const login = () => {
-		consumeWSChat('POST', 'login', cuerpo, '')
-			.then(result => {
-				localStorage.setItem('perfilGoogle', JSON.stringify(result))
-				localStorage.setItem('tokenGoogle', `${result.name}${result.picture}${result.nickname}`)
-				setIrInicio(true)
-			}).catch(() => {
-				setAviso(true)
-			})
+		if (!isLoading) {
+			setIsLoading(true);
+			setTimeout(() => {
+				AuthTokenRequest.post('login', cuerpo)
+					.then(result => {
+						setIsLoading(false)
+						localStorage.setItem('perfilGoogle', JSON.stringify(result.data))
+						localStorage.setItem('tokenGoogle', `${result.data.name}${result.data.picture}${result.data.nickname}`)
+						setIrInicio(true)
+					}).catch(() => {
+						setAviso(true)
+						setIsLoading(false)
+						document.getElementById('password').focus();
+					})
+			}, 1000)
+		}
 	}
 
 	if (irInicio === true) {
@@ -104,7 +118,7 @@ export default function Login() {
 
 	return (
 		<Grid container component="main" className={classes.root}>
-			<Container component={Paper} elevation={5} maxWidth="xs" className={classes.main}>
+			<Container component={Paper} elevation={5} maxWidth='xs' className={classes.main}>
 				<CssBaseline />
 				<Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }} open={aviso} autoHideDuration={3000} onClose={handleCloseMensaje} style={{ opacity: '0.8' }}
 					ContentProps={{ 'aria-describedby': 'mensaje' }}
@@ -127,50 +141,58 @@ export default function Login() {
 					</Avatar>
 					<Typography component="h1" variant="h5">
 						Sign in
-        </Typography>
+        			</Typography>
 					<form className={classes.form} noValidate>
 						<TextField
 							variant="outlined"
 							margin="normal"
 							required
 							fullWidth
-							label="Nickname"
+							label='Nickname'
 							name="nickname"
 							autoComplete="nickname"
 							onKeyDown={tecla}
+							disabled={isLoading}
 							onChange={onChange}
 							autoFocus
+							error={aviso}
 						/>
 						<TextField
 							variant="outlined"
 							margin="normal"
+							error={aviso}
 							required
 							fullWidth
+							id='password'
 							name="password"
-							label="Password"
+							label='Password'
 							type="password"
 							onChange={onChange}
+							disabled={isLoading}
 							onKeyDown={tecla}
 							autoComplete="password"
 						/>
 						<FormControlLabel
 							control={<Checkbox value="remember" color="primary" />}
 							label="Recordarme"
+							disabled={isLoading}
 						/>
+						{isLoading && <LinearProgress color='primary' />}
 						<Button
 							fullWidth
 							variant="contained"
 							color="primary"
 							onClick={() => login()}
+							disabled={isLoading}
 							className={classes.submit}
 						>
 							Ingresar
-          </Button>
+          				</Button>
 						<Grid container>
 							<Grid item xs>
 								<Link href="#" variant="body2">
 									Recuperar contraseña
-              </Link>
+              					</Link>
 							</Grid>
 							<Grid item>
 								<Link href="#" variant="body2">

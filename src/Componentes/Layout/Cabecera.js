@@ -145,9 +145,9 @@ const useStyles = makeStyles(theme => ({
 
 const MenuNavegacion = [
 	{ nombre: 'Inicio', link: '/inicio' },
-	{ nombre: 'Contactos', link: '/clientes' },
+	{ nombre: 'Contactos', link: '/contactos' },
 	{ nombre: 'Empresas', link: '/empresas' },
-	{ nombre: 'Agenda', link: '/calendario' },
+	{ nombre: 'Agenda', link: '/agenda' },
 	{ nombre: 'Chat', link: '/chat' },
 	{ nombre: 'Cobranza', link: '/cobranza' },
 	{ nombre: 'Caso', link: '/caso' }
@@ -257,9 +257,10 @@ function Cabecera(props) {
 			<Backdrop open={open} className={classes.back} onClick={() => handleDrawerClose()} />
 			<AppBar
 				position="fixed"
-				className={clsx(classes.appBar, {
-					[classes.appBarShift]: open,
-				})}
+				// className={clsx(classes.appBar, {
+				// 	[classes.appBarShift]: open,
+				// })}
+				className={classes.appBar}
 			>
 				<Toolbar>
 					<IconButton
@@ -327,7 +328,7 @@ function Cabecera(props) {
 					<img alt='...' src={Logo} className={classes.bigAvatar} />
 				</div>
 				<Typography variant='button' className={classes.nombreMenu}>NEW TRANSPORT S.A.</Typography>
-				<Typography variant='body1' className={classes.nombreMenu}>CRM</Typography>
+				<Typography variant='body1' className={classes.nombreMenu}>CRM V1.0</Typography>
 				<Divider />
 				<List>
 					{MenuNavegacion.map((items, index) => (
