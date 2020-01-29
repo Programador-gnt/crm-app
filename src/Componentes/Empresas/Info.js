@@ -47,7 +47,7 @@ const actions = [
 
 export default function Info(props) {
 	const history = useHistory()
-	const [open, setOpen] = React.useState(true)
+	const [open, setOpen] = React.useState(window.screen.width < 769 ? false : true)
 	const [infor, setInfor] = React.useState({})
 	const [letra, setLetra] = React.useState(null)
 	const id = window.location.search.split('=')[1]

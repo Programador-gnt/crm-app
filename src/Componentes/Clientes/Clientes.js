@@ -10,7 +10,6 @@ import {
 	CssBaseline,
 	Fade
 } from '@material-ui/core';
-import { AuthTokenRequest } from '../helpers/AxiosInstance';
 import TablaContactos from './TablaContactos'
 
 const useStyles = makeStyles(theme => ({
@@ -32,16 +31,8 @@ const actions = [
 
 export default function Clientes() {
 	const history = useHistory()
-	const [open, setOpen] = React.useState(true)
-	const [clientes, setClientes] = React.useState([])
+	const [open, setOpen] = React.useState(window.screen.width < 769 ? false : true)
 	const classes = useStyles()
-
-	const usuarios = () => {
-		AuthTokenRequest.get('contactos')
-			.then(result => {
-				setClientes(result.data)
-			})
-	}
 
 	const preventActionClickClose = (evt, action) => {
 		evt.preventDefault()
@@ -50,8 +41,6 @@ export default function Clientes() {
 			history.push('/contactos/nuevo')
 		}
 	}
-
-	React.useEffect(usuarios, [])
 
 	return (
 		<React.Fragment>
@@ -76,7 +65,7 @@ export default function Clientes() {
 			<Fade in={true} timeout={1000}>
 				<Grid container spacing={1} className={classes.root}>
 					<Grid item xs={12}>
-						<TablaContactos contactos={clientes} />
+						<TablaContactos />
 					</Grid>
 				</Grid>
 			</Fade>

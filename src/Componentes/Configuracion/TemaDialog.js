@@ -1,19 +1,21 @@
 import React from 'react';
-import Dialog from '@material-ui/core/Dialog';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Typography from '@material-ui/core/Typography';
-import DialogContent from '@material-ui/core/DialogContent';
-import Box from '@material-ui/core/Box';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-import Divider from '@material-ui/core/Divider';
-import Hidden from '@material-ui/core/Hidden';
-import Button from '@material-ui/core/Button';
+import {
+	Dialog,
+	DialogTitle,
+	Typography,
+	DialogContent,
+	Box,
+	List,
+	ListItem,
+	ListItemIcon,
+	FormControl,
+	InputLabel,
+	Select,
+	MenuItem,
+	Divider,
+	Hidden,
+	Button
+} from '@material-ui/core';
 import FiberManualRecord from '@material-ui/icons/FiberManualRecord';
 import InvertColorsIcon from '@material-ui/icons/InvertColors';
 import theming from '../Services/Tema';

@@ -1,7 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
-	Paper,
 	Slide,
 	Backdrop,
 	Dialog,
@@ -10,32 +9,16 @@ import {
 	DialogContentText,
 	DialogActions,
 	Button,
+	IconButton
 } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
-import MaterialTable from 'material-table';
+// import MaterialTable from 'material-table';
+import { AuthTokenRequest } from '../helpers/AxiosInstance';
+import MUIDataTable from "mui-datatables";
+import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
+import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
 
-const useStyles = makeStyles(theme => ({
-	root: {
-		width: '100%',
-	},
-	paper: {
-		width: '100%',
-		marginBottom: theme.spacing(2),
-	},
-	table: {
-		minWidth: 750,
-	},
-	visuallyHidden: {
-		border: 0,
-		clip: 'rect(0 0 0 0)',
-		height: 1,
-		margin: -1,
-		overflow: 'hidden',
-		padding: 0,
-		position: 'absolute',
-		top: 20,
-		width: 1,
-	},
+const useStyles = makeStyles(() => ({
 	back: {
 		transform: 'translateZ(0px)',
 		position: 'fixed',
@@ -47,13 +30,99 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} timeout={500} />;
 });
 
-export default function TablaContactos(data) {
+export default function TablaContactos() {
 	const [openDialog, setOpenDialog] = React.useState(false)
 	const [id, setId] = React.useState(null)
 	const [nombre, setNombre] = React.useState(null)
+	const [clientes, setClientes] = React.useState([])
 	const history = useHistory()
 	const classes = useStyles();
-	const rows = data.contactos;
+	const columns = [
+		{
+			name: "Ver",
+			options: {
+				filter: false,
+				sort: false,
+				empty: true,
+				customBodyRender: (value, tableMeta, updateValue) => {
+					return (
+						<IconButton onClick={() => history.push(`/contactos/info?id=${tableMeta.rowData[2]}`)}>
+							<VisibilityOutlinedIcon />
+						</IconButton>
+					);
+				}
+			}
+		},
+		{
+			name: "Eliminar",
+			options: {
+				filter: false,
+				sort: false,
+				empty: true,
+				customBodyRender: (value, tableMeta, updateValue) => {
+					return (
+						<IconButton onClick={() => MensajeEliminar(tableMeta.rowData[2], tableMeta.rowData[3])}>
+							<DeleteOutlineOutlinedIcon />
+						</IconButton>
+					);
+				}
+			}
+		},
+		{ label: 'Id', name: 'id_usuarios' },
+		{ label: 'Name', name: 'name' },
+		{ label: 'Empresa', name: 'empresa' },
+		{ label: 'Teléfono', name: 'telefono', type: 'numeric' },
+		{ label: 'Correo', name: 'correo' }
+	]
+	const options = {
+		fixedHeaderOptions: {
+			xAxis: false,
+			yAxis: true
+		  },
+		responsive: 'scrollMaxHeight',
+		textLabels: {
+			body: {
+				noMatch: "No hay nada para mostrar",
+				toolTip: "Sort",
+				columnHeaderTooltip: column => `Ordenar por ${column.label}`
+			},
+			pagination: {
+				next: "Siguiente",
+				previous: "Anterior",
+				rowsPerPage: "Filas por página:",
+				displayRows: "de",
+			},
+			toolbar: {
+				search: "Buscar",
+				downloadCsv: "Descargar CSV",
+				print: "Imprimir",
+				viewColumns: "Ver columnas",
+				filterTable: "Filtrar tabla",
+			},
+			filter: {
+				all: "Todos",
+				title: "Filtros",
+				reset: "Reset",
+			},
+			viewColumns: {
+				title: "Ver columnas",
+				titleAria: "mostrar/ocultar columnas",
+			},
+			selectedRows: {
+				text: "fila(s) seleccionadas",
+				delete: "Eliminar",
+				deleteAria: "Eliminar filas seleccionadas",
+			},
+		},
+		filterType: 'textField',
+	}
+
+	const usuarios = () => {
+		AuthTokenRequest.get('contactos')
+			.then(result => {
+				setClientes(result.data)
+			})
+	}
 
 	const MensajeEliminar = (ID, NOMBRE) => {
 		setId(ID)
@@ -62,12 +131,20 @@ export default function TablaContactos(data) {
 	}
 
 	const eliminar = () => {
-		console.log(id)
-		setOpenDialog(false)
+		AuthTokenRequest.get('contactos/eliminar', {
+			params: {
+				id_usuarios: id
+			}
+		}).then(() => {
+			setOpenDialog(false)
+			usuarios()
+		})
 	}
 
+	React.useEffect(usuarios, [])
+
 	return (
-		<div className={classes.root}>
+		<>
 			<Backdrop open={openDialog} className={classes.back} />
 			<Dialog
 				open={openDialog}
@@ -92,61 +169,65 @@ export default function TablaContactos(data) {
           			</Button>
 				</DialogActions>
 			</Dialog>
-			<Paper className={classes.paper}>
-				<MaterialTable
-					title=''
-					columns={[
-						{ title: 'Name', field: 'name' },
-						{ title: 'Empresa', field: 'empresa' },
-						{ title: 'Teléfono', field: 'telefono', type: 'numeric' },
-						{ title: 'Correo', field: 'correo' },
-					]}
-					data={rows}
-					actions={[
-						{
-							icon: 'search',
-							tooltip: 'Ver',
-							onClick: (event, rowData) => history.push(`/contactos/info?id=${rowData.id_usuarios}`)
-						},
-						{
-							icon: 'edit',
-							tooltip: 'Editar',
-							onClick: (event, rowData) => alert(rowData.id_usuarios)
-						},
-						{
-							icon: 'delete',
-							tooltip: 'Eliminar',
-							onClick: (event, rowData) => MensajeEliminar(rowData.id_usuarios, rowData.name)
-						},
-						{
-							icon: 'filter_list',
-							tooltip: 'Filtrar datos',
-							isFreeAction: true,
-							onClick: () => alert('filtrar')
+			<MUIDataTable
+				title={"Lista de contactos"}
+				data={clientes}
+				columns={columns}
+				options={options}
+			/>
+			{/* <MaterialTable
+				title=''
+				columns={[
+					{ title: 'Name', field: 'name' },
+					{ title: 'Empresa', field: 'empresa' },
+					{ title: 'Teléfono', field: 'telefono', type: 'numeric' },
+					{ title: 'Correo', field: 'correo' },
+				]}
+				data={clientes}
+				actions={[
+					{
+						icon: 'search',
+						tooltip: 'Ver',
+						onClick: (event, rowData) => history.push(`/contactos/info?id=${rowData.id_usuarios}`)
+					},
+					{
+						icon: 'edit',
+						tooltip: 'Editar',
+						onClick: (event, rowData) => alert(rowData.id_usuarios)
+					},
+					{
+						icon: 'delete',
+						tooltip: 'Eliminar',
+						onClick: (event, rowData) => MensajeEliminar(rowData.id_usuarios, rowData.name)
+					},
+					{
+						icon: 'filter_list',
+						tooltip: 'Filtrar datos',
+						isFreeAction: true,
+						onClick: () => alert('filtrar')
+					}
+				]}
+				localization={{
+					pagination: {
+						labelDisplayedRows: '{from}-{to} de {count}'
+					},
+					toolbar: {
+						nRowsSelected: '{0} fila(s) seleccionadas'
+					},
+					header: {
+						actions: 'Actions'
+					},
+					body: {
+						emptyDataSourceMessage: 'No hay nada para mostrar',
+						filterRow: {
+							filterTooltip: 'Filter'
 						}
-					]}
-					localization={{
-						pagination: {
-							labelDisplayedRows: '{from}-{to} de {count}'
-						},
-						toolbar: {
-							nRowsSelected: '{0} fila(s) seleccionadas'
-						},
-						header: {
-							actions: 'Actions'
-						},
-						body: {
-							emptyDataSourceMessage: 'No hay nada para mostrar',
-							filterRow: {
-								filterTooltip: 'Filter'
-							}
-						}
-					}}
-					options={{
-						search: false
-					}}
-				/>
-			</Paper>
-		</div>
+					}
+				}}
+				options={{
+					search: false
+				}}
+			/> */}
+		</>
 	);
 }

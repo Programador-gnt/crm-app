@@ -11,7 +11,7 @@ import GoogleIcon from 'mdi-material-ui/Google';
 import EventIcon from '@material-ui/icons/Event';
 import PhoneAndroidIcon from '@material-ui/icons/PhoneAndroid';
 import { Drawer, Typography, Divider, List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
-import Logo from '../../assets/images/Logo.svg'
+import Logo from '../../assets/images/Logo.svg';
 
 const drawerWidth = 240;
 const useStyles = makeStyles(theme => ({
@@ -87,7 +87,7 @@ function Menu() {
 					<Link to={items.link} style={{ textDecoration: 'none', color: 'inherit' }} key={index}>
 						<ListItem button key={index} className={classes.lista}>
 							<ListItemIcon>{items.nombre === 'Inicio' ? <HomeIcon /> :
-								items.nombre === 'Gmail' ? <GoogleIcon /> :
+								items.nombre === 'Gmail' ? <GoogleIcon className={classes.icono} /> :
 									items.nombre === 'Agenda' ? <EventIcon /> :
 										items.nombre === 'Empresas' ? <DomainIcon /> :
 											items.nombre === 'Llamadas' ? <PhoneAndroidIcon /> :

@@ -4,10 +4,10 @@ import { Typography, Link } from '@material-ui/core';
 
 function Copyright() {
     return (
-        <Typography variant="body2" color="textSecondary" align="center">
+        <Typography variant="body2" align="center">
             {'Copyright © '}
-            <Link color="inherit" href="http://newtransport.net/">
-                GNT Servicios generales SA
+            <Link href="http://newtransport.net/">
+                GNT Servicios generales S.A.
       </Link>{' '}
             {new Date().getFullYear()}
             {'.'}

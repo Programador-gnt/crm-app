@@ -1,46 +1,20 @@
 import React from 'react';
-import CssBaseline from '@material-ui/core/CssBaseline';
+import { useHistory } from 'react-router-dom';
+import { CssBaseline, Paper, Typography, Grid, TextField, Fab, ListItemText, ListItem, List, ListItemAvatar, AppBar, Toolbar, MenuItem, DialogTitle, DialogContent, DialogActions, Hidden, Button, Dialog, Snackbar, IconButton, Table, TableBody, TableCell, TableHead, TableRow, Checkbox } from '@material-ui/core';
 import SpeedDial from '@material-ui/lab/SpeedDial';
 import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
 import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
 import ArrowBackOutlinedIcon from '@material-ui/icons/ArrowBackOutlined';
 import { makeStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
-import Grid from '@material-ui/core/Grid';
-import TextField from '@material-ui/core/TextField';
-import Fab from '@material-ui/core/Fab';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItem from '@material-ui/core/ListItem';
-import List from '@material-ui/core/List';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import DomainIcon from '@material-ui/icons/Domain';
 import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import MenuItem from '@material-ui/core/MenuItem';
 import PhoneAndroidOutlinedIcon from '@material-ui/icons/PhoneAndroidOutlined';
 import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogActions from '@material-ui/core/DialogActions';
-import Hidden from '@material-ui/core/Hidden';
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
 import SaveOutlinedIcon from '@material-ui/icons/SaveOutlined';
 import consumeWSChat from '../Config/WebServiceChat';
-import Snackbar from '@material-ui/core/Snackbar';
-import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import CakeOutlinedIcon from '@material-ui/icons/CakeOutlined';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
 import GetAppOutlinedIcon from '@material-ui/icons/GetAppOutlined';
-import Checkbox from '@material-ui/core/Checkbox';
-import { useHistory } from 'react-router-dom'
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -109,7 +83,7 @@ const actions = [
 
 export default function Nuevo() {
 	const history = useHistory()
-	const [open, setOpen] = React.useState(true)
+	const [open, setOpen] = React.useState(window.screen.width < 769 ? false : true)
 	const [dialogDireccion, setDialogDireccion] = React.useState(false)
 	const [aviso, setAviso] = React.useState(false)
 	const [listaActiva, setListaActiva] = React.useState(null)

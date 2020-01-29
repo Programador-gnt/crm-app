@@ -51,7 +51,7 @@ const actions = [
 
 export default function Info() {
 	const history = useHistory()
-	const [open, setOpen] = React.useState(true)
+	const [open, setOpen] = React.useState(window.screen.width < 769 ? false : true)
 	const id = window.location.search.split('=')[1]
 	const [infor, setInfor] = React.useState({})
 	const classes = useStyles()

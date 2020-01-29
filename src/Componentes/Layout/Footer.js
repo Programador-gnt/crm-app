@@ -1,22 +1,8 @@
 import React from 'react';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Typography from '@material-ui/core/Typography';
+import { CssBaseline, Container } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
-import Link from '@material-ui/core/Link';
+import Copyright from './Copyright'
 
-function Copyright() {
-	return (
-		<Typography variant="body2" align="center">
-			{'Copyright © '}
-			<Link href="http://newtransport.net" target='_blank'>
-				GNT Servicios Generales S.A.
-      </Link>{' '}
-			{new Date().getFullYear()}
-			{'.'}
-		</Typography>
-	);
-}
 
 const useStyles = makeStyles(theme => ({
 	root: {

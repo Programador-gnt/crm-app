@@ -1,18 +1,10 @@
 import React from 'react';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Dialog from '@material-ui/core/Dialog';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogActions from '@material-ui/core/DialogActions';
-import Hidden from '@material-ui/core/Hidden';
-import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
+import { CssBaseline, Dialog, DialogTitle, DialogContent, DialogActions, Hidden, Grid, Button, CircularProgress } from '@material-ui/core'
 import clsx from 'clsx';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import { blue, green, red } from '@material-ui/core/colors';
 import GoogleIcon from 'mdi-material-ui/Google';
 import FacebookIcon from '@material-ui/icons/Facebook';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import Config from '../Config/Config';
 import gapi from 'gapi-client';
 // import consumeWSChat from '../Config/WebServiceChat';

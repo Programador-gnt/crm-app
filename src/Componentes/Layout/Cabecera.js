@@ -1,27 +1,13 @@
 import React from 'react';
-import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import Avatar from '@material-ui/core/Avatar';
-import MenuItem from '@material-ui/core/MenuItem';
-import Menu from '@material-ui/core/Menu';
+import clsx from 'clsx';
+import { Drawer, CssBaseline, AppBar, Toolbar, List, Typography, Divider, IconButton, ListItem, ListItemIcon, ListItemText, Avatar, MenuItem, Menu, Backdrop, Slide } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core/styles';
 import { Redirect, withRouter, Link } from 'react-router-dom';
 import HomeIcon from '@material-ui/icons/Home';
 import GoogleIcon from 'mdi-material-ui/Google';
 import EventIcon from '@material-ui/icons/Event';
 import PhoneAndroidIcon from '@material-ui/icons/PhoneAndroid';
-import Backdrop from '@material-ui/core/Backdrop';
 import TemaDialog from '../Configuracion/TemaDialog';
 import GroupOutlinedIcon from '@material-ui/icons/GroupOutlined';
 import DomainIcon from '@material-ui/icons/Domain';
@@ -31,12 +17,10 @@ import ChatDialog from '../ChatDialog/ChatDialog';
 import ForumOutlinedIcon from '@material-ui/icons/ForumOutlined';
 import io from 'socket.io-client';
 import Snackbar from '@material-ui/core/Snackbar';
-import Slide from '@material-ui/core/Slide';
 import CloseIcon from '@material-ui/icons/Close';
 import Logo from '../../assets/images/Logo.svg';
 import NotificationsNoneOutlinedIcon from '@material-ui/icons/NotificationsNoneOutlined';
-import ExitToAppOutlinedIcon from '@material-ui/icons/ExitToAppOutlined';
-import PersonOutlinedIcon from '@material-ui/icons/PersonOutlined';
+import AddOutlinedIcon from '@material-ui/icons/AddOutlined';
 // import { CometChat } from '@cometchat-pro/chat';
 
 const drawerWidth = 240;
@@ -162,6 +146,8 @@ function Cabecera(props) {
 	const classes = useStyles();
 	const [open, setOpen] = React.useState(false);
 	const [anchorEl, setAnchorEl] = React.useState(null);
+	const [conmutador, setConmutador] = React.useState(null);
+	const abrirConfig = Boolean(conmutador)
 	const [notificacion, setNotificacion] = React.useState(false)
 	const [infoNotificacion, setInfoNotificacion] = React.useState({})
 	const abrir = Boolean(anchorEl);
@@ -170,6 +156,7 @@ function Cabecera(props) {
 	const [variable, setVariable] = React.useState(false)
 	const perfil = JSON.parse(localStorage.getItem('perfilGoogle'))
 	const path = window.location.pathname.split('/')[1]
+
 	const handleDrawerOpen = () => {
 		setOpen(true);
 	};
@@ -182,8 +169,12 @@ function Cabecera(props) {
 		setAnchorEl(event.currentTarget);
 	};
 
+	const handleConfig = event => {
+		setConmutador(event.currentTarget)
+	}
 
-	const cerrarSesion = () => {
+	const LogOut = () => {
+		setAnchorEl(null);
 		if (localStorage.getItem('tokenGoogle')) {
 			setVariable(true)
 			var user = JSON.parse(localStorage.getItem('usuarioChat'))
@@ -280,18 +271,16 @@ function Cabecera(props) {
 							<IconButton color="inherit">
 								<NotificationsNoneOutlinedIcon />
 							</IconButton>
-							<IconButton
-								aria-label="account of current user"
-								aria-controls="menu-appbar"
-								aria-haspopup="true"
-								onClick={handleMenu}
-								color="inherit"
-							>
-								<PersonOutlinedIcon />
+							<IconButton onClick={handleConfig} color="inherit">
+								<AddOutlinedIcon />
 							</IconButton>
-							<IconButton onClick={cerrarSesion}
+							<Menu id="menu-config" anchorEl={conmutador} anchorOrigin={{ vertical: 'top', horizontal: 'right' }} keepMounted transformOrigin={{ vertical: 'top', horizontal: 'right' }} open={abrirConfig}
+								onClose={() => setConmutador(null)}>
+								<MenuItem onClick={() => chatDialog()}>Configuraciones</MenuItem>
+							</Menu>
+							<IconButton onClick={handleMenu}
 								color="inherit">
-								<ExitToAppOutlinedIcon />
+								<Avatar src={perfil.picture} alt='...' />
 							</IconButton>
 							<Menu
 								id="menu-appbar"
@@ -308,8 +297,8 @@ function Cabecera(props) {
 								open={abrir}
 								onClose={() => setAnchorEl(null)}>
 								<MenuItem disabled><em>{perfil.name}</em></MenuItem>
-								<MenuItem onClick={() => chatDialog()}>Configuraciones</MenuItem>
 								<MenuItem onClick={() => dialog()}>Tema</MenuItem>
+								<MenuItem onClick={() => LogOut()}>Cerrar serión</MenuItem>
 							</Menu>
 						</div>
 					</>
