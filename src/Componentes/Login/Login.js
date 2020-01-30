@@ -1,25 +1,27 @@
 
 import React from 'react';
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
-import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
+import {
+	Avatar,
+	Button,
+	CssBaseline,
+	TextField,
+	Box,
+	Grid,
+	Typography,
+	Paper,
+	IconButton,
+	Container,
+	FormControlLabel,
+	Checkbox,
+	Link,
+	LinearProgress,
+	Snackbar
+} from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/core/styles';
 import { Redirect } from 'react-router-dom';
-import Snackbar from '@material-ui/core/Snackbar';
-import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Copyright from '../Layout/Copyright';
-import Container from '@material-ui/core/Container';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import Link from '@material-ui/core/Link';
-import LinearProgress from '@material-ui/core/LinearProgress';
 import { AuthTokenRequest } from '../helpers/AxiosInstance'
 
 
