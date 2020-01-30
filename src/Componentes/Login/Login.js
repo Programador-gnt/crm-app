@@ -124,7 +124,7 @@ export default function Login() {
 				<CssBaseline />
 				<Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }} open={aviso} autoHideDuration={3000} onClose={handleCloseMensaje} style={{ opacity: '0.8' }}
 					ContentProps={{ 'aria-describedby': 'mensaje' }}
-					message={<Typography id="mensaje" variant='button'>Error al autenticar</Typography>}
+					message={<Typography id="mensaje" variant='button'>Datos incorrectos</Typography>}
 					action={[
 						<IconButton
 							key="close"
