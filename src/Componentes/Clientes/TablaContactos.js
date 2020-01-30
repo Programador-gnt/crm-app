@@ -1,233 +1,1136 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import React, { useState } from 'react';
+import Paper from '@material-ui/core/Paper';
 import {
-	Slide,
-	Backdrop,
-	Dialog,
-	DialogTitle,
-	DialogContent,
-	DialogContentText,
-	DialogActions,
-	Button,
-	IconButton
-} from '@material-ui/core';
-import { useHistory } from 'react-router-dom';
-// import MaterialTable from 'material-table';
-import { AuthTokenRequest } from '../helpers/AxiosInstance';
-import MUIDataTable from "mui-datatables";
-import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
-import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
-
-const useStyles = makeStyles(() => ({
-	back: {
-		transform: 'translateZ(0px)',
-		position: 'fixed',
-		zIndex: 100
-	}
-}));
-
-const Transition = React.forwardRef(function Transition(props, ref) {
-	return <Slide direction="up" ref={ref} {...props} timeout={500} />;
-});
+	Grid,
+	Table,
+	TableHeaderRow,
+	PagingPanel,
+	Toolbar,
+	SearchPanel
+} from '@devexpress/dx-react-grid-material-ui';
+import {
+	SortingState,
+	IntegratedSorting,
+	PagingState,
+	IntegratedPaging,
+	SearchState,
+	IntegratedFiltering
+} from '@devexpress/dx-react-grid';
 
 export default function TablaContactos() {
-	const [openDialog, setOpenDialog] = React.useState(false)
-	const [id, setId] = React.useState(null)
-	const [nombre, setNombre] = React.useState(null)
-	const [clientes, setClientes] = React.useState([])
-	const history = useHistory()
-	const classes = useStyles();
-	const columns = [
+	const [sorting, setSorting] = useState([{ columnName: '', direction: 'asc' }]);
+	const [columns] = useState([
+		{ name: "uid", title: "UID" },
+		{ name: "name", title: "Name" },
+		{ name: "dni", title: "Dni" },
+		{ name: "status", title: "Status" },
+		{ name: "empresa", title: "Empresa" },
+		{ name: "telefono", title: "Teléfono" },
+		{ name: "correo", title: "Correo" },
+		{ name: "cargo", title: "Cargo" }
+	]);
+	const [rows] = useState([
 		{
-			name: "Ver",
-			options: {
-				filter: false,
-				sort: false,
-				empty: true,
-				customBodyRender: (value, tableMeta, updateValue) => {
-					return (
-						<IconButton onClick={() => history.push(`/contactos/info?id=${tableMeta.rowData[2]}`)}>
-							<VisibilityOutlinedIcon />
-						</IconButton>
-					);
-				}
-			}
+			"id_usuarios": 1,
+			"uid": "sbustamante",
+			"name": "Samuel Bustamante",
+			"dni": "02159670",
+			"avatar": "https://i.imgur.com/xEV6htV.jpg",
+			"status": "online",
+			"empresa": "GNT - SERVICIOS GENERALES SOCIEDAD ANONIMA-GNT-SG",
+			"telefono": "+51977551191",
+			"correo": "programador@gnt.pe",
+			"cargo": "programador"
 		},
 		{
-			name: "Eliminar",
-			options: {
-				filter: false,
-				sort: false,
-				empty: true,
-				customBodyRender: (value, tableMeta, updateValue) => {
-					return (
-						<IconButton onClick={() => MensajeEliminar(tableMeta.rowData[2], tableMeta.rowData[3])}>
-							<DeleteOutlineOutlinedIcon />
-						</IconButton>
-					);
-				}
-			}
+			"id_usuarios": 2,
+			"uid": "kurama",
+			"name": "Kyuubi",
+			"dni": "02157890",
+			"avatar": "https://i.imgur.com/lEVEyiW.jpg",
+			"status": "offline",
+			"empresa": "Naruto Shipudden",
+			"telefono": "+51789123456",
+			"correo": "kyuubi@gnt.pe",
+			"cargo": "Gerente general"
 		},
-		{ label: 'Id', name: 'id_usuarios' },
-		{ label: 'Name', name: 'name' },
-		{ label: 'Empresa', name: 'empresa' },
-		{ label: 'Teléfono', name: 'telefono', type: 'numeric' },
-		{ label: 'Correo', name: 'correo' }
-	]
-	const options = {
-		fixedHeaderOptions: {
-			xAxis: false,
-			yAxis: true
-		  },
-		responsive: 'scrollMaxHeight',
-		textLabels: {
-			body: {
-				noMatch: "No hay nada para mostrar",
-				toolTip: "Sort",
-				columnHeaderTooltip: column => `Ordenar por ${column.label}`
-			},
-			pagination: {
-				next: "Siguiente",
-				previous: "Anterior",
-				rowsPerPage: "Filas por página:",
-				displayRows: "de",
-			},
-			toolbar: {
-				search: "Buscar",
-				downloadCsv: "Descargar CSV",
-				print: "Imprimir",
-				viewColumns: "Ver columnas",
-				filterTable: "Filtrar tabla",
-			},
-			filter: {
-				all: "Todos",
-				title: "Filtros",
-				reset: "Reset",
-			},
-			viewColumns: {
-				title: "Ver columnas",
-				titleAria: "mostrar/ocultar columnas",
-			},
-			selectedRows: {
-				text: "fila(s) seleccionadas",
-				delete: "Eliminar",
-				deleteAria: "Eliminar filas seleccionadas",
-			},
+		{
+			"id_usuarios": 3,
+			"uid": "probotector",
+			"name": "Probotector modelo 1.0.1",
+			"dni": "01245789",
+			"avatar": "https://i.imgur.com/EOjIX81.jpg",
+			"status": "offline",
+			"empresa": "Nintendo",
+			"telefono": "+555777888",
+			"correo": "contra@gnt.pe",
+			"cargo": "Gerente general"
 		},
-		filterType: 'textField',
-	}
-
-	const usuarios = () => {
-		AuthTokenRequest.get('contactos')
-			.then(result => {
-				setClientes(result.data)
-			})
-	}
-
-	const MensajeEliminar = (ID, NOMBRE) => {
-		setId(ID)
-		setNombre(NOMBRE)
-		setOpenDialog(true)
-	}
-
-	const eliminar = () => {
-		AuthTokenRequest.get('contactos/eliminar', {
-			params: {
-				id_usuarios: id
-			}
-		}).then(() => {
-			setOpenDialog(false)
-			usuarios()
-		})
-	}
-
-	React.useEffect(usuarios, [])
+		{
+			"id_usuarios": 4,
+			"uid": "astro",
+			"name": "Astro Sonic",
+			"dni": "02456789",
+			"avatar": "https://i.imgur.com/O1rtZTV.jpg",
+			"status": "offline",
+			"empresa": "Super Sonics",
+			"telefono": "+51777222333",
+			"correo": "astro@gnt.pe",
+			"cargo": "Gerente general"
+		},
+		{
+			"id_usuarios": 5,
+			"uid": "terminator",
+			"name": "T-800 modelo 1.0.1 ",
+			"dni": "0126980",
+			"avatar": "https://i.imgur.com/JsWlFGc.jpg",
+			"status": "offline",
+			"empresa": "SkyNet",
+			"telefono": "+51101101101",
+			"correo": "terminator@gnt.pe",
+			"cargo": "Exterminador"
+		},
+		{
+			"id_usuarios": 6,
+			"uid": "jlizama",
+			"name": "Juan Lizama",
+			"dni": "01547896",
+			"avatar": "https://i.imgur.com/LskOErg.jpg",
+			"status": "offline",
+			"empresa": "GNT - SERVICIOS GENERALES SOCIEDAD ANONIMA-GNT-SG",
+			"telefono": "+51777222333",
+			"correo": "jlizama@gnt.pe",
+			"cargo": "Jefe departamento T.I."
+		},
+		{
+			"id_usuarios": 7,
+			"uid": "ccajal",
+			"name": "Carol Cajal",
+			"dni": "0236980",
+			"avatar": "https://i.imgur.com/HNU9XZY.jpg",
+			"status": "offline",
+			"empresa": "GNT - SERVICIOS GENERALES SOCIEDAD ANONIMA-GNT-SG",
+			"telefono": "+51888222333",
+			"correo": "ccajal@gnt.pe",
+			"cargo": "Soporte T.I."
+		},
+		{
+			"id_usuarios": 8,
+			"uid": "wlizama",
+			"name": "Wilder Lizama",
+			"dni": "0578963",
+			"avatar": "https://i.imgur.com/0XKcvZA.jpg",
+			"status": "offline",
+			"empresa": "GNT - SERVICIOS GENERALES SOCIEDAD ANONIMA-GNT-SG",
+			"telefono": "+51777888999",
+			"correo": "wlizama@gnt.pe",
+			"cargo": "Programador"
+		},
+		{
+			"id_usuarios": 9,
+			"uid": "arodriguez",
+			"name": "Alexander Rodriguez",
+			"dni": "0785236",
+			"avatar": "https://i.imgur.com/cNrYZbk.jpg",
+			"status": "offline",
+			"empresa": "GNT - SERVICIOS GENERALES SOCIEDAD ANONIMA-GNT-SG",
+			"telefono": "+51777222333",
+			"correo": "arodriguez@gnt.pe",
+			"cargo": "Programador"
+		},
+		{
+			"id_usuarios": 10,
+			"uid": "jsevillano",
+			"name": "Jorge Sevillano",
+			"dni": "0156980",
+			"avatar": "https://i.imgur.com/Ckkr7Lo.png",
+			"status": "offline",
+			"empresa": "GNT - SERVICIOS GENERALES SOCIEDAD ANONIMA-GNT-SG",
+			"telefono": "+51777222333",
+			"correo": "jsevillano@gnt.pe",
+			"cargo": "Soporte"
+		},
+		{
+			"id_usuarios": 11,
+			"uid": "mfalconi",
+			"name": "Mercedes Falconí",
+			"dni": "0145678",
+			"avatar": "https://i.imgur.com/kX7OpKK.jpg",
+			"status": "offline",
+			"empresa": "GNT - SERVICIOS GENERALES SOCIEDAD ANONIMA-GNT-SG",
+			"telefono": "+51777222333",
+			"correo": "mfalconi@gnt.pe",
+			"cargo": "DBO"
+		},
+		{
+			"id_usuarios": 12,
+			"uid": "mchavez",
+			"name": "Martín Chavez",
+			"dni": "02578940",
+			"avatar": "https://i.imgur.com/EkrkJXw.png",
+			"status": "offline",
+			"empresa": "NEW TRANSPORT S.A.",
+			"telefono": "+51777222333",
+			"correo": "mchavez@newtransport.net",
+			"cargo": "Gerente General"
+		},
+		{
+			"id_usuarios": 13,
+			"uid": "saitama",
+			"name": "Calvo con capa",
+			"dni": "001578963",
+			"avatar": "https://i.imgur.com/gwFYMnE.png",
+			"status": "offline",
+			"empresa": "NEW TRANSPORT S.A.",
+			"telefono": "+51777222333",
+			"correo": "saitama@opm.com",
+			"cargo": "Gerente General"
+		},
+		{
+			"id_usuarios": 14,
+			"uid": "genos",
+			"name": "Cyborg Demoníaco",
+			"dni": "004578963",
+			"avatar": "https://i.imgur.com/yQrMAnE.jpg",
+			"status": "offline",
+			"empresa": "NEW TRANSPORT S.A.",
+			"telefono": "+51777222333",
+			"correo": "genos@opm.com",
+			"cargo": "Asistente"
+		},
+		{
+			"id_usuarios": 15,
+			"uid": "willy",
+			"name": "William Wallace",
+			"dni": "001545680",
+			"avatar": "https://i.imgur.com/W2e3x0d.jpg",
+			"status": "offline",
+			"empresa": "CORAZÓN VALIENTE S.A.",
+			"telefono": "+51777222333",
+			"correo": "libertad@willi.com",
+			"cargo": "Gerente General"
+		},
+		{
+			"id_usuarios": 1,
+			"uid": "sbustamante",
+			"name": "Samuel Bustamante",
+			"dni": "02159670",
+			"avatar": "https://i.imgur.com/xEV6htV.jpg",
+			"status": "online",
+			"empresa": "GNT - SERVICIOS GENERALES SOCIEDAD ANONIMA-GNT-SG",
+			"telefono": "+51977551191",
+			"correo": "programador@gnt.pe",
+			"cargo": "programador"
+		},
+		{
+			"id_usuarios": 2,
+			"uid": "kurama",
+			"name": "Kyuubi",
+			"dni": "02157890",
+			"avatar": "https://i.imgur.com/lEVEyiW.jpg",
+			"status": "offline",
+			"empresa": "Naruto Shipudden",
+			"telefono": "+51789123456",
+			"correo": "kyuubi@gnt.pe",
+			"cargo": "Gerente general"
+		},
+		{
+			"id_usuarios": 3,
+			"uid": "probotector",
+			"name": "Probotector modelo 1.0.1",
+			"dni": "01245789",
+			"avatar": "https://i.imgur.com/EOjIX81.jpg",
+			"status": "offline",
+			"empresa": "Nintendo",
+			"telefono": "+555777888",
+			"correo": "contra@gnt.pe",
+			"cargo": "Gerente general"
+		},
+		{
+			"id_usuarios": 4,
+			"uid": "astro",
+			"name": "Astro Sonic",
+			"dni": "02456789",
+			"avatar": "https://i.imgur.com/O1rtZTV.jpg",
+			"status": "offline",
+			"empresa": "Super Sonics",
+			"telefono": "+51777222333",
+			"correo": "astro@gnt.pe",
+			"cargo": "Gerente general"
+		},
+		{
+			"id_usuarios": 5,
+			"uid": "terminator",
+			"name": "T-800 modelo 1.0.1 ",
+			"dni": "0126980",
+			"avatar": "https://i.imgur.com/JsWlFGc.jpg",
+			"status": "offline",
+			"empresa": "SkyNet",
+			"telefono": "+51101101101",
+			"correo": "terminator@gnt.pe",
+			"cargo": "Exterminador"
+		},
+		{
+			"id_usuarios": 6,
+			"uid": "jlizama",
+			"name": "Juan Lizama",
+			"dni": "01547896",
+			"avatar": "https://i.imgur.com/LskOErg.jpg",
+			"status": "offline",
+			"empresa": "GNT - SERVICIOS GENERALES SOCIEDAD ANONIMA-GNT-SG",
+			"telefono": "+51777222333",
+			"correo": "jlizama@gnt.pe",
+			"cargo": "Jefe departamento T.I."
+		},
+		{
+			"id_usuarios": 7,
+			"uid": "ccajal",
+			"name": "Carol Cajal",
+			"dni": "0236980",
+			"avatar": "https://i.imgur.com/HNU9XZY.jpg",
+			"status": "offline",
+			"empresa": "GNT - SERVICIOS GENERALES SOCIEDAD ANONIMA-GNT-SG",
+			"telefono": "+51888222333",
+			"correo": "ccajal@gnt.pe",
+			"cargo": "Soporte T.I."
+		},
+		{
+			"id_usuarios": 8,
+			"uid": "wlizama",
+			"name": "Wilder Lizama",
+			"dni": "0578963",
+			"avatar": "https://i.imgur.com/0XKcvZA.jpg",
+			"status": "offline",
+			"empresa": "GNT - SERVICIOS GENERALES SOCIEDAD ANONIMA-GNT-SG",
+			"telefono": "+51777888999",
+			"correo": "wlizama@gnt.pe",
+			"cargo": "Programador"
+		},
+		{
+			"id_usuarios": 9,
+			"uid": "arodriguez",
+			"name": "Alexander Rodriguez",
+			"dni": "0785236",
+			"avatar": "https://i.imgur.com/cNrYZbk.jpg",
+			"status": "offline",
+			"empresa": "GNT - SERVICIOS GENERALES SOCIEDAD ANONIMA-GNT-SG",
+			"telefono": "+51777222333",
+			"correo": "arodriguez@gnt.pe",
+			"cargo": "Programador"
+		},
+		{
+			"id_usuarios": 10,
+			"uid": "jsevillano",
+			"name": "Jorge Sevillano",
+			"dni": "0156980",
+			"avatar": "https://i.imgur.com/Ckkr7Lo.png",
+			"status": "offline",
+			"empresa": "GNT - SERVICIOS GENERALES SOCIEDAD ANONIMA-GNT-SG",
+			"telefono": "+51777222333",
+			"correo": "jsevillano@gnt.pe",
+			"cargo": "Soporte"
+		},
+		{
+			"id_usuarios": 11,
+			"uid": "mfalconi",
+			"name": "Mercedes Falconí",
+			"dni": "0145678",
+			"avatar": "https://i.imgur.com/kX7OpKK.jpg",
+			"status": "offline",
+			"empresa": "GNT - SERVICIOS GENERALES SOCIEDAD ANONIMA-GNT-SG",
+			"telefono": "+51777222333",
+			"correo": "mfalconi@gnt.pe",
+			"cargo": "DBO"
+		},
+		{
+			"id_usuarios": 12,
+			"uid": "mchavez",
+			"name": "Martín Chavez",
+			"dni": "02578940",
+			"avatar": "https://i.imgur.com/EkrkJXw.png",
+			"status": "offline",
+			"empresa": "NEW TRANSPORT S.A.",
+			"telefono": "+51777222333",
+			"correo": "mchavez@newtransport.net",
+			"cargo": "Gerente General"
+		},
+		{
+			"id_usuarios": 13,
+			"uid": "saitama",
+			"name": "Calvo con capa",
+			"dni": "001578963",
+			"avatar": "https://i.imgur.com/gwFYMnE.png",
+			"status": "offline",
+			"empresa": "NEW TRANSPORT S.A.",
+			"telefono": "+51777222333",
+			"correo": "saitama@opm.com",
+			"cargo": "Gerente General"
+		},
+		{
+			"id_usuarios": 14,
+			"uid": "genos",
+			"name": "Cyborg Demoníaco",
+			"dni": "004578963",
+			"avatar": "https://i.imgur.com/yQrMAnE.jpg",
+			"status": "offline",
+			"empresa": "NEW TRANSPORT S.A.",
+			"telefono": "+51777222333",
+			"correo": "genos@opm.com",
+			"cargo": "Asistente"
+		},
+		{
+			"id_usuarios": 15,
+			"uid": "willy",
+			"name": "William Wallace",
+			"dni": "001545680",
+			"avatar": "https://i.imgur.com/W2e3x0d.jpg",
+			"status": "offline",
+			"empresa": "CORAZÓN VALIENTE S.A.",
+			"telefono": "+51777222333",
+			"correo": "libertad@willi.com",
+			"cargo": "Gerente General"
+		},
+		{
+			"id_usuarios": 1,
+			"uid": "sbustamante",
+			"name": "Samuel Bustamante",
+			"dni": "02159670",
+			"avatar": "https://i.imgur.com/xEV6htV.jpg",
+			"status": "online",
+			"empresa": "GNT - SERVICIOS GENERALES SOCIEDAD ANONIMA-GNT-SG",
+			"telefono": "+51977551191",
+			"correo": "programador@gnt.pe",
+			"cargo": "programador"
+		},
+		{
+			"id_usuarios": 2,
+			"uid": "kurama",
+			"name": "Kyuubi",
+			"dni": "02157890",
+			"avatar": "https://i.imgur.com/lEVEyiW.jpg",
+			"status": "offline",
+			"empresa": "Naruto Shipudden",
+			"telefono": "+51789123456",
+			"correo": "kyuubi@gnt.pe",
+			"cargo": "Gerente general"
+		},
+		{
+			"id_usuarios": 3,
+			"uid": "probotector",
+			"name": "Probotector modelo 1.0.1",
+			"dni": "01245789",
+			"avatar": "https://i.imgur.com/EOjIX81.jpg",
+			"status": "offline",
+			"empresa": "Nintendo",
+			"telefono": "+555777888",
+			"correo": "contra@gnt.pe",
+			"cargo": "Gerente general"
+		},
+		{
+			"id_usuarios": 4,
+			"uid": "astro",
+			"name": "Astro Sonic",
+			"dni": "02456789",
+			"avatar": "https://i.imgur.com/O1rtZTV.jpg",
+			"status": "offline",
+			"empresa": "Super Sonics",
+			"telefono": "+51777222333",
+			"correo": "astro@gnt.pe",
+			"cargo": "Gerente general"
+		},
+		{
+			"id_usuarios": 5,
+			"uid": "terminator",
+			"name": "T-800 modelo 1.0.1 ",
+			"dni": "0126980",
+			"avatar": "https://i.imgur.com/JsWlFGc.jpg",
+			"status": "offline",
+			"empresa": "SkyNet",
+			"telefono": "+51101101101",
+			"correo": "terminator@gnt.pe",
+			"cargo": "Exterminador"
+		},
+		{
+			"id_usuarios": 6,
+			"uid": "jlizama",
+			"name": "Juan Lizama",
+			"dni": "01547896",
+			"avatar": "https://i.imgur.com/LskOErg.jpg",
+			"status": "offline",
+			"empresa": "GNT - SERVICIOS GENERALES SOCIEDAD ANONIMA-GNT-SG",
+			"telefono": "+51777222333",
+			"correo": "jlizama@gnt.pe",
+			"cargo": "Jefe departamento T.I."
+		},
+		{
+			"id_usuarios": 7,
+			"uid": "ccajal",
+			"name": "Carol Cajal",
+			"dni": "0236980",
+			"avatar": "https://i.imgur.com/HNU9XZY.jpg",
+			"status": "offline",
+			"empresa": "GNT - SERVICIOS GENERALES SOCIEDAD ANONIMA-GNT-SG",
+			"telefono": "+51888222333",
+			"correo": "ccajal@gnt.pe",
+			"cargo": "Soporte T.I."
+		},
+		{
+			"id_usuarios": 8,
+			"uid": "wlizama",
+			"name": "Wilder Lizama",
+			"dni": "0578963",
+			"avatar": "https://i.imgur.com/0XKcvZA.jpg",
+			"status": "offline",
+			"empresa": "GNT - SERVICIOS GENERALES SOCIEDAD ANONIMA-GNT-SG",
+			"telefono": "+51777888999",
+			"correo": "wlizama@gnt.pe",
+			"cargo": "Programador"
+		},
+		{
+			"id_usuarios": 9,
+			"uid": "arodriguez",
+			"name": "Alexander Rodriguez",
+			"dni": "0785236",
+			"avatar": "https://i.imgur.com/cNrYZbk.jpg",
+			"status": "offline",
+			"empresa": "GNT - SERVICIOS GENERALES SOCIEDAD ANONIMA-GNT-SG",
+			"telefono": "+51777222333",
+			"correo": "arodriguez@gnt.pe",
+			"cargo": "Programador"
+		},
+		{
+			"id_usuarios": 10,
+			"uid": "jsevillano",
+			"name": "Jorge Sevillano",
+			"dni": "0156980",
+			"avatar": "https://i.imgur.com/Ckkr7Lo.png",
+			"status": "offline",
+			"empresa": "GNT - SERVICIOS GENERALES SOCIEDAD ANONIMA-GNT-SG",
+			"telefono": "+51777222333",
+			"correo": "jsevillano@gnt.pe",
+			"cargo": "Soporte"
+		},
+		{
+			"id_usuarios": 11,
+			"uid": "mfalconi",
+			"name": "Mercedes Falconí",
+			"dni": "0145678",
+			"avatar": "https://i.imgur.com/kX7OpKK.jpg",
+			"status": "offline",
+			"empresa": "GNT - SERVICIOS GENERALES SOCIEDAD ANONIMA-GNT-SG",
+			"telefono": "+51777222333",
+			"correo": "mfalconi@gnt.pe",
+			"cargo": "DBO"
+		},
+		{
+			"id_usuarios": 12,
+			"uid": "mchavez",
+			"name": "Martín Chavez",
+			"dni": "02578940",
+			"avatar": "https://i.imgur.com/EkrkJXw.png",
+			"status": "offline",
+			"empresa": "NEW TRANSPORT S.A.",
+			"telefono": "+51777222333",
+			"correo": "mchavez@newtransport.net",
+			"cargo": "Gerente General"
+		},
+		{
+			"id_usuarios": 13,
+			"uid": "saitama",
+			"name": "Calvo con capa",
+			"dni": "001578963",
+			"avatar": "https://i.imgur.com/gwFYMnE.png",
+			"status": "offline",
+			"empresa": "NEW TRANSPORT S.A.",
+			"telefono": "+51777222333",
+			"correo": "saitama@opm.com",
+			"cargo": "Gerente General"
+		},
+		{
+			"id_usuarios": 14,
+			"uid": "genos",
+			"name": "Cyborg Demoníaco",
+			"dni": "004578963",
+			"avatar": "https://i.imgur.com/yQrMAnE.jpg",
+			"status": "offline",
+			"empresa": "NEW TRANSPORT S.A.",
+			"telefono": "+51777222333",
+			"correo": "genos@opm.com",
+			"cargo": "Asistente"
+		},
+		{
+			"id_usuarios": 15,
+			"uid": "willy",
+			"name": "William Wallace",
+			"dni": "001545680",
+			"avatar": "https://i.imgur.com/W2e3x0d.jpg",
+			"status": "offline",
+			"empresa": "CORAZÓN VALIENTE S.A.",
+			"telefono": "+51777222333",
+			"correo": "libertad@willi.com",
+			"cargo": "Gerente General"
+		},
+		{
+			"id_usuarios": 1,
+			"uid": "sbustamante",
+			"name": "Samuel Bustamante",
+			"dni": "02159670",
+			"avatar": "https://i.imgur.com/xEV6htV.jpg",
+			"status": "online",
+			"empresa": "GNT - SERVICIOS GENERALES SOCIEDAD ANONIMA-GNT-SG",
+			"telefono": "+51977551191",
+			"correo": "programador@gnt.pe",
+			"cargo": "programador"
+		},
+		{
+			"id_usuarios": 2,
+			"uid": "kurama",
+			"name": "Kyuubi",
+			"dni": "02157890",
+			"avatar": "https://i.imgur.com/lEVEyiW.jpg",
+			"status": "offline",
+			"empresa": "Naruto Shipudden",
+			"telefono": "+51789123456",
+			"correo": "kyuubi@gnt.pe",
+			"cargo": "Gerente general"
+		},
+		{
+			"id_usuarios": 3,
+			"uid": "probotector",
+			"name": "Probotector modelo 1.0.1",
+			"dni": "01245789",
+			"avatar": "https://i.imgur.com/EOjIX81.jpg",
+			"status": "offline",
+			"empresa": "Nintendo",
+			"telefono": "+555777888",
+			"correo": "contra@gnt.pe",
+			"cargo": "Gerente general"
+		},
+		{
+			"id_usuarios": 4,
+			"uid": "astro",
+			"name": "Astro Sonic",
+			"dni": "02456789",
+			"avatar": "https://i.imgur.com/O1rtZTV.jpg",
+			"status": "offline",
+			"empresa": "Super Sonics",
+			"telefono": "+51777222333",
+			"correo": "astro@gnt.pe",
+			"cargo": "Gerente general"
+		},
+		{
+			"id_usuarios": 5,
+			"uid": "terminator",
+			"name": "T-800 modelo 1.0.1 ",
+			"dni": "0126980",
+			"avatar": "https://i.imgur.com/JsWlFGc.jpg",
+			"status": "offline",
+			"empresa": "SkyNet",
+			"telefono": "+51101101101",
+			"correo": "terminator@gnt.pe",
+			"cargo": "Exterminador"
+		},
+		{
+			"id_usuarios": 6,
+			"uid": "jlizama",
+			"name": "Juan Lizama",
+			"dni": "01547896",
+			"avatar": "https://i.imgur.com/LskOErg.jpg",
+			"status": "offline",
+			"empresa": "GNT - SERVICIOS GENERALES SOCIEDAD ANONIMA-GNT-SG",
+			"telefono": "+51777222333",
+			"correo": "jlizama@gnt.pe",
+			"cargo": "Jefe departamento T.I."
+		},
+		{
+			"id_usuarios": 7,
+			"uid": "ccajal",
+			"name": "Carol Cajal",
+			"dni": "0236980",
+			"avatar": "https://i.imgur.com/HNU9XZY.jpg",
+			"status": "offline",
+			"empresa": "GNT - SERVICIOS GENERALES SOCIEDAD ANONIMA-GNT-SG",
+			"telefono": "+51888222333",
+			"correo": "ccajal@gnt.pe",
+			"cargo": "Soporte T.I."
+		},
+		{
+			"id_usuarios": 8,
+			"uid": "wlizama",
+			"name": "Wilder Lizama",
+			"dni": "0578963",
+			"avatar": "https://i.imgur.com/0XKcvZA.jpg",
+			"status": "offline",
+			"empresa": "GNT - SERVICIOS GENERALES SOCIEDAD ANONIMA-GNT-SG",
+			"telefono": "+51777888999",
+			"correo": "wlizama@gnt.pe",
+			"cargo": "Programador"
+		},
+		{
+			"id_usuarios": 9,
+			"uid": "arodriguez",
+			"name": "Alexander Rodriguez",
+			"dni": "0785236",
+			"avatar": "https://i.imgur.com/cNrYZbk.jpg",
+			"status": "offline",
+			"empresa": "GNT - SERVICIOS GENERALES SOCIEDAD ANONIMA-GNT-SG",
+			"telefono": "+51777222333",
+			"correo": "arodriguez@gnt.pe",
+			"cargo": "Programador"
+		},
+		{
+			"id_usuarios": 10,
+			"uid": "jsevillano",
+			"name": "Jorge Sevillano",
+			"dni": "0156980",
+			"avatar": "https://i.imgur.com/Ckkr7Lo.png",
+			"status": "offline",
+			"empresa": "GNT - SERVICIOS GENERALES SOCIEDAD ANONIMA-GNT-SG",
+			"telefono": "+51777222333",
+			"correo": "jsevillano@gnt.pe",
+			"cargo": "Soporte"
+		},
+		{
+			"id_usuarios": 11,
+			"uid": "mfalconi",
+			"name": "Mercedes Falconí",
+			"dni": "0145678",
+			"avatar": "https://i.imgur.com/kX7OpKK.jpg",
+			"status": "offline",
+			"empresa": "GNT - SERVICIOS GENERALES SOCIEDAD ANONIMA-GNT-SG",
+			"telefono": "+51777222333",
+			"correo": "mfalconi@gnt.pe",
+			"cargo": "DBO"
+		},
+		{
+			"id_usuarios": 12,
+			"uid": "mchavez",
+			"name": "Martín Chavez",
+			"dni": "02578940",
+			"avatar": "https://i.imgur.com/EkrkJXw.png",
+			"status": "offline",
+			"empresa": "NEW TRANSPORT S.A.",
+			"telefono": "+51777222333",
+			"correo": "mchavez@newtransport.net",
+			"cargo": "Gerente General"
+		},
+		{
+			"id_usuarios": 13,
+			"uid": "saitama",
+			"name": "Calvo con capa",
+			"dni": "001578963",
+			"avatar": "https://i.imgur.com/gwFYMnE.png",
+			"status": "offline",
+			"empresa": "NEW TRANSPORT S.A.",
+			"telefono": "+51777222333",
+			"correo": "saitama@opm.com",
+			"cargo": "Gerente General"
+		},
+		{
+			"id_usuarios": 14,
+			"uid": "genos",
+			"name": "Cyborg Demoníaco",
+			"dni": "004578963",
+			"avatar": "https://i.imgur.com/yQrMAnE.jpg",
+			"status": "offline",
+			"empresa": "NEW TRANSPORT S.A.",
+			"telefono": "+51777222333",
+			"correo": "genos@opm.com",
+			"cargo": "Asistente"
+		},
+		{
+			"id_usuarios": 15,
+			"uid": "willy",
+			"name": "William Wallace",
+			"dni": "001545680",
+			"avatar": "https://i.imgur.com/W2e3x0d.jpg",
+			"status": "offline",
+			"empresa": "CORAZÓN VALIENTE S.A.",
+			"telefono": "+51777222333",
+			"correo": "libertad@willi.com",
+			"cargo": "Gerente General"
+		},
+		{
+			"id_usuarios": 1,
+			"uid": "sbustamante",
+			"name": "Samuel Bustamante",
+			"dni": "02159670",
+			"avatar": "https://i.imgur.com/xEV6htV.jpg",
+			"status": "online",
+			"empresa": "GNT - SERVICIOS GENERALES SOCIEDAD ANONIMA-GNT-SG",
+			"telefono": "+51977551191",
+			"correo": "programador@gnt.pe",
+			"cargo": "programador"
+		},
+		{
+			"id_usuarios": 2,
+			"uid": "kurama",
+			"name": "Kyuubi",
+			"dni": "02157890",
+			"avatar": "https://i.imgur.com/lEVEyiW.jpg",
+			"status": "offline",
+			"empresa": "Naruto Shipudden",
+			"telefono": "+51789123456",
+			"correo": "kyuubi@gnt.pe",
+			"cargo": "Gerente general"
+		},
+		{
+			"id_usuarios": 3,
+			"uid": "probotector",
+			"name": "Probotector modelo 1.0.1",
+			"dni": "01245789",
+			"avatar": "https://i.imgur.com/EOjIX81.jpg",
+			"status": "offline",
+			"empresa": "Nintendo",
+			"telefono": "+555777888",
+			"correo": "contra@gnt.pe",
+			"cargo": "Gerente general"
+		},
+		{
+			"id_usuarios": 4,
+			"uid": "astro",
+			"name": "Astro Sonic",
+			"dni": "02456789",
+			"avatar": "https://i.imgur.com/O1rtZTV.jpg",
+			"status": "offline",
+			"empresa": "Super Sonics",
+			"telefono": "+51777222333",
+			"correo": "astro@gnt.pe",
+			"cargo": "Gerente general"
+		},
+		{
+			"id_usuarios": 5,
+			"uid": "terminator",
+			"name": "T-800 modelo 1.0.1 ",
+			"dni": "0126980",
+			"avatar": "https://i.imgur.com/JsWlFGc.jpg",
+			"status": "offline",
+			"empresa": "SkyNet",
+			"telefono": "+51101101101",
+			"correo": "terminator@gnt.pe",
+			"cargo": "Exterminador"
+		},
+		{
+			"id_usuarios": 6,
+			"uid": "jlizama",
+			"name": "Juan Lizama",
+			"dni": "01547896",
+			"avatar": "https://i.imgur.com/LskOErg.jpg",
+			"status": "offline",
+			"empresa": "GNT - SERVICIOS GENERALES SOCIEDAD ANONIMA-GNT-SG",
+			"telefono": "+51777222333",
+			"correo": "jlizama@gnt.pe",
+			"cargo": "Jefe departamento T.I."
+		},
+		{
+			"id_usuarios": 7,
+			"uid": "ccajal",
+			"name": "Carol Cajal",
+			"dni": "0236980",
+			"avatar": "https://i.imgur.com/HNU9XZY.jpg",
+			"status": "offline",
+			"empresa": "GNT - SERVICIOS GENERALES SOCIEDAD ANONIMA-GNT-SG",
+			"telefono": "+51888222333",
+			"correo": "ccajal@gnt.pe",
+			"cargo": "Soporte T.I."
+		},
+		{
+			"id_usuarios": 8,
+			"uid": "wlizama",
+			"name": "Wilder Lizama",
+			"dni": "0578963",
+			"avatar": "https://i.imgur.com/0XKcvZA.jpg",
+			"status": "offline",
+			"empresa": "GNT - SERVICIOS GENERALES SOCIEDAD ANONIMA-GNT-SG",
+			"telefono": "+51777888999",
+			"correo": "wlizama@gnt.pe",
+			"cargo": "Programador"
+		},
+		{
+			"id_usuarios": 9,
+			"uid": "arodriguez",
+			"name": "Alexander Rodriguez",
+			"dni": "0785236",
+			"avatar": "https://i.imgur.com/cNrYZbk.jpg",
+			"status": "offline",
+			"empresa": "GNT - SERVICIOS GENERALES SOCIEDAD ANONIMA-GNT-SG",
+			"telefono": "+51777222333",
+			"correo": "arodriguez@gnt.pe",
+			"cargo": "Programador"
+		},
+		{
+			"id_usuarios": 10,
+			"uid": "jsevillano",
+			"name": "Jorge Sevillano",
+			"dni": "0156980",
+			"avatar": "https://i.imgur.com/Ckkr7Lo.png",
+			"status": "offline",
+			"empresa": "GNT - SERVICIOS GENERALES SOCIEDAD ANONIMA-GNT-SG",
+			"telefono": "+51777222333",
+			"correo": "jsevillano@gnt.pe",
+			"cargo": "Soporte"
+		},
+		{
+			"id_usuarios": 11,
+			"uid": "mfalconi",
+			"name": "Mercedes Falconí",
+			"dni": "0145678",
+			"avatar": "https://i.imgur.com/kX7OpKK.jpg",
+			"status": "offline",
+			"empresa": "GNT - SERVICIOS GENERALES SOCIEDAD ANONIMA-GNT-SG",
+			"telefono": "+51777222333",
+			"correo": "mfalconi@gnt.pe",
+			"cargo": "DBO"
+		},
+		{
+			"id_usuarios": 12,
+			"uid": "mchavez",
+			"name": "Martín Chavez",
+			"dni": "02578940",
+			"avatar": "https://i.imgur.com/EkrkJXw.png",
+			"status": "offline",
+			"empresa": "NEW TRANSPORT S.A.",
+			"telefono": "+51777222333",
+			"correo": "mchavez@newtransport.net",
+			"cargo": "Gerente General"
+		},
+		{
+			"id_usuarios": 13,
+			"uid": "saitama",
+			"name": "Calvo con capa",
+			"dni": "001578963",
+			"avatar": "https://i.imgur.com/gwFYMnE.png",
+			"status": "offline",
+			"empresa": "NEW TRANSPORT S.A.",
+			"telefono": "+51777222333",
+			"correo": "saitama@opm.com",
+			"cargo": "Gerente General"
+		},
+		{
+			"id_usuarios": 14,
+			"uid": "genos",
+			"name": "Cyborg Demoníaco",
+			"dni": "004578963",
+			"avatar": "https://i.imgur.com/yQrMAnE.jpg",
+			"status": "offline",
+			"empresa": "NEW TRANSPORT S.A.",
+			"telefono": "+51777222333",
+			"correo": "genos@opm.com",
+			"cargo": "Asistente"
+		},
+		{
+			"id_usuarios": 15,
+			"uid": "willy",
+			"name": "William Wallace",
+			"dni": "001545680",
+			"avatar": "https://i.imgur.com/W2e3x0d.jpg",
+			"status": "offline",
+			"empresa": "CORAZÓN VALIENTE S.A.",
+			"telefono": "+51777222333",
+			"correo": "libertad@willi.com",
+			"cargo": "Gerente General"
+		},
+		{
+			"id_usuarios": 1,
+			"uid": "sbustamante",
+			"name": "Samuel Bustamante",
+			"dni": "02159670",
+			"avatar": "https://i.imgur.com/xEV6htV.jpg",
+			"status": "online",
+			"empresa": "GNT - SERVICIOS GENERALES SOCIEDAD ANONIMA-GNT-SG",
+			"telefono": "+51977551191",
+			"correo": "programador@gnt.pe",
+			"cargo": "programador"
+		},
+		{
+			"id_usuarios": 2,
+			"uid": "kurama",
+			"name": "Kyuubi",
+			"dni": "02157890",
+			"avatar": "https://i.imgur.com/lEVEyiW.jpg",
+			"status": "offline",
+			"empresa": "Naruto Shipudden",
+			"telefono": "+51789123456",
+			"correo": "kyuubi@gnt.pe",
+			"cargo": "Gerente general"
+		},
+		{
+			"id_usuarios": 3,
+			"uid": "probotector",
+			"name": "Probotector modelo 1.0.1",
+			"dni": "01245789",
+			"avatar": "https://i.imgur.com/EOjIX81.jpg",
+			"status": "offline",
+			"empresa": "Nintendo",
+			"telefono": "+555777888",
+			"correo": "contra@gnt.pe",
+			"cargo": "Gerente general"
+		},
+		{
+			"id_usuarios": 4,
+			"uid": "astro",
+			"name": "Astro Sonic",
+			"dni": "02456789",
+			"avatar": "https://i.imgur.com/O1rtZTV.jpg",
+			"status": "offline",
+			"empresa": "Super Sonics",
+			"telefono": "+51777222333",
+			"correo": "astro@gnt.pe",
+			"cargo": "Gerente general"
+		},
+		{
+			"id_usuarios": 5,
+			"uid": "terminator",
+			"name": "T-800 modelo 1.0.1 ",
+			"dni": "0126980",
+			"avatar": "https://i.imgur.com/JsWlFGc.jpg",
+			"status": "offline",
+			"empresa": "SkyNet",
+			"telefono": "+51101101101",
+			"correo": "terminator@gnt.pe",
+			"cargo": "Exterminador"
+		},
+		{
+			"id_usuarios": 6,
+			"uid": "jlizama",
+			"name": "Juan Lizama",
+			"dni": "01547896",
+			"avatar": "https://i.imgur.com/LskOErg.jpg",
+			"status": "offline",
+			"empresa": "GNT - SERVICIOS GENERALES SOCIEDAD ANONIMA-GNT-SG",
+			"telefono": "+51777222333",
+			"correo": "jlizama@gnt.pe",
+			"cargo": "Jefe departamento T.I."
+		},
+		{
+			"id_usuarios": 7,
+			"uid": "ccajal",
+			"name": "Carol Cajal",
+			"dni": "0236980",
+			"avatar": "https://i.imgur.com/HNU9XZY.jpg",
+			"status": "offline",
+			"empresa": "GNT - SERVICIOS GENERALES SOCIEDAD ANONIMA-GNT-SG",
+			"telefono": "+51888222333",
+			"correo": "ccajal@gnt.pe",
+			"cargo": "Soporte T.I."
+		},
+		{
+			"id_usuarios": 8,
+			"uid": "wlizama",
+			"name": "Wilder Lizama",
+			"dni": "0578963",
+			"avatar": "https://i.imgur.com/0XKcvZA.jpg",
+			"status": "offline",
+			"empresa": "GNT - SERVICIOS GENERALES SOCIEDAD ANONIMA-GNT-SG",
+			"telefono": "+51777888999",
+			"correo": "wlizama@gnt.pe",
+			"cargo": "Programador"
+		},
+		{
+			"id_usuarios": 9,
+			"uid": "arodriguez",
+			"name": "Alexander Rodriguez",
+			"dni": "0785236",
+			"avatar": "https://i.imgur.com/cNrYZbk.jpg",
+			"status": "offline",
+			"empresa": "GNT - SERVICIOS GENERALES SOCIEDAD ANONIMA-GNT-SG",
+			"telefono": "+51777222333",
+			"correo": "arodriguez@gnt.pe",
+			"cargo": "Programador"
+		},
+		{
+			"id_usuarios": 10,
+			"uid": "jsevillano",
+			"name": "Jorge Sevillano",
+			"dni": "0156980",
+			"avatar": "https://i.imgur.com/Ckkr7Lo.png",
+			"status": "offline",
+			"empresa": "GNT - SERVICIOS GENERALES SOCIEDAD ANONIMA-GNT-SG",
+			"telefono": "+51777222333",
+			"correo": "jsevillano@gnt.pe",
+			"cargo": "Soporte"
+		},
+		{
+			"id_usuarios": 11,
+			"uid": "mfalconi",
+			"name": "Mercedes Falconí",
+			"dni": "0145678",
+			"avatar": "https://i.imgur.com/kX7OpKK.jpg",
+			"status": "offline",
+			"empresa": "GNT - SERVICIOS GENERALES SOCIEDAD ANONIMA-GNT-SG",
+			"telefono": "+51777222333",
+			"correo": "mfalconi@gnt.pe",
+			"cargo": "DBO"
+		},
+		{
+			"id_usuarios": 12,
+			"uid": "mchavez",
+			"name": "Martín Chavez",
+			"dni": "02578940",
+			"avatar": "https://i.imgur.com/EkrkJXw.png",
+			"status": "offline",
+			"empresa": "NEW TRANSPORT S.A.",
+			"telefono": "+51777222333",
+			"correo": "mchavez@newtransport.net",
+			"cargo": "Gerente General"
+		},
+		{
+			"id_usuarios": 13,
+			"uid": "saitama",
+			"name": "Calvo con capa",
+			"dni": "001578963",
+			"avatar": "https://i.imgur.com/gwFYMnE.png",
+			"status": "offline",
+			"empresa": "NEW TRANSPORT S.A.",
+			"telefono": "+51777222333",
+			"correo": "saitama@opm.com",
+			"cargo": "Gerente General"
+		},
+		{
+			"id_usuarios": 14,
+			"uid": "genos",
+			"name": "Cyborg Demoníaco",
+			"dni": "004578963",
+			"avatar": "https://i.imgur.com/yQrMAnE.jpg",
+			"status": "offline",
+			"empresa": "NEW TRANSPORT S.A.",
+			"telefono": "+51777222333",
+			"correo": "genos@opm.com",
+			"cargo": "Asistente"
+		},
+		{
+			"id_usuarios": 15,
+			"uid": "willy",
+			"name": "William Wallace",
+			"dni": "001545680",
+			"avatar": "https://i.imgur.com/W2e3x0d.jpg",
+			"status": "offline",
+			"empresa": "CORAZÓN VALIENTE S.A.",
+			"telefono": "+51777222333",
+			"correo": "libertad@willi.com",
+			"cargo": "Gerente General"
+		}
+	]);
+	const [currentPage, setCurrentPage] = useState(0);
+	const [pageSize, setPageSize] = useState(5);
+	const [pageSizes] = useState([5, 10, 15, 0]);
+	const [searchValue, setSearchState] = useState('');
 
 	return (
-		<>
-			<Backdrop open={openDialog} className={classes.back} />
-			<Dialog
-				open={openDialog}
-				TransitionComponent={Transition}
-				keepMounted
-				onClose={() => setOpenDialog(false)}
-				aria-labelledby="alert-dialog-slide-title"
-				aria-describedby="alert-dialog-slide-description"
-			>
-				<DialogTitle id="alert-dialog-slide-title">{`¿Seguro que deseas eliminar a ${nombre}?`}</DialogTitle>
-				<DialogContent>
-					<DialogContentText id="alert-dialog-slide-description">
-						Una vez eliminado se perderá toda la información de este contacto.
-          			</DialogContentText>
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={() => setOpenDialog(false)} color="secondary">
-						Cancelar
-          			</Button>
-					<Button variant='contained' onClick={() => eliminar()} color="primary">
-						Confirmar
-          			</Button>
-				</DialogActions>
-			</Dialog>
-			<MUIDataTable
-				title={"Lista de contactos"}
-				data={clientes}
-				columns={columns}
-				options={options}
-			/>
-			{/* <MaterialTable
-				title=''
-				columns={[
-					{ title: 'Name', field: 'name' },
-					{ title: 'Empresa', field: 'empresa' },
-					{ title: 'Teléfono', field: 'telefono', type: 'numeric' },
-					{ title: 'Correo', field: 'correo' },
-				]}
-				data={clientes}
-				actions={[
-					{
-						icon: 'search',
-						tooltip: 'Ver',
-						onClick: (event, rowData) => history.push(`/contactos/info?id=${rowData.id_usuarios}`)
-					},
-					{
-						icon: 'edit',
-						tooltip: 'Editar',
-						onClick: (event, rowData) => alert(rowData.id_usuarios)
-					},
-					{
-						icon: 'delete',
-						tooltip: 'Eliminar',
-						onClick: (event, rowData) => MensajeEliminar(rowData.id_usuarios, rowData.name)
-					},
-					{
-						icon: 'filter_list',
-						tooltip: 'Filtrar datos',
-						isFreeAction: true,
-						onClick: () => alert('filtrar')
-					}
-				]}
-				localization={{
-					pagination: {
-						labelDisplayedRows: '{from}-{to} de {count}'
-					},
-					toolbar: {
-						nRowsSelected: '{0} fila(s) seleccionadas'
-					},
-					header: {
-						actions: 'Actions'
-					},
-					body: {
-						emptyDataSourceMessage: 'No hay nada para mostrar',
-						filterRow: {
-							filterTooltip: 'Filter'
-						}
-					}
-				}}
-				options={{
-					search: false
-				}}
-			/> */}
-		</>
+		<Paper>
+			<Grid rows={rows} columns={columns}>
+				<SortingState sorting={sorting} onSortingChange={setSorting} />
+				<PagingState currentPage={currentPage} onCurrentPageChange={setCurrentPage} pageSize={pageSize} onPageSizeChange={setPageSize} />
+				<SearchState value={searchValue} onValueChange={setSearchState} />
+				<IntegratedSorting />
+				<IntegratedPaging />
+				<IntegratedFiltering />
+				<Table />
+				<TableHeaderRow showSortingControls />
+				<Toolbar />
+				<SearchPanel />
+				<PagingPanel pageSizes={pageSizes} />
+			</Grid>
+		</Paper>
 	);
-}
+};
