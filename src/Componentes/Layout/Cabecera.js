@@ -1,7 +1,7 @@
 import React from 'react';
 import MenuIcon from '@material-ui/icons/Menu';
 import clsx from 'clsx';
-import { Drawer, CssBaseline, AppBar, Toolbar, List, Typography, Divider, IconButton, ListItem, ListItemIcon, ListItemText, Avatar, MenuItem, Menu, Backdrop, Slide } from '@material-ui/core'
+import { Drawer, CssBaseline, AppBar, Toolbar, Badge, List, Typography, Divider, IconButton, ListItem, ListItemIcon, ListItemText, Avatar, MenuItem, Menu, Backdrop, Slide } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles';
 import { Redirect, withRouter, Link } from 'react-router-dom';
 import HomeIcon from '@material-ui/icons/Home';
@@ -269,7 +269,9 @@ function Cabecera(props) {
 					<>
 						<div>
 							<IconButton color="inherit">
-								<NotificationsNoneOutlinedIcon />
+								<Badge badgeContent={8} color='secondary'>
+									<NotificationsNoneOutlinedIcon />
+								</Badge>
 							</IconButton>
 							<IconButton onClick={handleConfig} color="inherit">
 								<AddOutlinedIcon />
