@@ -8,15 +8,11 @@ import {
 	DialogContent,
 	DialogContentText,
 	DialogActions,
-	Button,
-	IconButton
+	Button
 } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
-// import MaterialTable from 'material-table';
+import MaterialTable from 'material-table';
 import { AuthTokenRequest } from '../helpers/AxiosInstance';
-import MUIDataTable from "mui-datatables";
-import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
-import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
 
 const useStyles = makeStyles(() => ({
 	back: {
@@ -37,85 +33,6 @@ export default function TablaContactos() {
 	const [clientes, setClientes] = React.useState([])
 	const history = useHistory()
 	const classes = useStyles();
-	const columns = [
-		{
-			name: "Ver",
-			options: {
-				filter: false,
-				sort: false,
-				empty: true,
-				customBodyRender: (value, tableMeta, updateValue) => {
-					return (
-						<IconButton onClick={() => history.push(`/contactos/info?id=${tableMeta.rowData[2]}`)}>
-							<VisibilityOutlinedIcon />
-						</IconButton>
-					);
-				}
-			}
-		},
-		{
-			name: "Eliminar",
-			options: {
-				filter: false,
-				sort: false,
-				empty: true,
-				customBodyRender: (value, tableMeta, updateValue) => {
-					return (
-						<IconButton onClick={() => MensajeEliminar(tableMeta.rowData[2], tableMeta.rowData[3])}>
-							<DeleteOutlineOutlinedIcon />
-						</IconButton>
-					);
-				}
-			}
-		},
-		{ label: 'Id', name: 'id_usuarios' },
-		{ label: 'Name', name: 'name' },
-		{ label: 'Empresa', name: 'empresa' },
-		{ label: 'Teléfono', name: 'telefono', type: 'numeric' },
-		{ label: 'Correo', name: 'correo' }
-	]
-	const options = {
-		fixedHeaderOptions: {
-			xAxis: false,
-			yAxis: true
-		  },
-		responsive: 'scrollMaxHeight',
-		textLabels: {
-			body: {
-				noMatch: "No hay nada para mostrar",
-				toolTip: "Sort",
-				columnHeaderTooltip: column => `Ordenar por ${column.label}`
-			},
-			pagination: {
-				next: "Siguiente",
-				previous: "Anterior",
-				rowsPerPage: "Filas por página:",
-				displayRows: "de",
-			},
-			toolbar: {
-				search: "Buscar",
-				downloadCsv: "Descargar CSV",
-				print: "Imprimir",
-				viewColumns: "Ver columnas",
-				filterTable: "Filtrar tabla",
-			},
-			filter: {
-				all: "Todos",
-				title: "Filtros",
-				reset: "Reset",
-			},
-			viewColumns: {
-				title: "Ver columnas",
-				titleAria: "mostrar/ocultar columnas",
-			},
-			selectedRows: {
-				text: "fila(s) seleccionadas",
-				delete: "Eliminar",
-				deleteAria: "Eliminar filas seleccionadas",
-			},
-		},
-		filterType: 'textField',
-	}
 
 	const usuarios = () => {
 		AuthTokenRequest.get('contactos')
@@ -169,14 +86,8 @@ export default function TablaContactos() {
           			</Button>
 				</DialogActions>
 			</Dialog>
-			<MUIDataTable
-				title={"Lista de contactos"}
-				data={clientes}
-				columns={columns}
-				options={options}
-			/>
-			{/* <MaterialTable
-				title=''
+			<MaterialTable
+				title='Lista de contactos'
 				columns={[
 					{ title: 'Name', field: 'name' },
 					{ title: 'Empresa', field: 'empresa' },
@@ -227,7 +138,7 @@ export default function TablaContactos() {
 				options={{
 					search: false
 				}}
-			/> */}
+			/>
 		</>
 	);
 }

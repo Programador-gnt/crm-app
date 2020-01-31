@@ -134,7 +134,12 @@ const colors = {
 		id: 'blue-gray',
 		name: 'Blue Gray',
 		import: blueGray
-	}
+	},
+	// black: {
+	// 	id: 'black',
+	// 	name: 'Black',
+	// 	import: '#000000'
+	// }
 };
 
 const types = {

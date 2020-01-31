@@ -88,7 +88,7 @@ export default function TablaEmpresas(data) {
                 </DialogActions>
             </Dialog>
             <MaterialTable
-                title=''
+                title='Lista de empresas'
                 columns={[
                     { title: 'Razón social', field: 'razonsocial' },
                     { title: 'Ruc', field: 'ruc' },
