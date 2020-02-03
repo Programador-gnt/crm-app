@@ -322,7 +322,7 @@ export default function Nuevo() {
 									<Toolbar variant='dense'>
 										<Typography variant="button" className={classes.title}>
 											Agregar dirección
-						</Typography>
+									</Typography>
 										<HomeOutlinedIcon />
 									</Toolbar>
 								</AppBar>
@@ -551,7 +551,7 @@ export default function Nuevo() {
 						<Grid item xs={12} sm={3}>
 							<TextField
 								name='dni'
-								value={denei}
+								value={denei || ''}
 								margin='normal'
 								autoFocus
 								fullWidth
@@ -579,7 +579,7 @@ export default function Nuevo() {
 						<Grid item xs={12} sm={6}>
 							<TextField
 								name='apellidoPaterno'
-								value={informacion1.apellidoPaterno}
+								value={informacion1.apellidoPaterno || ''}
 								margin='normal'
 								fullWidth
 								helperText="Apellido paterno"
@@ -590,7 +590,7 @@ export default function Nuevo() {
 						<Grid item xs={12} sm={6}>
 							<TextField
 								name='apellidoMaterno'
-								value={informacion1.apellidoMaterno}
+								value={informacion1.apellidoMaterno || ''}
 								margin='normal'
 								fullWidth
 								helperText="Apellido materno"
@@ -601,7 +601,7 @@ export default function Nuevo() {
 						<Grid item xs={12} sm={4}>
 							<TextField
 								name='nombres'
-								value={informacion1.nombres}
+								value={informacion1.nombres || ''}
 								margin='normal'
 								fullWidth
 								helperText="nombres"
@@ -625,7 +625,7 @@ export default function Nuevo() {
 						<Grid item xs={12} sm={3}>
 							<TextField
 								name='ruc'
-								value={ruc}
+								value={ruc || ''}
 								margin='normal'
 								fullWidth
 								label="RUC"
@@ -640,7 +640,7 @@ export default function Nuevo() {
 						<Grid item xs={12} sm={6}>
 							<TextField
 								name='razonSocial'
-								value={informacion2.razonSocial}
+								value={informacion2.razonSocial || ''}
 								margin='normal'
 								fullWidth
 								helperText="Razón social"
@@ -727,7 +727,7 @@ export default function Nuevo() {
 						<Grid item xs={12} sm={4}>
 							<TextField
 								name='numero'
-								value={telefonos.numero}
+								value={telefonos.numero || ''}
 								margin='normal'
 								fullWidth
 								label="Teléfono"
@@ -742,7 +742,7 @@ export default function Nuevo() {
 								select
 								className={classes.texto}
 								name='tipo'
-								value={telefonos.tipo}
+								value={telefonos.tipo || ''}
 								margin='normal'
 								fullWidth
 								onChange={onChangeTelefonos}
@@ -790,7 +790,7 @@ export default function Nuevo() {
 						<Grid item xs={12} sm={4}>
 							<TextField
 								name='direccion'
-								value={correos.direccion}
+								value={correos.direccion || ''}
 								margin='normal'
 								fullWidth
 								label="Correo"
@@ -805,7 +805,7 @@ export default function Nuevo() {
 								select
 								className={classes.texto}
 								name='tipo'
-								value={correos.tipo}
+								value={correos.tipo || ''}
 								margin='normal'
 								fullWidth
 								onChange={onChangeCorreos}
@@ -851,7 +851,7 @@ export default function Nuevo() {
 						<Grid item xs={12} sm={4}>
 							<TextField
 								name='nombre'
-								value={redes.nombre}
+								value={redes.nombre || ''}
 								margin='normal'
 								fullWidth
 								label="Red social"
@@ -866,7 +866,7 @@ export default function Nuevo() {
 								select
 								className={classes.texto}
 								name='tipo'
-								value={redes.tipo}
+								value={redes.tipo || ''}
 								margin='normal'
 								fullWidth
 								onChange={onChangeRedes}

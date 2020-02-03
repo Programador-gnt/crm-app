@@ -280,7 +280,7 @@ export default function Nuevo() {
 												<TextField
 													name='tdireccion'
 													select
-													value={empresa.tdireccion}
+													value={empresa.tdireccion || ''}
 													fullWidth
 													label="Tipo"
 													required
@@ -373,7 +373,7 @@ export default function Nuevo() {
 										<TextField
 											name='tdireccion'
 											select
-											value={empresa.tdireccion}
+											value={empresa.tdireccion || ''}
 											fullWidth
 											label="Tipo"
 											required
@@ -492,7 +492,7 @@ export default function Nuevo() {
 								select
 								className={classes.texto}
 								name='tdocumento'
-								value={empresa.tdocumento}
+								value={empresa.tdocumento || ''}
 								margin='normal'
 								fullWidth
 								onChange={onChangeEmpresa}
@@ -507,7 +507,7 @@ export default function Nuevo() {
 						<Grid item xs={12} sm={3}>
 							<TextField
 								name='ruc'
-								value={empresa.ruc}
+								value={empresa.ruc || ''}
 								margin='normal'
 								autoFocus
 								fullWidth
@@ -522,7 +522,7 @@ export default function Nuevo() {
 						<Grid item xs={12} sm={6}>
 							<TextField
 								name='razonsocial'
-								value={empresa.razonsocial}
+								value={empresa.razonsocial || ''}
 								className={classes.texto}
 								margin='normal'
 								onChange={onChangeEmpresa}
@@ -568,7 +568,7 @@ export default function Nuevo() {
 								select
 								className={classes.texto}
 								name='ttelefono'
-								value={empresa.ttelefono}
+								value={empresa.ttelefono || ''}
 								margin='normal'
 								fullWidth
 								onChange={onChangeEmpresa}
@@ -584,7 +584,7 @@ export default function Nuevo() {
 							<TextField
 								name='telefono'
 								id='telefono'
-								value={empresa.telefono}
+								value={empresa.telefono || ''}
 								margin='normal'
 								fullWidth
 								label="Teléfono"
@@ -613,7 +613,7 @@ export default function Nuevo() {
 						<Grid item xs={12} sm={4}>
 							<TextField
 								name='fechaactividades'
-								value={empresa.fechaactividades}
+								value={empresa.fechaactividades || ''}
 								margin='normal'
 								fullWidth
 								label="Fecha de inicio de actividades"
@@ -626,7 +626,7 @@ export default function Nuevo() {
 						<Grid item xs={12} sm={4}>
 							<TextField
 								name='rubro'
-								value={empresa.rubro}
+								value={empresa.rubro || ''}
 								margin='normal'
 								fullWidth
 								label="Rubro"
@@ -639,7 +639,7 @@ export default function Nuevo() {
 						<Grid item xs={12} sm={4}>
 							<TextField
 								name='pproductos'
-								value={empresa.pproductos}
+								value={empresa.pproductos || ''}
 								margin='normal'
 								fullWidth
 								label="Principales productos"
@@ -659,7 +659,7 @@ export default function Nuevo() {
 						<Grid item xs={12} sm={4}>
 							<TextField
 								name='tfechaimportante'
-								value={empresa.tfechaimportante}
+								value={empresa.tfechaimportante || ''}
 								margin='normal'
 								fullWidth
 								label="Tipo fecha"
@@ -673,7 +673,7 @@ export default function Nuevo() {
 							<TextField
 								name='fechaimportante'
 								id='fechaimportante'
-								value={empresa.fechaimportante}
+								value={empresa.fechaimportante || ''}
 								margin='normal'
 								fullWidth
 								label="Fecha importante"
@@ -731,7 +731,7 @@ export default function Nuevo() {
 						<Grid item xs={12} sm={4}>
 							<TextField
 								name='emailfacturaelectronica'
-								value={empresa.emailfacturaelectronica}
+								value={empresa.emailfacturaelectronica || ''}
 								margin='normal'
 								fullWidth
 								label="Envío de factura electrónica"
@@ -744,7 +744,7 @@ export default function Nuevo() {
 						<Grid item xs={12} sm={4}>
 							<TextField
 								name='empleados'
-								value={empresa.empleados}
+								value={empresa.empleados || ''}
 								margin='normal'
 								fullWidth
 								label="Cantidad de empleados"
@@ -757,7 +757,7 @@ export default function Nuevo() {
 						<Grid item xs={12} sm={4}>
 							<TextField
 								name='obreros'
-								value={empresa.obreros}
+								value={empresa.obreros || ''}
 								margin='normal'
 								fullWidth
 								label="Cantidad de obreros"
@@ -838,7 +838,7 @@ export default function Nuevo() {
 						<Grid item xs={12} sm={6}>
 							<TextField
 								name='capitalsocial'
-								value={empresa.capitalsocial}
+								value={empresa.capitalsocial || ''}
 								margin='normal'
 								fullWidth
 								label="Capital social"
@@ -851,7 +851,7 @@ export default function Nuevo() {
 						<Grid item xs={12} sm={6}>
 							<TextField
 								name='fechadecorte'
-								value={empresa.fechadecorte}
+								value={empresa.fechadecorte || ''}
 								margin='normal'
 								fullWidth
 								label="Fecha de corte"
@@ -866,7 +866,7 @@ export default function Nuevo() {
 						<Grid item xs={12} sm={4}>
 							<TextField
 								name='activocorriente'
-								value={empresa.activocorriente}
+								value={empresa.activocorriente || ''}
 								margin='normal'
 								fullWidth
 								label="Activo corriente"
@@ -879,7 +879,7 @@ export default function Nuevo() {
 						<Grid item xs={12} sm={4}>
 							<TextField
 								name='activototal'
-								value={empresa.activototal}
+								value={empresa.activototal || ''}
 								margin='normal'
 								fullWidth
 								label="Activo total"
@@ -892,7 +892,7 @@ export default function Nuevo() {
 						<Grid item xs={12} sm={4}>
 							<TextField
 								name='pasivocorriente'
-								value={empresa.pasivocorriente}
+								value={empresa.pasivocorriente || ''}
 								margin='normal'
 								fullWidth
 								label="Pasivo corriente"
@@ -907,7 +907,7 @@ export default function Nuevo() {
 						<Grid item xs={12} sm={4}>
 							<TextField
 								name='patrimonio'
-								value={empresa.patrimonio}
+								value={empresa.patrimonio || ''}
 								margin='normal'
 								fullWidth
 								label="Patrimonio"
@@ -920,7 +920,7 @@ export default function Nuevo() {
 						<Grid item xs={12} sm={4}>
 							<TextField
 								name='ventas'
-								value={empresa.ventas}
+								value={empresa.ventas || ''}
 								margin='normal'
 								fullWidth
 								label="Ventas"
@@ -933,7 +933,7 @@ export default function Nuevo() {
 						<Grid item xs={12} sm={4}>
 							<TextField
 								name='resultadoneto'
-								value={empresa.resultadoneto}
+								value={empresa.resultadoneto || ''}
 								margin='normal'
 								fullWidth
 								label="Resultado neto"
@@ -948,7 +948,7 @@ export default function Nuevo() {
 						<Grid item xs={12} sm={3}>
 							<TextField
 								name='formadepago'
-								value={empresa.formadepago}
+								value={empresa.formadepago || ''}
 								margin='normal'
 								fullWidth
 								label="Forma de pago"
@@ -961,7 +961,7 @@ export default function Nuevo() {
 						<Grid item xs={12} sm={3}>
 							<TextField
 								name='garantia'
-								value={empresa.garantia}
+								value={empresa.garantia || ''}
 								margin='normal'
 								fullWidth
 								label="Garantía"
@@ -974,7 +974,7 @@ export default function Nuevo() {
 						<Grid item xs={12} sm={3}>
 							<TextField
 								name='credito'
-								value={empresa.credito}
+								value={empresa.credito || ''}
 								margin='normal'
 								fullWidth
 								label="Crédito"
@@ -987,7 +987,7 @@ export default function Nuevo() {
 						<Grid item xs={12} sm={3}>
 							<TextField
 								name='montopromedio'
-								value={empresa.montopromedio}
+								value={empresa.montopromedio || ''}
 								margin='normal'
 								fullWidth
 								label="Monto promedio"
@@ -1118,7 +1118,7 @@ export default function Nuevo() {
 								select
 								className={classes.texto}
 								name='tcorreo'
-								value={empresa.tcorreo}
+								value={empresa.tcorreo || ''}
 								margin='normal'
 								fullWidth
 								onChange={onChangeEmpresa}
@@ -1133,7 +1133,7 @@ export default function Nuevo() {
 							<TextField
 								name='correo'
 								id='correo'
-								value={empresa.correo}
+								value={empresa.correo || ''}
 								margin='normal'
 								fullWidth
 								label="Correo"

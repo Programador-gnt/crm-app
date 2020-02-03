@@ -1,5 +1,5 @@
 import React from 'react';
-import { CssBaseline, Card, CardContent, CardActions, Avatar, Typography, Grid, Divider, Chip } from '@material-ui/core';
+import { CssBaseline, Card, CardContent, CardActions, Avatar, Typography, Grid, Tooltip, Paper, TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import SpeedDial from '@material-ui/lab/SpeedDial';
 import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
@@ -9,14 +9,14 @@ import GoogleIcon from 'mdi-material-ui/Google';
 import EventIcon from '@material-ui/icons/Event';
 import PhoneAndroidIcon from '@material-ui/icons/PhoneAndroid';
 import IconButton from '@material-ui/core/IconButton';
-import FaceIcon from '@material-ui/icons/Face';
-import DoneIcon from '@material-ui/icons/Done';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
-import consumeWSChat from '../Config/WebServiceChat';
+import { AuthTokenRequest } from '../helpers/AxiosInstance';
 import { useHistory } from 'react-router-dom'
 
 const useStyles = makeStyles(theme => ({
 	root: {
+		display: 'flex',
+		flexWrap: 'wrap',
 		width: '100%',
 		marginTop: theme.spacing(8),
 		paddingLeft: theme.spacing(4)
@@ -27,8 +27,7 @@ const useStyles = makeStyles(theme => ({
 		right: theme.spacing(2),
 	},
 	card: {
-		width: 400,
-		margin: theme.spacing(5)
+
 	},
 	avatar: {
 		backgroundColor: theme.palette.primary.main,
@@ -42,6 +41,13 @@ const useStyles = makeStyles(theme => ({
 	},
 	info: {
 		marginTop: theme.spacing(1)
+	},
+	Paper: {
+		width: '100%',
+		[theme.breakpoints.up(600 + theme.spacing(3) * 2)]: {
+			width: '100%',
+			padding: theme.spacing(3),
+		}
 	}
 }));
 
@@ -54,13 +60,17 @@ export default function Info() {
 	const [open, setOpen] = React.useState(window.screen.width < 769 ? false : true)
 	const id = window.location.search.split('=')[1]
 	const [infor, setInfor] = React.useState({})
+	const [editar, setEditar] = React.useState(true)
 	const classes = useStyles()
 
 	const info = () => {
-		consumeWSChat('GET', 'contactos/info', '', `?id_usuarios=${id}`)
-			.then(result => {
-				setInfor(result)
-			})
+		AuthTokenRequest.get('contactos/info', {
+			params: {
+				id_usuarios: id
+			}
+		}).then(result => {
+			setInfor(result.data)
+		})
 	}
 
 	const preventActionClickClose = (evt, action) => {
@@ -76,80 +86,136 @@ export default function Info() {
 	return (
 		<React.Fragment>
 			<CssBaseline />
-			<Grid className={classes.root}>
-				<Grid item xs={12}>
-					<Typography component="h1" variant="h4" align="center" color='textSecondary'>
-						Información de contacto
-          			</Typography>
-					<SpeedDial
-						ariaLabel="SpeedDial tooltip example"
-						className={classes.speedDial}
-						icon={<SpeedDialIcon />}
-						onClick={() => setOpen(!open)}
-						open={open}>
+			<SpeedDial
+				ariaLabel="SpeedDial tooltip example"
+				className={classes.speedDial}
+				icon={<SpeedDialIcon />}
+				onClick={() => setOpen(!open)}
+				open={open}>
 
-						{actions.map(action => (
-							<SpeedDialAction
-								tooltipOpen
-								key={action.name}
-								icon={action.name === 'Volver' ? <ArrowBackOutlinedIcon /> : ''}
-								tooltipTitle={action.name}
-								onClick={evt => preventActionClickClose(evt, action)}
-							/>
-						))}
-					</SpeedDial>
-					<Grid container alignItems='center' justify='center'>
-						<Card className={classes.card}>
-							<CardContent>
-								<Avatar className={classes.avatar} src={infor.avatar} />
-								<Typography variant="h5" className={classes.texto} color='secondary'>
-									{infor.name}
-								</Typography>
-								<Typography variant="body1" className={classes.texto} color='textSecondary'>
-									{infor.empresa}
-								</Typography>
-								<Divider />
-								<Typography variant="subtitle2" className={classes.info} color='textPrimary'>
-									Email
-                                {/* Incluso cuando todo es perfecto, siempre puedes mejorarlo. Rompe barreras en tu cabeza, crea algo loco y no olvides que programar es poesía... */}
-								</Typography>
-								<Typography variant="body1" color='textSecondary'>
-									{infor.correo}
-								</Typography>
-								<Typography variant="subtitle2" className={classes.info} color='textPrimary'>
-									Teléfono
-                            </Typography>
-								<Typography variant="body1" color='textSecondary'>
-									{infor.telefono}
-								</Typography>
-								<Typography variant="subtitle2" className={classes.info} color='textPrimary'>
-									Status
-                            </Typography>
-								<Chip
-									icon={<FaceIcon />}
-									label={infor.status}
-									color="primary"
-									onDelete={() => console.log('status')}
-									deleteIcon={<DoneIcon />}
-									variant="outlined"
-								/>
-							</CardContent>
-							<CardActions disableSpacing>
-								<IconButton aria-label="Gmail">
+				{actions.map(action => (
+					<SpeedDialAction
+						tooltipOpen
+						key={action.name}
+						icon={action.name === 'Volver' ? <ArrowBackOutlinedIcon /> : ''}
+						tooltipTitle={action.name}
+						onClick={evt => preventActionClickClose(evt, action)}
+					/>
+				))}
+			</SpeedDial>
+			<Grid container className={classes.root} spacing={1}>
+				<Grid item xs={12} sm={4}>
+					<Card className={classes.card}>
+						<CardContent>
+							<Avatar className={classes.avatar} src={infor.avatar} />
+							<Typography variant="h5" className={classes.texto} color='secondary'>
+								{infor.name}
+							</Typography>
+							<Typography variant="body1" className={classes.texto} color='textSecondary'>
+								{infor.correo}
+							</Typography>
+						</CardContent>
+						<CardActions disableSpacing>
+							<Tooltip title='Enviar mensaje'>
+								<IconButton>
 									<GoogleIcon color='primary' />
 								</IconButton>
-								<IconButton aria-label="Agendar">
+							</Tooltip>
+							<Tooltip title='Agendar reunión'>
+								<IconButton>
 									<EventIcon color='primary' />
 								</IconButton>
-								<IconButton aria-label="Llamadas">
+							</Tooltip>
+							<Tooltip title='Llamar'>
+								<IconButton>
 									<PhoneAndroidIcon color='primary' />
 								</IconButton>
-								<IconButton aria-label="Llamadas">
+							</Tooltip>
+							<Tooltip title='Editar'>
+								<IconButton onClick={() => setEditar(!editar)}>
 									<EditOutlinedIcon color='primary' />
 								</IconButton>
-							</CardActions>
-						</Card>
-					</Grid>
+							</Tooltip>
+						</CardActions>
+					</Card>
+				</Grid>
+				<Grid item xs={12} sm={8}>
+					<Paper elevation={4} className={classes.Paper}>
+						<Grid container spacing={1}>
+							<Grid item xs={12}>
+								<Typography variant="h6" color='textSecondary'>
+									Perfil de contacto
+						    	</Typography>
+							</Grid>
+							<Grid item xs={12} sm={6}>
+								<TextField
+									name='name'
+									value={infor.name || ''}
+									disabled={editar}
+									margin='normal'
+									autoFocus
+									fullWidth
+									helperText='Name'
+									type="text"
+								/>
+							</Grid>
+							<Grid item xs={12} sm={6}>
+								<TextField
+									name='dni'
+									value={infor.dni || ''}
+									disabled={editar}
+									margin='normal'
+									fullWidth
+									helperText='Dni'
+									type="text"
+								/>
+							</Grid>
+							<Grid item xs={12} sm={6}>
+								<TextField
+									name='empresa'
+									value={infor.empresa || ''}
+									disabled={editar}
+									margin='normal'
+									fullWidth
+									helperText='Empresa'
+									type="text"
+								/>
+							</Grid>
+							<Grid item xs={12} sm={6}>
+								<TextField
+									name='telefono'
+									value={infor.telefono || ''}
+									disabled={editar}
+									margin='normal'
+									fullWidth
+									helperText='Telefono'
+									type="text"
+								/>
+							</Grid>
+							<Grid item xs={12} sm={6}>
+								<TextField
+									name='correo'
+									value={infor.correo || ''}
+									disabled={editar}
+									margin='normal'
+									fullWidth
+									helperText='Correo'
+									type="text"
+								/>
+							</Grid>
+							<Grid item xs={12} sm={6}>
+								<TextField
+									name='cargo'
+									value={infor.cargo || ''}
+									disabled={editar}
+									margin='normal'
+									fullWidth
+									helperText='Cargo'
+									type="text"
+								/>
+							</Grid>
+						</Grid>
+					</Paper>
 				</Grid>
 			</Grid>
 		</React.Fragment>
