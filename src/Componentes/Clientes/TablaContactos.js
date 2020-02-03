@@ -102,11 +102,6 @@ export default function TablaContactos() {
 						onClick: (event, rowData) => history.push(`/contactos/info?id=${rowData.id_usuarios}`)
 					},
 					{
-						icon: 'edit',
-						tooltip: 'Editar',
-						onClick: (event, rowData) => alert(rowData.id_usuarios)
-					},
-					{
 						icon: 'delete',
 						tooltip: 'Eliminar',
 						onClick: (event, rowData) => MensajeEliminar(rowData.id_usuarios, rowData.name)

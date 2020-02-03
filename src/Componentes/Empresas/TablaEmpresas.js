@@ -103,11 +103,6 @@ export default function TablaEmpresas(data) {
                         onClick: (event, rowData) => history.push(`/empresas/info?id=${rowData.id_empresas}`)
                     },
                     {
-                        icon: 'edit',
-                        tooltip: 'Editar',
-                        onClick: (event, rowData) => alert(rowData.id_empresas)
-                    },
-                    {
                         icon: 'delete',
                         tooltip: 'Eliminar',
                         onClick: (event, rowData) => MensajeEliminar(rowData.id_empresas, rowData.razonsocial)
