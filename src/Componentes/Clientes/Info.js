@@ -105,7 +105,7 @@ export default function Info() {
 			</SpeedDial>
 			<Grid container className={classes.root} spacing={1}>
 				<Grid item xs={12} sm={4}>
-					<Card className={classes.card}>
+					<Card className={classes.card} raised={true}>
 						<CardContent>
 							<Avatar className={classes.avatar} src={infor.avatar} />
 							<Typography variant="h5" className={classes.texto} color='secondary'>
