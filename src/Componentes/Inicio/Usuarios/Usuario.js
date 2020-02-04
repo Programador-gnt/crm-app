@@ -1,7 +1,8 @@
 import React from 'react';
 import Paper from '@material-ui/core/Paper';
-import { Chart, BarSeries, Title, ArgumentAxis, ValueAxis } from '@devexpress/dx-react-chart-material-ui';
-import { Animation } from '@devexpress/dx-react-chart';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+// import { Chart, BarSeries, Title, ArgumentAxis, ValueAxis } from '@devexpress/dx-react-chart-material-ui';
+// import { Animation } from '@devexpress/dx-react-chart';
 
 
 export default function BarraUsuario(props) {
@@ -22,13 +23,25 @@ export default function BarraUsuario(props) {
 
 	return (
 		<Paper elevation={4}>
-			<Chart data={data}>
+			<BarChart
+				width={335}
+				height={500}
+				data={data}
+				margin={{ left: -30, top: 5 }}>
+				<CartesianGrid strokeDasharray="5 5" />
+				<XAxis dataKey="mes" />
+				<YAxis />
+				<Tooltip />
+				<Legend />
+				<Bar type="monotone" dataKey="contactos" fill="#39a24f" />
+			</BarChart>
+			{/* <Chart data={data}>
 				<ArgumentAxis />
 				<ValueAxis max={1} />
 				<BarSeries valueField="contactos" argumentField="mes" color='#39a24f' />
 				<Title text="Contactos" />
 				<Animation duration={500} />
-			</Chart>
+			</Chart> */}
 		</Paper>
 	);
 }
