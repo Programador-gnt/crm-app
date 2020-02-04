@@ -3,7 +3,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import clsx from 'clsx';
 import { Drawer, CssBaseline, AppBar, Toolbar, List, Badge, Typography, Divider, IconButton, ListItem, ListItemIcon, ListItemText, Avatar, MenuItem, Menu, Backdrop, Slide } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles';
-import { Redirect, withRouter, Link } from 'react-router-dom';
+import { Redirect, withRouter, Link, useHistory } from 'react-router-dom';
 import HomeIcon from '@material-ui/icons/Home';
 import GoogleIcon from 'mdi-material-ui/Google';
 import EventIcon from '@material-ui/icons/Event';
@@ -156,6 +156,7 @@ function Cabecera(props) {
 	const [variable, setVariable] = React.useState(false)
 	const perfil = JSON.parse(localStorage.getItem('perfilGoogle'))
 	const path = window.location.pathname.split('/')[1]
+	const history = useHistory()
 
 	const handleDrawerOpen = () => {
 		setOpen(true);
@@ -198,7 +199,7 @@ function Cabecera(props) {
 
 	const cerrar = () => {
 		setOpenDialog(false)
-		return (props.location.pathname)
+		return (history.push(window.location.pathname))
 	}
 
 	const cerrarChatDialog = () => {
