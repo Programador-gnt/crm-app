@@ -1,71 +1,42 @@
 import React from 'react';
 import Paper from '@material-ui/core/Paper';
-import { Chart, ArgumentAxis, ValueAxis, AreaSeries, Title, Legend } from '@devexpress/dx-react-chart-material-ui';
-import { ArgumentScale, Animation } from '@devexpress/dx-react-chart';
-import { scalePoint } from 'd3-scale';
-import { withStyles } from '@material-ui/core/styles';
-
-const legendStyles = {
-	root: {
-		display: 'flex',
-		margin: 'auto',
-		flexDirection: 'row',
-	},
-};
-const legendLabelStyles = theme => ({
-	label: {
-		paddingTop: theme.spacing(1),
-	},
-});
-const legendItemStyles = {
-	item: {
-		flexDirection: 'column',
-	},
-};
-
-const LegendRootBase = ({ classes, ...restProps }) => (
-	<Legend.Root {...restProps} className={classes.root} />
-);
-const LegendLabelBase = ({ classes, ...restProps }) => (
-	<Legend.Label {...restProps} className={classes.label} />
-);
-const LegendItemBase = ({ classes, ...restProps }) => (
-	<Legend.Item {...restProps} className={classes.item} />
-);
-
-const LegendRoot = withStyles(legendStyles, { name: 'LegendRoot' })(LegendRootBase);
-const LegendLabel = withStyles(legendLabelStyles, { name: 'LegendLabel' })(LegendLabelBase);
-const LegendItem = withStyles(legendItemStyles, { name: 'LegendItem' })(LegendItemBase);
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 
 export default function AreaGmail() {
 	const data = [
-		{ mes: 'Ene', contactos: 5, no: 10, si: 4 },
-		{ mes: 'Feb', contactos: 10, no: 8, si: 5 },
-		{ mes: 'Mar', contactos: 12, no: 7, si: 7 },
-		{ mes: 'Abr', contactos: 9, no: 5, si: 2 },
-		{ mes: 'May', contactos: 10, no: 20, si: 6 },
-		{ mes: 'Jun', contactos: 12, no: 25, si: 9 },
-		{ mes: 'Jul', contactos: 13, no: 8, si: 7 },
-		{ mes: 'Ags', contactos: 14, no: 6, si: 9 },
-		{ mes: 'Sep', contactos: 19, no: 18, si: 2 },
-		{ mes: 'Oct', contactos: 17, no: 8, si: 1 },
-		{ mes: 'Nov', contactos: 20, no: 7, si: 8 },
-		{ mes: 'Dic', contactos: 14, no: 16, si: 9 }
+		{ gmail: 'Ene', correos: 5, enviados: 10, recibidos: 4 },
+		{ gmail: 'Feb', correos: 10, enviados: 8, recibidos: 5 },
+		{ gmail: 'Mar', correos: 12, enviados: 7, recibidos: 7 },
+		{ gmail: 'Abr', correos: 9, enviados: 5, recibidos: 2 },
+		{ gmail: 'May', correos: 10, enviados: 20, recibidos: 6 },
+		{ gmail: 'Jun', correos: 12, enviados: 25, recibidos: 9 },
+		{ gmail: 'Jul', correos: 13, enviados: 8, recibidos: 7 },
+		{ gmail: 'Ags', correos: 14, enviados: 6, recibidos: 9 },
+		{ gmail: 'Sep', correos: 19, enviados: 18, recibidos: 2 },
+		{ gmail: 'Oct', correos: 17, enviados: 8, recibidos: 1 },
+		{ gmail: 'Nov', correos: 20, enviados: 7, recibidos: 8 },
+		{ gmail: 'Dic', correos: 14, enviados: 16, recibidos: 9 }
 	];
 
 	return (
 		<Paper elevation={4}>
-			<Chart data={data}>
-				<ArgumentScale factory={scalePoint} />
-				<ArgumentAxis />
-				<ValueAxis />
-				<AreaSeries name='Recibidos' valueField="contactos" argumentField="mes" color='#e53a34' />
-				<AreaSeries name='Enviados' valueField="no" argumentField="mes" color='#39a24f' />
-				<AreaSeries name='Papelera' valueField="si" argumentField="mes" color='#000000' />
-				<Title text="Gmail" />
-				<Legend position="bottom" rootComponent={LegendRoot} itemComponent={LegendItem} labelComponent={LegendLabel} />
-				<Animation duration={1000} />
-			</Chart>
+			<AreaChart
+				width={335}
+				height={500}
+				data={data}
+				margin={{
+					top: 10, right: 30, left: 0, bottom: 0,
+				}}
+			>
+				<CartesianGrid strokeDasharray="3 3" />
+				<XAxis dataKey="gmail" />
+				<YAxis />
+				<Tooltip />
+				<Legend />
+				<Area type="step" dataKey="correos" stackId="1" stroke="#8884d8" fill="#8884d8" />
+				<Area type="step" dataKey="enviados" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
+				<Area type="step" dataKey="recibidos" stackId="1" stroke="#ffc658" fill="#ffc658" />
+			</AreaChart>
 		</Paper>
 	);
 }
