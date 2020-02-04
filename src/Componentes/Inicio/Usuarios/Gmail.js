@@ -24,10 +24,7 @@ export default function AreaGmail() {
 				width={335}
 				height={500}
 				data={data}
-				margin={{
-					top: 10, right: 30, left: 0, bottom: 0,
-				}}
-			>
+				margin={{ left: -30, bottom: 5 }}>
 				<CartesianGrid strokeDasharray="3 3" />
 				<XAxis dataKey="gmail" />
 				<YAxis />
