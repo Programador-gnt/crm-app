@@ -70,7 +70,7 @@ const useStyles = makeStyles(theme => ({
 export default function Login() {
 	const [irInicio, setIrInicio] = React.useState(false)
 	const [aviso, setAviso] = React.useState(false)
-	const [cuerpo, setCuerpo] = React.useState({})
+	const [cuerpo, setCuerpo] = React.useState({ nickname: '', password: '' })
 	const [isLoading, setIsLoading] = React.useState(false)
 	const classes = useStyles();
 
@@ -185,7 +185,7 @@ export default function Login() {
 							variant="contained"
 							color="primary"
 							onClick={() => login()}
-							disabled={isLoading}
+							disabled={cuerpo.password === '' ? true : isLoading ? true : false}
 							className={classes.submit}
 						>
 							Ingresar
