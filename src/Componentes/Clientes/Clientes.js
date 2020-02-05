@@ -10,7 +10,9 @@ import {
 	CssBaseline,
 	Fade
 } from '@material-ui/core';
-import TablaContactos from './TablaContactos'
+import TablaContactos from './TablaContactos';
+import TableChartOutlinedIcon from '@material-ui/icons/TableChartOutlined';
+import WidgetsOutlinedIcon from '@material-ui/icons/WidgetsOutlined';
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -26,12 +28,15 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const actions = [
-	{ name: 'Nuevo' }
+	{ name: 'Nuevo' },
+	{ name: 'Table' },
+	{ name: 'Tarjeta' }
 ]
 
 export default function Clientes() {
 	const history = useHistory()
 	const [open, setOpen] = React.useState(window.screen.width < 769 ? false : true)
+	const [tarjeta, setTarjeta] = React.useState(false)
 	const classes = useStyles()
 
 	const preventActionClickClose = (evt, action) => {
@@ -39,6 +44,12 @@ export default function Clientes() {
 		evt.stopPropagation()
 		if (action.name === 'Nuevo') {
 			history.push('/contactos/nuevo')
+		}
+		if (action.name === 'Table') {
+			setTarjeta(false)
+		}
+		if (action.name === 'Tarjeta') {
+			setTarjeta(true)
 		}
 	}
 
@@ -56,7 +67,7 @@ export default function Clientes() {
 					<SpeedDialAction
 						tooltipOpen
 						key={action.name}
-						icon={action.name === 'Nuevo' ? <AddIcon /> : ''}
+						icon={action.name === 'Nuevo' ? <AddIcon /> : action.name === 'Table' ? <TableChartOutlinedIcon /> : action.name === 'Tarjeta' ? <WidgetsOutlinedIcon /> : ''}
 						tooltipTitle={action.name}
 						onClick={evt => preventActionClickClose(evt, action)}
 					/>
@@ -65,7 +76,7 @@ export default function Clientes() {
 			<Fade in={true} timeout={1000}>
 				<Grid container spacing={1} className={classes.root}>
 					<Grid item xs={12}>
-						<TablaContactos />
+						<TablaContactos tarjeta={tarjeta} />
 					</Grid>
 				</Grid>
 			</Fade>

@@ -11,10 +11,10 @@ import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined'
 import PhoneAndroidOutlinedIcon from '@material-ui/icons/PhoneAndroidOutlined';
 import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined';
 import SaveOutlinedIcon from '@material-ui/icons/SaveOutlined';
-import consumeWSChat from '../Config/WebServiceChat';
 import CloseIcon from '@material-ui/icons/Close';
 import CakeOutlinedIcon from '@material-ui/icons/CakeOutlined';
 import GetAppOutlinedIcon from '@material-ui/icons/GetAppOutlined';
+import { AuthTokenRequest } from '../helpers/AxiosInstance'
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -131,10 +131,13 @@ export default function Nuevo() {
 	}
 
 	const conusltarCargos = () => {
-		consumeWSChat('GET', 'contactos/empresa', '', `?empresa=${empresa.razonsocial}`)
-			.then(respuesta => {
-				setCargos(respuesta)
-			})
+		AuthTokenRequest.get('contactos/empresa', {
+			params: {
+				empresa: empresa.razonsocial
+			}
+		}).then(respuesta => {
+			setCargos(respuesta.data)
+		})
 	}
 
 	const agregarTelefono = () => {
@@ -167,7 +170,7 @@ export default function Nuevo() {
 		setListaActivaCorreo(true)
 	}
 
-	const eliminarCorreo = (i) => {
+	const eliminarCorreo = () => {
 		setListaActivaCorreo(false)
 		document.getElementById('correo').focus();
 		setEmpresa({
@@ -180,7 +183,7 @@ export default function Nuevo() {
 		setListaActivaRedes(true)
 	}
 
-	const eliminarRedes = (i) => {
+	const eliminarRedes = () => {
 		setListaActivaRedes(false)
 		document.getElementById('social').focus();
 		setEmpresa({
@@ -215,7 +218,7 @@ export default function Nuevo() {
 	}
 
 	const guardar = () => {
-		consumeWSChat('POST', 'empresas/nuevo', empresa, '')
+		AuthTokenRequest.post('empresa/nuevo', empresa)
 			.then(() => {
 				setAviso(true)
 			})

@@ -103,7 +103,7 @@ export default function Info() {
 					/>
 				))}
 			</SpeedDial>
-			<Grid container className={classes.root} spacing={1}>
+			<Grid container className={classes.root} spacing={2}>
 				<Grid item xs={12} sm={4}>
 					<Card className={classes.card} raised={true}>
 						<CardContent>
@@ -141,7 +141,7 @@ export default function Info() {
 				</Grid>
 				<Grid item xs={12} sm={8}>
 					<Paper elevation={4} className={classes.Paper}>
-						<Grid container spacing={1}>
+						<Grid container spacing={2}>
 							<Grid item xs={12}>
 								<Typography variant="h6" color='textSecondary'>
 									Perfil de contacto

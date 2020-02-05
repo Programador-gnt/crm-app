@@ -15,9 +15,10 @@ import {
 	Avatar,
 	Grid,
 	Zoom,
-	CardActions,
 	Tooltip,
-	IconButton
+	IconButton,
+	CardHeader,
+	Popover
 } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import MaterialTable from 'material-table';
@@ -42,7 +43,14 @@ const useStyles = makeStyles((theme) => ({
 		marginTop: theme.spacing(1)
 	},
 	card: {
-		width: '95%'
+		width: '95%',
+		transition: 'all .2s ease-in-out',
+		'&:hover': {
+			transform: 'scale(1.02)'
+		}
+	},
+	typography: {
+		padding: theme.spacing(2),
 	}
 }));
 
@@ -50,12 +58,13 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} timeout={500} />;
 });
 
-export default function TablaContactos() {
+export default function TablaContactos(props) {
 	const [openDialog, setOpenDialog] = React.useState(false)
 	const [id, setId] = React.useState(null)
 	const [nombre, setNombre] = React.useState(null)
 	const [clientes, setClientes] = React.useState([])
-	const [tarjetas, setTarjetas] = React.useState(false)
+	const [anchorEl, setAnchorEl] = React.useState(null);
+	const open = Boolean(anchorEl);
 	const history = useHistory()
 	const classes = useStyles();
 
@@ -82,6 +91,10 @@ export default function TablaContactos() {
 			usuarios()
 		})
 	}
+
+	const handleClose = () => {
+		setAnchorEl(null);
+	};
 
 	React.useEffect(usuarios, [])
 
@@ -111,14 +124,29 @@ export default function TablaContactos() {
           			</Button>
 				</DialogActions>
 			</Dialog>
-			{tarjetas ?
+			{props.tarjeta ?
 				<Grid container spacing={2}>
 					{clientes.map((info, index) => (
 						<Zoom key={index} in={true} timeout={500}>
 							<Grid key={index} item xs={12} sm={4}>
 								<Card className={classes.card} raised={true}>
+									<CardHeader
+										action={
+											<>
+												<Tooltip title='Editar'>
+													<IconButton onClick={() => history.push(`/contactos/info?id=${info.id_usuarios}`)}>
+														<EditOutlinedIcon />
+													</IconButton>
+												</Tooltip>
+												<Tooltip title='Eliminar'>
+													<IconButton onClick={() => MensajeEliminar(info.id_usuarios, info.name)}>
+														<DeleteOutlineOutlinedIcon color='secondary' />
+													</IconButton>
+												</Tooltip>
+											</>
+										} />
 									<CardContent>
-										<Avatar className={classes.avatar} src={info.avatar} />
+										<Avatar className={classes.avatar} variant="square" src={info.avatar} />
 										<Typography variant="h5" className={classes.texto} color='secondary'>
 											{info.name}
 										</Typography>
@@ -126,72 +154,72 @@ export default function TablaContactos() {
 											{info.correo}
 										</Typography>
 									</CardContent>
-									<CardActions disableSpacing>
-										<Tooltip title='Editar'>
-											<IconButton>
-												<EditOutlinedIcon color='primary' />
-											</IconButton>
-										</Tooltip>
-										<Tooltip title='Eliminar'>
-											<IconButton>
-												<DeleteOutlineOutlinedIcon color='primary' />
-											</IconButton>
-										</Tooltip>
-									</CardActions>
 								</Card>
 							</Grid>
 						</Zoom>
 					))}
 				</Grid>
 				:
-				<MaterialTable
-					title='Lista de contactos'
-					columns={[
-						{ title: 'Name', field: 'name' },
-						{ title: 'Empresa', field: 'empresa' },
-						{ title: 'Teléfono', field: 'telefono', type: 'numeric' },
-						{ title: 'Correo', field: 'correo' },
-					]}
-					data={clientes}
-					actions={[
-						{
-							icon: 'search',
-							tooltip: 'Ver',
-							onClick: (event, rowData) => history.push(`/contactos/info?id=${rowData.id_usuarios}`)
-						},
-						{
-							icon: 'delete',
-							tooltip: 'Eliminar',
-							onClick: (event, rowData) => MensajeEliminar(rowData.id_usuarios, rowData.name)
-						},
-						{
-							icon: 'widgets',
-							tooltip: 'Cards',
-							isFreeAction: true,
-							onClick: () => setTarjetas(true)
-						}
-					]}
-					localization={{
-						pagination: {
-							labelDisplayedRows: '{from}-{to} de {count}'
-						},
-						toolbar: {
-							nRowsSelected: '{0} fila(s) seleccionadas'
-						},
-						header: {
-							actions: 'Actions'
-						},
-						body: {
-							emptyDataSourceMessage: 'No hay nada para mostrar',
-							filterRow: {
-								filterTooltip: 'Filter'
+				<>
+					<Popover
+						open={open}
+						anchorEl={anchorEl}
+						onClose={handleClose}
+						anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+						transformOrigin={{ vertical: 'top', horizontal: 'center' }}>
+						<Typography className={classes.typography}>Contenido del filtro</Typography>
+					</Popover>
+					<MaterialTable
+						title='Lista de contactos'
+						columns={[
+							{ title: 'Name', field: 'name' },
+							{ title: 'Empresa', field: 'empresa' },
+							{ title: 'Teléfono', field: 'telefono', type: 'numeric' },
+							{ title: 'Correo', field: 'correo' },
+						]}
+						data={clientes}
+						actions={[
+							{
+								icon: 'search',
+								tooltip: 'Ver',
+								onClick: (event, rowData) => history.push(`/contactos/info?id=${rowData.id_usuarios}`)
+							},
+							{
+								icon: 'delete',
+								tooltip: 'Eliminar',
+								onClick: (event, rowData) => MensajeEliminar(rowData.id_usuarios, rowData.name)
+							},
+							{
+								icon: 'filter_list',
+								tooltip: 'Filtrar',
+								isFreeAction: true,
+								onClick: (event) => {
+									setAnchorEl(event.currentTarget);
+								}
 							}
-						}
-					}}
-					options={{
-						search: false
-					}}
-				/>}
+						]}
+						localization={{
+							pagination: {
+								labelDisplayedRows: '{from}-{to} de {count}'
+							},
+							toolbar: {
+								nRowsSelected: '{0} fila(s) seleccionadas'
+							},
+							header: {
+								actions: 'Actions'
+							},
+							body: {
+								emptyDataSourceMessage: 'No hay nada para mostrar',
+								filterRow: {
+									filterTooltip: 'Filter'
+								}
+							}
+						}}
+						options={{
+							search: false
+						}}
+					/>
+				</>}
 		</>
 	);
 }

@@ -50,8 +50,8 @@ import ScheduleOutlinedIcon from '@material-ui/icons/ScheduleOutlined';
 import { green } from '@material-ui/core/colors';
 import clsx from 'clsx';
 import InvertColorsIcon from '@material-ui/icons/InvertColors';
-import consumeWSChat from '../Config/WebServiceChat';
 import PersonAddOutlinedIcon from '@material-ui/icons/PersonAddOutlined';
+import { AuthTokenRequest } from '../helpers/AxiosInstance'
 
 // const SCOPES = 'https://mail.google.com https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/calendar https://www.google.com/m8/feeds/ https://www.googleapis.com/auth/contacts.readonly';
 
@@ -152,11 +152,14 @@ export default function Calendario() {
 	const buttonClassname = clsx({ [classes.buttonSuccess]: success });
 
 	const GetEventos = () => {
-		consumeWSChat('GET', 'eventos', '', `?creator=${perfil.correo}`)
-			.then(result => {
-				setEventosGoogle(result)
-				setAviso(true)
-			})
+		AuthTokenRequest.get('eventos', {
+			params: {
+				creator: perfil.correo
+			}
+		}).then(result => {
+			setEventosGoogle(result.data)
+			setAviso(true)
+		})
 		// consumeWSCalendar('GET', '', '', '')
 		// 	.then(result => {
 		// 		setEventosGoogle(result)
@@ -259,18 +262,24 @@ export default function Calendario() {
 	}
 
 	const consultarInvitados = (id) => {
-		consumeWSChat('GET', 'invitados/info', '', `?id_eventos=${id}`)
-			.then(result => {
-				setArrayInvitados(result)
-			})
+		AuthTokenRequest.get('invitados/info', {
+			params: {
+				id_eventos: id
+			}
+		}).then(result => {
+			setArrayInvitados(result.data)
+		})
 	}
 
 	const consultarEvento = (id) => {
-		consumeWSChat('GET', 'eventos/info', '', `?id=${id}`)
-			.then(result => {
-				setEventoConsultado(result)
-				setDialogEvento(true)
-			})
+		AuthTokenRequest.get('eventos/info', {
+			params: {
+				id: id
+			}
+		}).then(result => {
+			setEventoConsultado(result.data)
+			setDialogEvento(true)
+		})
 		// consumeWSCalendar('GET', '/', '', `${id}`)
 		// 	.then(result => {
 		// 		setEventoConsultado(result)
@@ -302,13 +311,16 @@ export default function Calendario() {
 	}
 
 	const eliminarEvento = async () => {
-		consumeWSChat('GET', 'eventos/eliminar', '', `?id=${idEventoEliminar}`)
-			.then(() => {
-				setDialogEvento(false)
-				setEventoConsultado({})
-				setIdEventoEliminar('')
-				GetEventos()
-			})
+		AuthTokenRequest.get('eventos/eliminar', {
+			params: {
+				id: idEventoEliminar
+			}
+		}).then(() => {
+			setDialogEvento(false)
+			setEventoConsultado({})
+			setIdEventoEliminar('')
+			GetEventos()
+		})
 		// var token = JSON.parse(localStorage.getItem('tokenGoogle'))
 		// await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${idEventoEliminar}`, {
 		// 	method: 'DELETE',
@@ -389,7 +401,7 @@ export default function Calendario() {
 			timer.current = setTimeout(() => {
 				setSuccess(true);
 				setLoading(false);
-				consumeWSChat('POST', 'eventos/nuevo', eventoNuevo, '')
+				AuthTokenRequest.post('eventos/nuevo', eventoNuevo)
 					.then(() => {
 						setAbrirDialog(false)
 						GetEventos()
@@ -430,7 +442,7 @@ export default function Calendario() {
 
 	const tecla = (e) => {
 		if (e.keyCode === 13) {
-			consumeWSChat('POST', 'invitados/nuevo', invitados, '')
+			AuthTokenRequest.post('invitados/nuevo', invitados)
 				.then(() => {
 					consultarInvitados(idEventoEliminar)
 				})
@@ -440,10 +452,13 @@ export default function Calendario() {
 	}
 
 	const eliminarInivitados = (id) => {
-		consumeWSChat('GET', 'invitados/eliminar', '', `?id=${id}`)
-			.then(() => {
-				consultarInvitados(idEventoEliminar)
-			})
+		AuthTokenRequest.get('invitados/eliminar', {
+			params: {
+				id: id
+			}
+		}).then(() => {
+			consultarInvitados(idEventoEliminar)
+		})
 	}
 
 	// const handleColor = (e) => {
@@ -467,7 +482,7 @@ export default function Calendario() {
 	}
 
 	const eventDrag = (info) => {
-		consumeWSChat('POST', 'eventos/editar', { start: convert(info.event.start), end: convert(info.event.end), id: info.event.id }, '')
+		AuthTokenRequest.post('eventos/editar', { start: convert(info.event.start), end: convert(info.event.end), id: info.event.id })
 			.then(() => {
 				GetEventos()
 			})
