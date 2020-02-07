@@ -1,7 +1,7 @@
 import React from 'react';
 import MenuIcon from '@material-ui/icons/Menu';
 import clsx from 'clsx';
-import { Drawer, CssBaseline, AppBar, Toolbar, List, Badge, Typography, Divider, IconButton, ListItem, ListItemIcon, ListItemText, Avatar, MenuItem, Menu, Backdrop, Slide } from '@material-ui/core'
+import { Drawer, CssBaseline, AppBar, Toolbar, List, ListItemAvatar, Badge, Typography, Divider, IconButton, ListItem, ListItemIcon, ListItemText, Avatar, MenuItem, Menu, Backdrop, Slide } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles';
 import { Redirect, withRouter, Link, useHistory } from 'react-router-dom';
 import HomeIcon from '@material-ui/icons/Home';
@@ -21,6 +21,8 @@ import CloseIcon from '@material-ui/icons/Close';
 import Logo from '../../assets/images/Logo.svg';
 import NotificationsNoneOutlinedIcon from '@material-ui/icons/NotificationsNoneOutlined';
 import AddOutlinedIcon from '@material-ui/icons/AddOutlined';
+import ExitToAppOutlinedIcon from '@material-ui/icons/ExitToAppOutlined';
+import PersonOutlineOutlinedIcon from '@material-ui/icons/PersonOutlineOutlined';
 // import { CometChat } from '@cometchat-pro/chat';
 
 const drawerWidth = 240;
@@ -54,9 +56,11 @@ const useStyles = makeStyles(theme => ({
 		flexShrink: 0
 	},
 	drawerPaper: {
-		width: drawerWidth
+		width: drawerWidth,
+		backgroundColor: '#364049'
 	},
 	drawerHeader: {
+		backgroundColor: '#1f303d',
 		display: 'flex',
 		alignItems: 'center',
 		padding: theme.spacing(0, 1),
@@ -102,14 +106,11 @@ const useStyles = makeStyles(theme => ({
 		position: 'fixed',
 		zIndex: 100
 	},
-	nombreMenu: {
-		marginLeft: 'auto',
-		marginRight: 'auto'
-	},
 	lista: {
+		color: theme.palette.getContrastText('#364049'),
 		'&:hover': {
-			backgroundColor: theme.palette.primary.main,
-			color: theme.palette.getContrastText(theme.palette.primary.main)
+			backgroundColor: '#1f303d',
+			color: theme.palette.getContrastText('#1f303d')
 		}
 	},
 	snack: {
@@ -124,7 +125,26 @@ const useStyles = makeStyles(theme => ({
 	},
 	close: {
 		padding: theme.spacing(0.5)
+	},
+	contenedorLetras: {
+		backgroundColor: '#1f303d',
+		width: '100%',
+		padding: theme.spacing(0, 1),
+		...theme.mixins.toolbar,
+		color: theme.palette.getContrastText('#1f303d')
+	},
+	iconos: {
+		color: theme.palette.getContrastText('#364049')
+	},
+	divisor: {
+		backgroundColor: theme.palette.getContrastText('#364049')
+	},
+	textoPerfil: {
+		width: '100%',
+		padding: theme.spacing(0, 1),
+		...theme.mixins.toolbar
 	}
+
 }));
 
 const MenuNavegacion = [
@@ -141,7 +161,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
 });
 
-function Cabecera(props) {
+function Cabecera() {
 	var socket = io.connect('http://172.19.39.179:5000', { 'forceNew': true })
 	const classes = useStyles();
 	const [open, setOpen] = React.useState(false);
@@ -156,6 +176,7 @@ function Cabecera(props) {
 	const [variable, setVariable] = React.useState(false)
 	const perfil = JSON.parse(localStorage.getItem('perfilGoogle'))
 	const path = window.location.pathname.split('/')[1]
+	const path2 = window.location.pathname.split('/')[2]
 	const history = useHistory()
 
 	const handleDrawerOpen = () => {
@@ -194,7 +215,7 @@ function Cabecera(props) {
 
 	const chatDialog = () => {
 		setOpenChatDialog(true)
-		setAnchorEl(null);
+		setConmutador(null);
 	}
 
 	const cerrar = () => {
@@ -264,8 +285,8 @@ function Cabecera(props) {
 					>
 						<MenuIcon />
 					</IconButton>
-					<Typography variant="h6" className={classes.title}>
-						{path.charAt(0).toUpperCase() + path.slice(1)}
+					<Typography variant='body1' className={classes.title}>
+						{typeof path2 === 'undefined' ? path.charAt(0).toUpperCase() + path.slice(1) : path.charAt(0).toUpperCase() + path.slice(1) + ' > ' + path2.charAt(0).toUpperCase() + path2.slice(1)}
 					</Typography>
 					<>
 						<div>
@@ -280,10 +301,10 @@ function Cabecera(props) {
 							<Menu id="menu-config" anchorEl={conmutador} anchorOrigin={{ vertical: 'top', horizontal: 'right' }} keepMounted transformOrigin={{ vertical: 'top', horizontal: 'right' }} open={abrirConfig}
 								onClose={() => setConmutador(null)}>
 								<MenuItem onClick={() => chatDialog()}>Configuraciones</MenuItem>
+								<MenuItem onClick={() => dialog()}>Tema</MenuItem>
 							</Menu>
-							<IconButton onClick={handleMenu}
-								color="inherit">
-								<Avatar src={perfil.picture} alt='...' />
+							<IconButton onClick={handleMenu} color="inherit">
+								<PersonOutlineOutlinedIcon />
 							</IconButton>
 							<Menu
 								id="menu-appbar"
@@ -299,9 +320,25 @@ function Cabecera(props) {
 								}}
 								open={abrir}
 								onClose={() => setAnchorEl(null)}>
-								<MenuItem disabled><em>{perfil.name}</em></MenuItem>
-								<MenuItem onClick={() => dialog()}>Tema</MenuItem>
-								<MenuItem onClick={() => LogOut()}>Cerrar serión</MenuItem>
+								<MenuItem>
+									<List>
+										<ListItem>
+											<ListItemAvatar>
+												<Avatar src={perfil.picture} alt='...' />
+											</ListItemAvatar>
+											<ListItemText primary={<div className={classes.textoPerfil}>
+												<Typography align='center'>{perfil.correo}</Typography>
+												<Typography align='center'><b>{perfil.name}</b></Typography>
+												<Typography align='center'><em>{perfil.cargo}</em></Typography>
+											</div>} />
+										</ListItem>
+									</List>
+								</MenuItem>
+								<Divider />
+								<MenuItem>Mi perfil</MenuItem>
+								<MenuItem>Mi cuenta</MenuItem>
+								<Divider />
+								<MenuItem onClick={() => LogOut()}><ExitToAppOutlinedIcon /> Cerrar serión</MenuItem>
 							</Menu>
 						</div>
 					</>
@@ -319,28 +356,30 @@ function Cabecera(props) {
 				<div className={classes.drawerHeader}>
 					<img alt='...' src={Logo} className={classes.bigAvatar} />
 				</div>
-				<Typography variant='button' className={classes.nombreMenu}>NEW TRANSPORT S.A.</Typography>
-				<Typography variant='body1' className={classes.nombreMenu}>CRM V1.0</Typography>
-				<Divider />
+				<div className={classes.contenedorLetras}>
+					<Typography variant='body1' align='center'>NEW TRANSPORT S.A.</Typography>
+					<Typography variant='body2' align='center'>CRM V1.0</Typography>
+				</div>
+				<Divider className={classes.divisor} />
 				<List>
 					{MenuNavegacion.map((items, index) => (
 						<Link to={items.link} style={{ textDecoration: 'none', color: 'inherit' }} key={index}>
 							<ListItem button key={index} onClick={handleDrawerClose} className={classes.lista}>
-								<ListItemIcon>{items.nombre === 'Inicio' ? <HomeIcon /> :
-									items.nombre === 'Gmail' ? <GoogleIcon /> :
-										items.nombre === 'Agenda' ? <EventIcon /> :
-											items.nombre === 'Empresas' ? <DomainIcon /> :
-												items.nombre === 'Llamadas' ? <PhoneAndroidIcon /> :
-													items.nombre === 'Caso' ? <FindInPageOutlinedIcon /> :
-														items.nombre === 'Chat' ? <ForumOutlinedIcon /> :
-															items.nombre === 'Cobranza' ? <MonetizationOnOutlinedIcon /> :
-																items.nombre === 'Contactos' ? <GroupOutlinedIcon /> : ''}</ListItemIcon>
+								<ListItemIcon>{items.nombre === 'Inicio' ? <HomeIcon className={classes.iconos} /> :
+									items.nombre === 'Gmail' ? <GoogleIcon className={classes.iconos} /> :
+										items.nombre === 'Agenda' ? <EventIcon className={classes.iconos} /> :
+											items.nombre === 'Empresas' ? <DomainIcon className={classes.iconos} /> :
+												items.nombre === 'Llamadas' ? <PhoneAndroidIcon className={classes.iconos} /> :
+													items.nombre === 'Caso' ? <FindInPageOutlinedIcon className={classes.iconos} /> :
+														items.nombre === 'Chat' ? <ForumOutlinedIcon className={classes.iconos} /> :
+															items.nombre === 'Cobranza' ? <MonetizationOnOutlinedIcon className={classes.iconos} /> :
+																items.nombre === 'Contactos' ? <GroupOutlinedIcon className={classes.iconos} /> : ''}</ListItemIcon>
 								<ListItemText primary={items.nombre} />
 							</ListItem>
 						</Link>
 					))}
 				</List>
-				<Divider />
+				<Divider className={classes.divisor} />
 			</Drawer>
 		</div>
 	);

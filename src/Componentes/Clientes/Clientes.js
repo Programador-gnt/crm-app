@@ -8,7 +8,7 @@ import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
 import {
 	Grid,
 	CssBaseline,
-	Fade
+	Zoom
 } from '@material-ui/core';
 import TablaContactos from './TablaContactos';
 import TableChartOutlinedIcon from '@material-ui/icons/TableChartOutlined';
@@ -73,13 +73,13 @@ export default function Clientes() {
 					/>
 				))}
 			</SpeedDial>
-			<Fade in={true} timeout={1000}>
+			<Zoom in={true} timeout={500}>
 				<Grid container spacing={1} className={classes.root}>
 					<Grid item xs={12}>
 						<TablaContactos tarjeta={tarjeta} />
 					</Grid>
 				</Grid>
-			</Fade>
+			</Zoom>
 		</React.Fragment>
 	);
 }

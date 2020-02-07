@@ -108,6 +108,12 @@ export default function TablaEmpresas(data) {
                         onClick: (event, rowData) => MensajeEliminar(rowData.id_empresas, rowData.razonsocial)
                     },
                     {
+                        icon: 'refresh',
+                        tooltip: 'Actualizar',
+                        isFreeAction: true,
+                        onClick: () => { consultarEmpresas() }
+                    },
+                    {
                         icon: 'filter_list',
                         tooltip: 'Filtrar datos',
                         isFreeAction: true,

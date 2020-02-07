@@ -55,7 +55,6 @@ const useStyles = makeStyles(theme => ({
 		margin: theme.spacing(3, 0, 2),
 	},
 	main: {
-		// backgroundColor: 'rgba(255, 255, 255, 0.750)',
 		opacity: '0.8',
 		height: '60%',
 		marginTop: theme.spacing(10),
@@ -179,7 +178,7 @@ export default function Login() {
 							label="Recordarme"
 							disabled={isLoading}
 						/>
-						{isLoading && <LinearProgress color='primary' />}
+						{isLoading && <LinearProgress color='secondary' />}
 						<Button
 							fullWidth
 							variant="contained"
@@ -203,10 +202,10 @@ export default function Login() {
 							</Grid>
 						</Grid>
 					</form>
+					<Box mt={8}>
+						<Copyright />
+					</Box>
 				</div>
-				<Box mt={8}>
-					<Copyright />
-				</Box>
 			</Container>
 		</Grid>
 	);

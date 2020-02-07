@@ -13,6 +13,7 @@ import PhoneAndroidIcon from '@material-ui/icons/PhoneAndroid';
 import { Drawer, Typography, Divider, List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
 import Logo from '../../assets/images/Logo.svg';
 
+
 const drawerWidth = 240;
 const useStyles = makeStyles(theme => ({
 	drawer: {
@@ -23,9 +24,11 @@ const useStyles = makeStyles(theme => ({
 		}
 	},
 	drawerPaper: {
-		width: drawerWidth
+		width: drawerWidth,
+		backgroundColor: '#364049',
 	},
 	drawerHeader: {
+		backgroundColor: '#1f303d',
 		display: 'flex',
 		alignItems: 'center',
 		padding: theme.spacing(0, 1),
@@ -43,15 +46,25 @@ const useStyles = makeStyles(theme => ({
 		width: 120,
 		height: 'auto'
 	},
-	nombreMenu: {
-		marginLeft: 'auto',
-		marginRight: 'auto'
-	},
 	lista: {
+		color: theme.palette.getContrastText('#364049'),
 		'&:hover': {
-			backgroundColor: theme.palette.primary.main,
-			color: theme.palette.getContrastText(theme.palette.primary.main)
+			backgroundColor: '#1f303d',
+			color: theme.palette.getContrastText('#1f303d')
 		}
+	},
+	contenedorLetras: {
+		backgroundColor: '#1f303d',
+		width: '100%',
+		padding: theme.spacing(0, 1),
+		...theme.mixins.toolbar,
+		color: theme.palette.getContrastText('#1f303d')
+	},
+	iconos: {
+		color: theme.palette.getContrastText('#364049')
+	},
+	divisor: {
+		backgroundColor: theme.palette.getContrastText('#364049')
 	}
 }));
 
@@ -79,28 +92,30 @@ function Menu() {
 			<div className={classes.drawerHeader}>
 				<img alt='...' src={Logo} className={classes.bigAvatar} />
 			</div>
-			<Typography variant='button' className={classes.nombreMenu}>NEW TRANSPORT S.A.</Typography>
-			<Typography variant='body1' className={classes.nombreMenu}>CRM V1.0</Typography>
-			<Divider />
+			<div className={classes.contenedorLetras}>
+				<Typography variant='body1' align='center'>NEW TRANSPORT S.A.</Typography>
+				<Typography variant='body2' align='center'>CRM V1.0</Typography>
+			</div>
+			<Divider className={classes.divisor} />
 			<List>
 				{MenuNavegacion.map((items, index) => (
 					<Link to={items.link} style={{ textDecoration: 'none', color: 'inherit' }} key={index}>
 						<ListItem button key={index} className={classes.lista}>
-							<ListItemIcon>{items.nombre === 'Inicio' ? <HomeIcon /> :
-								items.nombre === 'Gmail' ? <GoogleIcon className={classes.icono} /> :
-									items.nombre === 'Agenda' ? <EventIcon /> :
-										items.nombre === 'Empresas' ? <DomainIcon /> :
-											items.nombre === 'Llamadas' ? <PhoneAndroidIcon /> :
-												items.nombre === 'Caso' ? <FindInPageOutlinedIcon /> :
-													items.nombre === 'Chat' ? <ForumOutlinedIcon /> :
-														items.nombre === 'Cobranza' ? <MonetizationOnOutlinedIcon /> :
-															items.nombre === 'Contactos' ? <GroupOutlinedIcon /> : ''}</ListItemIcon>
+							<ListItemIcon>{items.nombre === 'Inicio' ? <HomeIcon className={classes.iconos} /> :
+								items.nombre === 'Gmail' ? <GoogleIcon className={classes.iconos} /> :
+									items.nombre === 'Agenda' ? <EventIcon className={classes.iconos} /> :
+										items.nombre === 'Empresas' ? <DomainIcon className={classes.iconos} /> :
+											items.nombre === 'Llamadas' ? <PhoneAndroidIcon className={classes.iconos} /> :
+												items.nombre === 'Caso' ? <FindInPageOutlinedIcon className={classes.iconos} /> :
+													items.nombre === 'Chat' ? <ForumOutlinedIcon className={classes.iconos} /> :
+														items.nombre === 'Cobranza' ? <MonetizationOnOutlinedIcon className={classes.iconos} /> :
+															items.nombre === 'Contactos' ? <GroupOutlinedIcon className={classes.iconos} /> : ''}</ListItemIcon>
 							<ListItemText primary={items.nombre} />
 						</ListItem>
 					</Link>
 				))}
 			</List>
-			<Divider />
+			<Divider className={classes.divisor} />
 		</Drawer>
 	);
 }

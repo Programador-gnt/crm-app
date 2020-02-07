@@ -1,6 +1,6 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { CssBaseline, Paper, Typography, Grid, TextField, Fab, ListItemText, ListItem, List, ListItemAvatar, AppBar, Toolbar, MenuItem, DialogTitle, DialogContent, DialogActions, Hidden, Button, Dialog, Snackbar, IconButton, Table, TableBody, TableCell, TableHead, TableRow, Checkbox } from '@material-ui/core';
+import { LinearProgress, CssBaseline, Paper, Typography, Grid, TextField, Fab, ListItemText, ListItem, List, ListItemAvatar, AppBar, Toolbar, MenuItem, DialogTitle, DialogContent, DialogActions, Hidden, Button, Dialog, Snackbar, IconButton, Table, TableBody, TableCell, TableHead, TableRow, Checkbox } from '@material-ui/core';
 import SpeedDial from '@material-ui/lab/SpeedDial';
 import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
 import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
@@ -13,8 +13,7 @@ import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined';
 import SaveOutlinedIcon from '@material-ui/icons/SaveOutlined';
 import CloseIcon from '@material-ui/icons/Close';
 import CakeOutlinedIcon from '@material-ui/icons/CakeOutlined';
-import GetAppOutlinedIcon from '@material-ui/icons/GetAppOutlined';
-import { AuthTokenRequest } from '../helpers/AxiosInstance'
+import { AuthTokenRequest } from '../helpers/AxiosInstance';
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -71,7 +70,7 @@ const useStyles = makeStyles(theme => ({
 		flex: 1,
 	},
 	table: {
-		minWidth: 650,
+		minWidth: 300
 	}
 }));
 
@@ -91,6 +90,8 @@ export default function Nuevo() {
 	const [listaActivaFechas, setListaActivaFechas] = React.useState(null)
 	const [listaActivaCorreo, setListaActivaCorreo] = React.useState(null)
 	const [listaActivaRedes, setListaActivaRedes] = React.useState(null)
+	const [listaActivaBanco, setListaActivaBanco] = React.useState(null)
+	const [isLoading, setIsLoading] = React.useState(false)
 	const [cargos, setCargos] = React.useState([])
 	const [empresa, setEmpresa] = React.useState({
 		tdocumento: 1,
@@ -113,6 +114,7 @@ export default function Nuevo() {
 			if (typeof empresa.ruc === 'undefined') {
 
 			} else {
+				setIsLoading(true)
 				await fetch(`https://dniruc.apisperu.com/api/v1/ruc/${empresa.ruc}?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InByb2dyYW1hZG9yQGdudC5wZSJ9.h0kKyOThfiofLhCBJIctabYiQb7dWpk_kOe0hVwUR4g`, {
 					method: 'GET',
 					headers: {
@@ -121,6 +123,8 @@ export default function Nuevo() {
 				}).then(respuesta => {
 					return respuesta.json()
 				}).then(json => {
+					setIsLoading(false)
+					document.getElementById('botonDireccion').focus()
 					setEmpresa({
 						...empresa,
 						razonsocial: json.razonSocial
@@ -142,6 +146,7 @@ export default function Nuevo() {
 
 	const agregarTelefono = () => {
 		setListaActiva(true)
+		document.getElementById('fechaactividades').focus()
 	}
 
 	const eliminarTelefono = () => {
@@ -155,6 +160,8 @@ export default function Nuevo() {
 
 	const agregarFechaImportante = () => {
 		setListaActivaFechas(true)
+		document.getElementById('emailfacturaelectronica').focus()
+		conusltarCargos()
 	}
 
 	const eliminarFechaImportante = () => {
@@ -168,6 +175,7 @@ export default function Nuevo() {
 
 	const agregarCorreo = () => {
 		setListaActivaCorreo(true)
+		document.getElementById('social').focus()
 	}
 
 	const eliminarCorreo = () => {
@@ -218,7 +226,7 @@ export default function Nuevo() {
 	}
 
 	const guardar = () => {
-		AuthTokenRequest.post('empresa/nuevo', empresa)
+		AuthTokenRequest.post('empresas/nuevo', empresa)
 			.then(() => {
 				setAviso(true)
 			})
@@ -237,6 +245,24 @@ export default function Nuevo() {
 		if (action.name === 'Guardar') {
 			guardar()
 		}
+	}
+
+	const agregarCuenta = () => {
+		setListaActivaBanco(true)
+		document.getElementById('correo').focus()
+	}
+
+	const eliminarCuenta = () => {
+		setListaActivaBanco(false)
+		document.getElementById('banco').focus();
+		setEmpresa({
+			...empresa,
+			banco: '',
+			tipo: '',
+			cuenta: '',
+			sectorista: '',
+			telefonoBanco: ''
+		})
 	}
 
 
@@ -302,23 +328,27 @@ export default function Nuevo() {
 													label="Dirección 1"
 													placeholder="Av- ejemplo #número"
 													required
+													onKeyDown={e => { if (e.keyCode === 13) { document.getElementById('direccion2').focus() } }}
 													onChange={onChangeEmpresa}
 													type="text"
 												/>
 											</Grid>
 											<Grid item >
 												<TextField
+													id='direccion2'
 													name='direccion2'
 													fullWidth
 													label="Dirección 2"
 													placeholder="Urb ejemplo"
 													required
+													onKeyDown={e => { if (e.keyCode === 13) { document.getElementById('departamento').focus() } }}
 													onChange={onChangeEmpresa}
 													type="text"
 												/>
 											</Grid>
 											<Grid item>
 												<TextField
+													id='pais'
 													name='pais'
 													select
 													value={empresa.pais}
@@ -335,28 +365,33 @@ export default function Nuevo() {
 											</Grid>
 											<Grid item>
 												<TextField
+													id='departamento'
 													name='departamento'
 													fullWidth
 													label="Departamento"
 													placeholder="Lima"
 													required
+													onKeyDown={e => { if (e.keyCode === 13) { document.getElementById('provincia').focus() } }}
 													onChange={onChangeEmpresa}
 													type="text"
 												/>
 											</Grid>
 											<Grid item >
 												<TextField
+													id='provincia'
 													name='provincia'
 													fullWidth
 													label="Provincia"
 													placeholder="Lima"
 													required
+													onKeyDown={e => { if (e.keyCode === 13) { document.getElementById('distrito').focus() } }}
 													onChange={onChangeEmpresa}
 													type="text"
 												/>
 											</Grid>
 											<Grid item >
 												<TextField
+													id='distrito'
 													name='distrito'
 													fullWidth
 													label="Distrito"
@@ -395,17 +430,20 @@ export default function Nuevo() {
 											label="Dirección 1"
 											placeholder="Av- ejemplo #número"
 											required
+											onKeyDown={e => { if (e.keyCode === 13) { document.getElementById('direccion2').focus() } }}
 											onChange={onChangeEmpresa}
 											type="text"
 										/>
 									</Grid>
 									<Grid item xs>
 										<TextField
+											id='direccion2'
 											name='direccion2'
 											fullWidth
 											label="Dirección 2"
 											placeholder="Urb ejemplo"
 											required
+											onKeyDown={e => { if (e.keyCode === 13) { document.getElementById('departamento').focus() } }}
 											onChange={onChangeEmpresa}
 											type="text"
 										/>
@@ -428,28 +466,33 @@ export default function Nuevo() {
 									</Grid>
 									<Grid item>
 										<TextField
+											id='departamento'
 											name='departamento'
 											fullWidth
 											label="Departamento"
 											placeholder="Lima"
 											required
+											onKeyDown={e => { if (e.keyCode === 13) { document.getElementById('provincia').focus() } }}
 											onChange={onChangeEmpresa}
 											type="text"
 										/>
 									</Grid>
 									<Grid item >
 										<TextField
+											id='provincia'
 											name='provincia'
 											fullWidth
 											label="Provincia"
 											placeholder="Lima"
 											required
+											onKeyDown={e => { if (e.keyCode === 13) { document.getElementById('distrito').focus() } }}
 											onChange={onChangeEmpresa}
 											type="text"
 										/>
 									</Grid>
 									<Grid item >
 										<TextField
+											id='distrito'
 											name='distrito'
 											fullWidth
 											label="Distrito"
@@ -465,6 +508,7 @@ export default function Nuevo() {
 						<DialogActions>
 							<Button color="secondary" onClick={() => setDialogDireccion(false)}>Cerrar</Button>
 							<Button
+								id='botonAgregarDireccion'
 								color="primary"
 								onClick={() => agregarDireccion()}
 								variant="contained">
@@ -510,22 +554,24 @@ export default function Nuevo() {
 						<Grid item xs={12} sm={3}>
 							<TextField
 								name='ruc'
-								value={empresa.ruc}
+								value={empresa.ruc || ''}
 								margin='normal'
 								autoFocus
 								fullWidth
 								label="RUC"
+								disabled={isLoading}
 								onChange={onChangeEmpresa}
 								onKeyDown={teclaRuc}
 								placeholder="Ingrese Ruc"
 								helperText='presione enter'
 								type="text"
 							/>
+							{isLoading && <LinearProgress color='secondary' />}
 						</Grid>
 						<Grid item xs={12} sm={6}>
 							<TextField
 								name='razonsocial'
-								value={empresa.razonsocial}
+								value={empresa.razonsocial || ''}
 								className={classes.texto}
 								margin='normal'
 								onChange={onChangeEmpresa}
@@ -543,7 +589,7 @@ export default function Nuevo() {
 						    </Typography>
 						</Grid>
 						<Grid item xs={12} sm={1}>
-							<Fab color='secondary' size='small' className={classes.texto} aria-label='agregar' onClick={() => setDialogDireccion(true)}>
+							<Fab id='botonDireccion' color='secondary' size='small' className={classes.texto} aria-label='agregar' onClick={() => setDialogDireccion(true)}>
 								<HomeOutlinedIcon />
 							</Fab>
 						</Grid>
@@ -587,7 +633,7 @@ export default function Nuevo() {
 							<TextField
 								name='telefono'
 								id='telefono'
-								value={empresa.telefono}
+								value={empresa.telefono || ''}
 								margin='normal'
 								fullWidth
 								label="Teléfono"
@@ -615,12 +661,14 @@ export default function Nuevo() {
 					<Grid container spacing={2}>
 						<Grid item xs={12} sm={4}>
 							<TextField
+								id='fechaactividades'
 								name='fechaactividades'
-								value={empresa.fechaactividades}
+								value={empresa.fechaactividades || ''}
 								margin='normal'
 								fullWidth
 								label="Fecha de inicio de actividades"
 								onChange={onChangeEmpresa}
+								onKeyDown={e => { if (e.keyCode === 13) { document.getElementById('rubro').focus() } }}
 								placeholder="Ingrese fecha"
 								helperText='ejemplo: 2016'
 								type="text"
@@ -628,11 +676,13 @@ export default function Nuevo() {
 						</Grid>
 						<Grid item xs={12} sm={4}>
 							<TextField
+								id='rubro'
 								name='rubro'
-								value={empresa.rubro}
+								value={empresa.rubro || ''}
 								margin='normal'
 								fullWidth
 								label="Rubro"
+								onKeyDown={e => { if (e.keyCode === 13) { document.getElementById('pproductos').focus() } }}
 								onChange={onChangeEmpresa}
 								placeholder="Ingrese rubro"
 								helperText='ej: logística etc...'
@@ -641,12 +691,14 @@ export default function Nuevo() {
 						</Grid>
 						<Grid item xs={12} sm={4}>
 							<TextField
+								id='pproductos'
 								name='pproductos'
-								value={empresa.pproductos}
+								value={empresa.pproductos || ''}
 								margin='normal'
 								fullWidth
 								label="Principales productos"
 								onChange={onChangeEmpresa}
+								onKeyDown={e => { if (e.keyCode === 13) { document.getElementById('tfechaimportante').focus() } }}
 								placeholder="servicios que comercializan"
 								helperText='productos que comercializan'
 								type="text"
@@ -661,12 +713,14 @@ export default function Nuevo() {
 						</Grid>
 						<Grid item xs={12} sm={4}>
 							<TextField
+								id='tfechaimportante'
 								name='tfechaimportante'
-								value={empresa.tfechaimportante}
+								value={empresa.tfechaimportante || ''}
 								margin='normal'
 								fullWidth
 								label="Tipo fecha"
 								onChange={onChangeEmpresa}
+								onKeyDown={e => { if (e.keyCode === 13) { document.getElementById('fechaimportante').focus() } }}
 								placeholder="Ingrese fecha importante"
 								helperText='eje: aniversario'
 								type="text"
@@ -676,7 +730,7 @@ export default function Nuevo() {
 							<TextField
 								name='fechaimportante'
 								id='fechaimportante'
-								value={empresa.fechaimportante}
+								value={empresa.fechaimportante || ''}
 								margin='normal'
 								fullWidth
 								label="Fecha importante"
@@ -702,7 +756,7 @@ export default function Nuevo() {
 						</Grid>
 					</Grid>
 					<Grid container spacing={2}>
-						<Grid item xs={12} sm={12}>
+						<Grid item xs={12}>
 							<Table className={classes.table} aria-label="simple table">
 								<TableHead>
 									<TableRow>
@@ -710,8 +764,6 @@ export default function Nuevo() {
 										<TableCell align="right">Nombre</TableCell>
 										<TableCell align="right">DNI</TableCell>
 										<TableCell align="right">Correo</TableCell>
-										<TableCell align="right">Celular</TableCell>
-										<TableCell align="right"><GetAppOutlinedIcon color='secondary' style={{ cursor: 'pointer' }} onClick={() => conusltarCargos()} /></TableCell>
 									</TableRow>
 								</TableHead>
 								<TableBody>
@@ -722,7 +774,6 @@ export default function Nuevo() {
 												<TableCell align="right">{contactos.name}</TableCell>
 												<TableCell align="right">{contactos.dni}</TableCell>
 												<TableCell align="right">{contactos.correo}</TableCell>
-												<TableCell align="right">{contactos.telefono}</TableCell>
 											</TableRow>
 										))
 										: null}
@@ -733,12 +784,14 @@ export default function Nuevo() {
 					<Grid container spacing={2}>
 						<Grid item xs={12} sm={4}>
 							<TextField
+								id='emailfacturaelectronica'
 								name='emailfacturaelectronica'
-								value={empresa.emailfacturaelectronica}
+								value={empresa.emailfacturaelectronica || ''}
 								margin='normal'
 								fullWidth
 								label="Envío de factura electrónica"
 								onChange={onChangeEmpresa}
+								onKeyDown={e => { if (e.keyCode === 13) { document.getElementById('empleados').focus() } }}
 								placeholder="email@ejemplo.com"
 								helperText='ingrese un email'
 								type="text"
@@ -746,12 +799,14 @@ export default function Nuevo() {
 						</Grid>
 						<Grid item xs={12} sm={4}>
 							<TextField
+								id='empleados'
 								name='empleados'
-								value={empresa.empleados}
+								value={empresa.empleados || ''}
 								margin='normal'
 								fullWidth
 								label="Cantidad de empleados"
 								onChange={onChangeEmpresa}
+								onKeyDown={e => { if (e.keyCode === 13) { document.getElementById('obreros').focus() } }}
 								placeholder="Cantidad"
 								helperText='ingrese una cantidad'
 								type="text"
@@ -759,8 +814,9 @@ export default function Nuevo() {
 						</Grid>
 						<Grid item xs={12} sm={4}>
 							<TextField
+								id='obreros'
 								name='obreros'
-								value={empresa.obreros}
+								value={empresa.obreros || ''}
 								margin='normal'
 								fullWidth
 								label="Cantidad de obreros"
@@ -841,11 +897,12 @@ export default function Nuevo() {
 						<Grid item xs={12} sm={6}>
 							<TextField
 								name='capitalsocial'
-								value={empresa.capitalsocial}
+								value={empresa.capitalsocial || ''}
 								margin='normal'
 								fullWidth
 								label="Capital social"
 								onChange={onChangeEmpresa}
+								onKeyDown={e => { if (e.keyCode === 13) { document.getElementById('fechadecorte').focus() } }}
 								placeholder="capital social"
 								helperText='ingrese capital social'
 								type="text"
@@ -853,12 +910,14 @@ export default function Nuevo() {
 						</Grid>
 						<Grid item xs={12} sm={6}>
 							<TextField
+								id='fechadecorte'
 								name='fechadecorte'
-								value={empresa.fechadecorte}
+								value={empresa.fechadecorte || ''}
 								margin='normal'
 								fullWidth
 								label="Fecha de corte"
 								onChange={onChangeEmpresa}
+								onKeyDown={e => { if (e.keyCode === 13) { document.getElementById('activocorriente').focus() } }}
 								placeholder="01/01/2020"
 								helperText='ingrese una fecha'
 								type="text"
@@ -868,12 +927,14 @@ export default function Nuevo() {
 					<Grid container spacing={2}>
 						<Grid item xs={12} sm={4}>
 							<TextField
+								id='activocorriente'
 								name='activocorriente'
-								value={empresa.activocorriente}
+								value={empresa.activocorriente || ''}
 								margin='normal'
 								fullWidth
 								label="Activo corriente"
 								onChange={onChangeEmpresa}
+								onKeyDown={e => { if (e.keyCode === 13) { document.getElementById('activototal').focus() } }}
 								placeholder="activo corriente"
 								helperText='ingrese el activo corriente'
 								type="text"
@@ -881,12 +942,14 @@ export default function Nuevo() {
 						</Grid>
 						<Grid item xs={12} sm={4}>
 							<TextField
+								id='activototal'
 								name='activototal'
-								value={empresa.activototal}
+								value={empresa.activototal || ''}
 								margin='normal'
 								fullWidth
 								label="Activo total"
 								onChange={onChangeEmpresa}
+								onKeyDown={e => { if (e.keyCode === 13) { document.getElementById('pasivocorriente').focus() } }}
 								placeholder="activo total"
 								helperText='ingrese el activo total'
 								type="text"
@@ -894,12 +957,14 @@ export default function Nuevo() {
 						</Grid>
 						<Grid item xs={12} sm={4}>
 							<TextField
+								id='pasivocorriente'
 								name='pasivocorriente'
-								value={empresa.pasivocorriente}
+								value={empresa.pasivocorriente || ''}
 								margin='normal'
 								fullWidth
 								label="Pasivo corriente"
 								onChange={onChangeEmpresa}
+								onKeyDown={e => { if (e.keyCode === 13) { document.getElementById('patrimonio').focus() } }}
 								placeholder="pasivo corriente"
 								helperText='ingrese el pasivo corriente'
 								type="text"
@@ -909,12 +974,14 @@ export default function Nuevo() {
 					<Grid container spacing={2}>
 						<Grid item xs={12} sm={4}>
 							<TextField
+								id='patrimonio'
 								name='patrimonio'
-								value={empresa.patrimonio}
+								value={empresa.patrimonio || ''}
 								margin='normal'
 								fullWidth
 								label="Patrimonio"
 								onChange={onChangeEmpresa}
+								onKeyDown={e => { if (e.keyCode === 13) { document.getElementById('ventas').focus() } }}
 								placeholder="patrimonio"
 								helperText='ingrese el patrimonio'
 								type="text"
@@ -922,12 +989,14 @@ export default function Nuevo() {
 						</Grid>
 						<Grid item xs={12} sm={4}>
 							<TextField
+								id='ventas'
 								name='ventas'
-								value={empresa.ventas}
+								value={empresa.ventas || ''}
 								margin='normal'
 								fullWidth
 								label="Ventas"
 								onChange={onChangeEmpresa}
+								onKeyDown={e => { if (e.keyCode === 13) { document.getElementById('resultadoneto').focus() } }}
 								placeholder="ventas"
 								helperText='ingrese las ventas'
 								type="text"
@@ -935,12 +1004,14 @@ export default function Nuevo() {
 						</Grid>
 						<Grid item xs={12} sm={4}>
 							<TextField
+								id='resultadoneto'
 								name='resultadoneto'
-								value={empresa.resultadoneto}
+								value={empresa.resultadoneto || ''}
 								margin='normal'
 								fullWidth
 								label="Resultado neto"
 								onChange={onChangeEmpresa}
+								onKeyDown={e => { if (e.keyCode === 13) { document.getElementById('formadepago').focus() } }}
 								placeholder="resultado neto"
 								helperText='ingrese el resultado neto'
 								type="text"
@@ -950,12 +1021,14 @@ export default function Nuevo() {
 					<Grid container spacing={2}>
 						<Grid item xs={12} sm={3}>
 							<TextField
+								id='formadepago'
 								name='formadepago'
-								value={empresa.formadepago}
+								value={empresa.formadepago || ''}
 								margin='normal'
 								fullWidth
 								label="Forma de pago"
 								onChange={onChangeEmpresa}
+								onKeyDown={e => { if (e.keyCode === 13) { document.getElementById('garantia').focus() } }}
 								placeholder="forma de pago"
 								helperText='ingrese la forma de pago'
 								type="text"
@@ -963,12 +1036,14 @@ export default function Nuevo() {
 						</Grid>
 						<Grid item xs={12} sm={3}>
 							<TextField
+								id='garantia'
 								name='garantia'
-								value={empresa.garantia}
+								value={empresa.garantia || ''}
 								margin='normal'
 								fullWidth
 								label="Garantía"
 								onChange={onChangeEmpresa}
+								onKeyDown={e => { if (e.keyCode === 13) { document.getElementById('credito').focus() } }}
 								placeholder="garantía"
 								helperText='ingrese la garantía'
 								type="text"
@@ -976,12 +1051,14 @@ export default function Nuevo() {
 						</Grid>
 						<Grid item xs={12} sm={3}>
 							<TextField
+								id='credito'
 								name='credito'
-								value={empresa.credito}
+								value={empresa.credito || ''}
 								margin='normal'
 								fullWidth
 								label="Crédito"
 								onChange={onChangeEmpresa}
+								onKeyDown={e => { if (e.keyCode === 13) { document.getElementById('montopromedio').focus() } }}
 								placeholder="crédito"
 								helperText='ingrese plazo en días'
 								type="text"
@@ -989,8 +1066,9 @@ export default function Nuevo() {
 						</Grid>
 						<Grid item xs={12} sm={3}>
 							<TextField
+								id='montopromedio'
 								name='montopromedio'
-								value={empresa.montopromedio}
+								value={empresa.montopromedio || ''}
 								margin='normal'
 								fullWidth
 								label="Monto promedio"
@@ -1005,114 +1083,93 @@ export default function Nuevo() {
 						<Grid item xs={12}>
 							<Typography variant='h6'>Referencias bancarias</Typography>
 						</Grid>
+						<Grid item xs={12} sm={3}>
+							<TextField
+								id='banco'
+								name='banco'
+								value={empresa.banco || ''}
+								margin='normal'
+								fullWidth
+								label="Banco"
+								onChange={onChangeEmpresa}
+								onKeyDown={e => { if (e.keyCode === 13) { document.getElementById('tipo').focus() } }}
+								placeholder="Banco"
+								helperText='ej: BCP'
+								type="text"
+							/>
+						</Grid>
+						<Grid item xs={12} sm={2}>
+							<TextField
+								id='tipo'
+								name='tipo'
+								value={empresa.tipo || ''}
+								margin='normal'
+								fullWidth
+								label="Tipo"
+								onChange={onChangeEmpresa}
+								onKeyDown={e => { if (e.keyCode === 13) { document.getElementById('cuenta').focus() } }}
+								placeholder="Tipo de cuenta"
+								helperText='tipo de cta'
+								type="text"
+							/>
+						</Grid>
+						<Grid item xs={12} sm={3}>
+							<TextField
+								id='cuenta'
+								name='cuenta'
+								value={empresa.cuenta || ''}
+								margin='normal'
+								fullWidth
+								label="Cuenta"
+								onChange={onChangeEmpresa}
+								onKeyDown={e => { if (e.keyCode === 13) { document.getElementById('sectorista').focus() } }}
+								placeholder="N° de cuenta"
+								helperText='n° de cta'
+								type="text"
+							/>
+						</Grid>
+						<Grid item xs={12} sm={2}>
+							<TextField
+								id='sectorista'
+								name='sectorista'
+								value={empresa.sectorista || ''}
+								margin='normal'
+								fullWidth
+								label="Sectorista"
+								onChange={onChangeEmpresa}
+								onKeyDown={e => { if (e.keyCode === 13) { document.getElementById('telefonoBanco').focus() } }}
+								placeholder="Sectorista"
+								helperText='sectorista'
+								type="text"
+							/>
+						</Grid>
+						<Grid item xs={12} sm={2}>
+							<TextField
+								id='telefonoBanco'
+								name='telefonoBanco'
+								value={empresa.telefonoBanco || ''}
+								margin='normal'
+								fullWidth
+								label="Telefono"
+								onChange={onChangeEmpresa}
+								onKeyDown={e => { if (e.keyCode === 13) { agregarCuenta() } }}
+								placeholder="Telefono"
+								helperText='telefono'
+								type="text"
+							/>
+						</Grid>
 						<Grid item xs={12}>
-							<Table className={classes.table} aria-label="simple table">
-								<TableHead>
-									<TableRow>
-										<TableCell>Banco</TableCell>
-										<TableCell align="right">Tipo de cta.</TableCell>
-										<TableCell align="right">N° de cta.</TableCell>
-										<TableCell align="right">Sectorista</TableCell>
-										<TableCell align="right">Telefono</TableCell>
-									</TableRow>
-								</TableHead>
-								<TableBody>
-									<TableRow key={1}>
-										<TableCell component="th"><TextField
-											name='banco1'
-											value={empresa.banco1}
-											fullWidth
-											label="banco"
-											onChange={onChangeEmpresa}
-											placeholder="banco"
-											type="text"
-										/></TableCell>
-										<TableCell align="right"><TextField
-											name='tipo1'
-											value={empresa.tipo1}
-											fullWidth
-											label="Tipo"
-											onChange={onChangeEmpresa}
-											placeholder="Tipo"
-											type="text"
-										/></TableCell>
-										<TableCell align="right"><TextField
-											name='cuenta1'
-											value={empresa.cuenta1}
-											fullWidth
-											label="cuenta"
-											onChange={onChangeEmpresa}
-											placeholder="cuenta"
-											type="text"
-										/></TableCell>
-										<TableCell align="right"><TextField
-											name='sectorista1'
-											value={empresa.sectorista1}
-											fullWidth
-											label="sectorista"
-											onChange={onChangeEmpresa}
-											placeholder="sectorista"
-											type="text"
-										/></TableCell>
-										<TableCell align="right"><TextField
-											name='telefono1'
-											value={empresa.telefono1}
-											fullWidth
-											label="telefono"
-											onChange={onChangeEmpresa}
-											placeholder="telefono"
-											type="text"
-										/></TableCell>
-									</TableRow>
-									<TableRow key={2}>
-										<TableCell component="th"><TextField
-											name='banco2'
-											value={empresa.banco2}
-											fullWidth
-											label="banco"
-											onChange={onChangeEmpresa}
-											placeholder="banco"
-											type="text"
-										/></TableCell>
-										<TableCell align="right"><TextField
-											name='tipo2'
-											value={empresa.Tipo2}
-											fullWidth
-											label="Tipo"
-											onChange={onChangeEmpresa}
-											placeholder="Tipo"
-											type="text"
-										/></TableCell>
-										<TableCell align="right"><TextField
-											name='cuenta2'
-											value={empresa.cuenta2}
-											fullWidth
-											label="cuenta"
-											onChange={onChangeEmpresa}
-											placeholder="cuenta"
-											type="text"
-										/></TableCell>
-										<TableCell align="right"><TextField
-											name='sectorista2'
-											value={empresa.sectorista2}
-											fullWidth
-											label="sectorista"
-											onChange={onChangeEmpresa}
-											placeholder="sectorista"
-											type="text"
-										/></TableCell>
-										<TableCell align="right"><TextField
-											name='telefono2'
-											value={empresa.telefono2}
-											fullWidth
-											label="telefono"
-											onChange={onChangeEmpresa}
-											placeholder="telefono"
-											type="text"
-										/></TableCell>
-									</TableRow>
-								</TableBody>
-							</Table>
+							<List>
+								{listaActivaBanco ?
+									<ListItem>
+										<ListItemAvatar>
+											<HomeOutlinedIcon color='primary' />
+										</ListItemAvatar>
+										<ListItemText primary={`${empresa.banco} - ${empresa.cuenta}`} secondary={empresa.tipo} />
+										<DeleteOutlineOutlinedIcon color='error' onClick={() => eliminarCuenta()} style={{ cursor: 'pointer' }} />
+									</ListItem>
+									: null}
+							</List>
 						</Grid>
 					</Grid>
 					<Grid container spacing={2}>
@@ -1136,7 +1193,7 @@ export default function Nuevo() {
 							<TextField
 								name='correo'
 								id='correo'
-								value={empresa.correo}
+								value={empresa.correo || ''}
 								margin='normal'
 								fullWidth
 								label="Correo"
@@ -1181,7 +1238,7 @@ export default function Nuevo() {
 							<TextField
 								name='social'
 								id='social'
-								value={empresa.social}
+								value={empresa.social || ''}
 								margin='normal'
 								fullWidth
 								label="Red social"

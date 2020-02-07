@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, CssBaseline, Fade } from '@material-ui/core';
+import { Grid, CssBaseline, Zoom } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useHistory } from 'react-router-dom';
 import AddIcon from '@material-ui/icons/Add';
@@ -62,13 +62,13 @@ export default function Empresas() {
 					/>
 				))}
 			</SpeedDial>
-			<Fade in={true} timeout={1000}>
+			<Zoom in={true} timeout={500}>
 				<Grid container spacing={1} className={classes.root}>
 					<Grid item xs={12}>
 						<TablaEmpresas />
 					</Grid>
 				</Grid>
-			</Fade>
+			</Zoom>
 		</React.Fragment>
 	);
 }

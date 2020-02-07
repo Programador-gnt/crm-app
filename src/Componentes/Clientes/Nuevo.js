@@ -43,7 +43,8 @@ import SaveOutlinedIcon from '@material-ui/icons/SaveOutlined';
 import PhotoIcon from '@material-ui/icons/Photo';
 // import consumeWSChat from '../Config/WebServiceChat';
 import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
-import { useHistory } from 'react-router-dom'
+import { useHistory } from 'react-router-dom';
+import { AuthTokenRequest } from '../helpers/AxiosInstance'
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -117,7 +118,7 @@ export default function Nuevo() {
 	const [informacion1, setInformacion1] = React.useState({})
 	const [informacion2, setInformacion2] = React.useState({})
 	const [imagenAvatar, setImagenAvatar] = React.useState('')
-	const [avatarGuardar, setAvatarGuardar] = React.useState('')
+	const [avatarGuardar, setAvatarGuardar] = React.useState([])
 	const [telefonos, setTelefonos] = React.useState({ tipo: 'personal' })
 	const [arrayTelefono, setArrayTelefono] = React.useState([])
 	const [correos, setCorreos] = React.useState({ tipo: 'personal' })
@@ -280,8 +281,7 @@ export default function Nuevo() {
 		}
 
 		setImagenAvatar(URL.createObjectURL(avatar))
-		setAvatarGuardar(avatar.name)
-		console.log(avatarGuardar)
+		setAvatarGuardar(URL.createObjectURL(avatar))
 
 		// this.setState({
 		//     avatar: avatar,
@@ -292,11 +292,11 @@ export default function Nuevo() {
 	};
 
 	const guardar = () => {
-		// consumeWSChat('POST', 'contacto/nuevo', { avatarGuardar }, '')
-		// 	.then(result => {
-		// 		console.log(result)
-		// 	})
-		console.log('guardar')
+		console.log(avatarGuardar)
+		AuthTokenRequest.post('contactos/upload', {foto: avatarGuardar})
+			.then(() => {
+			
+			})
 	}
 
 	const preventActionClickClose = (evt, action) => {
@@ -564,7 +564,7 @@ export default function Nuevo() {
 							/>
 						</Grid>
 						<Grid item sx={12} sm={3}>
-							<input accept="image/*" className={classes.input} id="icon-button-file" type="file" onChange={handleAvatarChange} />
+							<input className={classes.input} id="icon-button-file" type="file" name='file' onChange={handleAvatarChange} />
 							<label htmlFor="icon-button-file">
 								{imagenAvatar ?
 									<Zoom in={true} timeout={500}>

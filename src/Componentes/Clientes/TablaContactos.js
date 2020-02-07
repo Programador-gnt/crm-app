@@ -14,11 +14,11 @@ import {
 	Typography,
 	Avatar,
 	Grid,
-	Zoom,
 	Tooltip,
 	IconButton,
 	CardHeader,
-	Popover
+	Popover,
+	Zoom
 } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import MaterialTable from 'material-table';
@@ -188,6 +188,12 @@ export default function TablaContactos(props) {
 								icon: 'delete',
 								tooltip: 'Eliminar',
 								onClick: (event, rowData) => MensajeEliminar(rowData.id_usuarios, rowData.name)
+							},
+							{
+								icon: 'refresh',
+								tooltip: 'Actualizar',
+								isFreeAction: true,
+								onClick: () => { usuarios() }
 							},
 							{
 								icon: 'filter_list',

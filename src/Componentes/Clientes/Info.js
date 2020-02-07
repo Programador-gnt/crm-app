@@ -1,5 +1,5 @@
 import React from 'react';
-import { CssBaseline, Card, CardContent, CardActions, Avatar, Typography, Grid, Tooltip, Paper, TextField } from '@material-ui/core';
+import { CssBaseline, Card, CardContent, CardActions, Avatar, Typography, Grid, Tooltip, Paper, TextField, Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import SpeedDial from '@material-ui/lab/SpeedDial';
 import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
@@ -46,8 +46,16 @@ const useStyles = makeStyles(theme => ({
 		width: '100%',
 		[theme.breakpoints.up(600 + theme.spacing(3) * 2)]: {
 			width: '100%',
-			padding: theme.spacing(3),
+			padding: theme.spacing(3)
 		}
+	},
+	buttons: {
+		display: 'flex',
+		justifyContent: 'flex-end',
+	},
+	button: {
+		marginTop: theme.spacing(3),
+		marginLeft: theme.spacing(1),
 	}
 }));
 
@@ -111,8 +119,11 @@ export default function Info() {
 							<Typography variant="h5" className={classes.texto} color='secondary'>
 								{infor.name}
 							</Typography>
-							<Typography variant="body1" className={classes.texto} color='textSecondary'>
+							<Typography variant="body1" className={classes.texto} color='textPrimary'>
 								{infor.correo}
+							</Typography>
+							<Typography variant="body1" className={classes.texto} color='textSecondary'>
+								{infor.empresa}
 							</Typography>
 						</CardContent>
 						<CardActions disableSpacing>
@@ -213,6 +224,10 @@ export default function Info() {
 									helperText='Cargo'
 									type="text"
 								/>
+							</Grid>
+							<Grid item xs={12} className={classes.buttons}>
+								<Button color='secondary' className={classes.button} disabled={editar} onClick={() => setEditar(true)}>Cancelar</Button>
+								<Button variant='contained' color='primary' className={classes.button} disabled={editar}>Guardar</Button>
 							</Grid>
 						</Grid>
 					</Paper>
