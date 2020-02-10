@@ -197,7 +197,7 @@ function Cabecera() {
 
 	const LogOut = () => {
 		setAnchorEl(null);
-		if (localStorage.getItem('tokenGoogle')) {
+		if (localStorage.getItem('token')) {
 			setVariable(true)
 			var user = JSON.parse(localStorage.getItem('usuarioChat'))
 			socket.emit('desconectado', user.uid)
@@ -228,7 +228,7 @@ function Cabecera() {
 	}
 
 	const chat = () => {
-		if (localStorage.getItem('tokenGoogle')) {
+		if (localStorage.getItem('token')) {
 			socket.emit('conectado', perfil.nickname)
 			socket.on('conectado/respuesta', result => {
 				if (localStorage.getItem('usuarioChat')) {
@@ -249,7 +249,7 @@ function Cabecera() {
 
 	React.useEffect(chat, [])
 
-	if (localStorage.getItem('tokenGoogle') === null) {
+	if (localStorage.getItem('token') === null) {
 		return (<Redirect to='/login' />)
 	}
 

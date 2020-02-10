@@ -8,7 +8,7 @@ import {
     DialogContent,
     DialogContentText,
     DialogActions,
-    Button,
+    Button
 } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import MaterialTable from 'material-table';

@@ -15,14 +15,16 @@ import {
 	Checkbox,
 	Link,
 	LinearProgress,
-	Snackbar
+	Snackbar,
+	Fade
 } from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { makeStyles } from '@material-ui/core/styles';
-import { Redirect } from 'react-router-dom';
+import { Redirect, useHistory } from 'react-router-dom';
 import CloseIcon from '@material-ui/icons/Close';
 import Copyright from '../Layout/Copyright';
-import { AuthTokenRequest } from '../helpers/AxiosInstance'
+import { AuthTokenRequest } from '../helpers/AxiosInstance';
+import UserContext from '../helpers/UserContext'
 
 
 const useStyles = makeStyles(theme => ({
@@ -40,7 +42,7 @@ const useStyles = makeStyles(theme => ({
 		marginTop: theme.spacing(8),
 		display: 'flex',
 		flexDirection: 'column',
-		alignItems: 'center',
+		alignItems: 'center'
 	},
 	avatar: {
 		margin: theme.spacing(1),
@@ -48,11 +50,10 @@ const useStyles = makeStyles(theme => ({
 	},
 	form: {
 		width: '100%', // Fix IE 11 issue.
-		marginTop: theme.spacing(1),
-
+		marginTop: theme.spacing(1)
 	},
 	submit: {
-		margin: theme.spacing(3, 0, 2),
+		margin: theme.spacing(3, 0, 2)
 	},
 	main: {
 		opacity: '0.8',
@@ -62,32 +63,27 @@ const useStyles = makeStyles(theme => ({
 			marginTop: 0,
 			width: '100%',
 			height: '100%'
+		},
+		[theme.breakpoints.between('sm', 'md')]: {
+			height: '73%'
 		}
 	}
 }));
 
 export default function Login() {
-	const [irInicio, setIrInicio] = React.useState(false)
-	const [aviso, setAviso] = React.useState(false)
+	const history = useHistory()
+	const [aviso, setAviso] = React.useState({ mensaje: '', aviso: false })
 	const [cuerpo, setCuerpo] = React.useState({ nickname: '', password: '' })
 	const [isLoading, setIsLoading] = React.useState(false)
 	const classes = useStyles();
+	const setUserContext = React.useContext(UserContext)[1]
 
 	const handleCloseMensaje = () => {
-		setAviso(false)
+		setAviso({ mensaje: '', aviso: false })
 	};
 
 	const onChange = (e) => {
-		setCuerpo({
-			...cuerpo,
-			[e.target.name]: e.target.value
-		})
-	}
-
-	const tecla = (e) => {
-		if (e.keyCode === 13) {
-			login()
-		}
+		setCuerpo({ ...cuerpo, [e.target.name]: e.target.value })
 	}
 
 	const login = () => {
@@ -97,11 +93,12 @@ export default function Login() {
 				AuthTokenRequest.post('login', cuerpo)
 					.then(result => {
 						setIsLoading(false)
-						localStorage.setItem('perfilGoogle', JSON.stringify(result.data))
-						localStorage.setItem('tokenGoogle', `${result.data.name}${result.data.picture}${result.data.nickname}`)
-						setIrInicio(true)
-					}).catch(() => {
-						setAviso(true)
+						localStorage.setItem('perfilGoogle', JSON.stringify(result.data.perfil))
+						localStorage.setItem('token', JSON.stringify(result.data.token))
+						setUserContext({ token: result.data.token })
+						history.push('/inicio')
+					}).catch(error => {
+						setAviso({ mensaje: error.response.data, aviso: true })
 						setIsLoading(false)
 						document.getElementById('password').focus();
 					})
@@ -109,11 +106,7 @@ export default function Login() {
 		}
 	}
 
-	if (irInicio === true) {
-		return (<Redirect to='/inicio' />)
-	}
-
-	if (localStorage.getItem('tokenGoogle')) {
+	if (localStorage.getItem('token')) {
 		return (<Redirect to='/inicio' />)
 	}
 
@@ -121,9 +114,9 @@ export default function Login() {
 		<Grid container component="main" className={classes.root}>
 			<Container component={Paper} elevation={5} maxWidth='xs' className={classes.main}>
 				<CssBaseline />
-				<Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }} open={aviso} autoHideDuration={3000} onClose={handleCloseMensaje} style={{ opacity: '0.8' }}
+				<Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }} open={aviso.aviso} autoHideDuration={3000} onClose={handleCloseMensaje} style={{ opacity: '0.8' }}
 					ContentProps={{ 'aria-describedby': 'mensaje' }}
-					message={<Typography id="mensaje" variant='button'>Error al autenticar</Typography>}
+					message={<Typography id="mensaje" variant='button'>{aviso.mensaje}</Typography>}
 					action={[
 						<IconButton
 							key="close"
@@ -136,76 +129,77 @@ export default function Login() {
 						</IconButton>,
 					]}
 				/>
-				<div className={classes.paper}>
-					<Avatar className={classes.avatar}>
-						<LockOutlinedIcon />
-					</Avatar>
-					<Typography component="h1" variant="h5">
-						Sign in
+				<Fade in={true} timeout={1000}>
+					<div className={classes.paper}>
+						<Avatar className={classes.avatar}>
+							<LockOutlinedIcon />
+						</Avatar>
+						<Typography component="h1" variant="h5">
+							Sign in
         			</Typography>
-					<form className={classes.form} noValidate>
-						<TextField
-							variant="outlined"
-							margin="normal"
-							required
-							fullWidth
-							label='Nickname'
-							name="nickname"
-							autoComplete="nickname"
-							onKeyDown={tecla}
-							disabled={isLoading}
-							onChange={onChange}
-							autoFocus
-							error={aviso}
-						/>
-						<TextField
-							variant="outlined"
-							margin="normal"
-							error={aviso}
-							required
-							fullWidth
-							id='password'
-							name="password"
-							label='Password'
-							type="password"
-							onChange={onChange}
-							disabled={isLoading}
-							onKeyDown={tecla}
-							autoComplete="password"
-						/>
-						<FormControlLabel
-							control={<Checkbox value="remember" color="primary" />}
-							label="Recordarme"
-							disabled={isLoading}
-						/>
-						{isLoading && <LinearProgress color='secondary' />}
-						<Button
-							fullWidth
-							variant="contained"
-							color="primary"
-							onClick={() => login()}
-							disabled={cuerpo.password === '' ? true : isLoading ? true : false}
-							className={classes.submit}
-						>
-							Ingresar
+						<form className={classes.form} noValidate>
+							<TextField
+								variant="outlined"
+								margin="normal"
+								required
+								fullWidth
+								label='Nickname'
+								name="nickname"
+								autoComplete="nickname"
+								onKeyDown={e => { if (e.keyCode === 13) { login() } }}
+								disabled={isLoading}
+								onChange={onChange}
+								autoFocus
+								error={aviso.aviso}
+							/>
+							<TextField
+								variant="outlined"
+								margin="normal"
+								error={aviso.aviso}
+								required
+								fullWidth
+								id='password'
+								name="password"
+								label='Password'
+								type="password"
+								onChange={onChange}
+								disabled={isLoading}
+								onKeyDown={e => { if (e.keyCode === 13) { login() } }}
+								autoComplete="password"
+							/>
+							<FormControlLabel
+								control={<Checkbox value="remember" color="primary" />}
+								label="Recordarme"
+								disabled={isLoading}
+							/>
+							{isLoading && <LinearProgress color='secondary' />}
+							<Button
+								fullWidth
+								variant="contained"
+								color="primary"
+								onClick={() => login()}
+								disabled={cuerpo.password === '' ? true : isLoading ? true : false}
+								className={classes.submit}>
+								Ingresar
           				</Button>
-						<Grid container>
-							<Grid item xs>
-								<Link href="#" variant="body2">
-									Recuperar contraseña
+							<Grid container>
+								<Grid item xs>
+									<Link href="#" variant="body2">
+										Recuperar contraseña
               					</Link>
+								</Grid>
+								<Grid item>
+									<Link href="#" variant="body2">
+										{"Crear cuenta"}
+									</Link>
+								</Grid>
 							</Grid>
-							<Grid item>
-								<Link href="#" variant="body2">
-									{"Crear cuenta"}
-								</Link>
-							</Grid>
-						</Grid>
-					</form>
-					<Box mt={8}>
-						<Copyright />
-					</Box>
-				</div>
+						</form>
+						<Box mt={8}>
+							<Copyright />
+						</Box>
+					</div>
+				</Fade>
 			</Container>
 		</Grid>
 	);

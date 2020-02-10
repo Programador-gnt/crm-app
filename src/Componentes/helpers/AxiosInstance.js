@@ -7,9 +7,16 @@ const AuthTokenRequest = axios.create({
 })
 // interceptor de petición (antes de solicitud)
 AuthTokenRequest.interceptors.request.use(
-	config => config,              // Hacer algo antes de enviar la solicitud
+	config => { // Hacer algo antes de enviar la solicitud
+		const token = localStorage.getItem("token") ?
+			JSON.parse(localStorage.getItem("token")) :
+			''
+		config.headers.Authorization = `Bearer ${token}`;
+		return config;
+	},
 	error => Promise.reject(error) // Hacer algo con error de solicitud
 )
+
 // interceptor de respuesta (despues de solicitud)
 AuthTokenRequest.interceptors.response.use(
 	response => response,          // Cualquier código de estado que se encuentre dentro del rango de 2xx hace que esta función se active

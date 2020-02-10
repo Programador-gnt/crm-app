@@ -5,8 +5,8 @@ import { makeStyles, withStyles } from '@material-ui/core/styles';
 import { blue, green, red } from '@material-ui/core/colors';
 import GoogleIcon from 'mdi-material-ui/Google';
 import FacebookIcon from '@material-ui/icons/Facebook';
-import Config from '../Config/Config';
-import gapi from 'gapi-client';
+// import Config from '../Config/Config';
+// import gapi from 'gapi-client';
 // import consumeWSChat from '../Config/WebServiceChat';
 // import { CometChat } from '@cometchat-pro/chat';
 
@@ -77,7 +77,7 @@ export default function ChatDialog(props) {
 	const [success, setSuccess] = React.useState(false);
 	const [loadingF, setLoadingF] = React.useState(false);
 	const [successF, setSuccessF] = React.useState(false);
-	const SCOPES = 'https://mail.google.com https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/calendar https://www.google.com/m8/feeds/ https://www.googleapis.com/auth/contacts.readonly';
+	// const SCOPES = 'https://mail.google.com https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/calendar https://www.google.com/m8/feeds/ https://www.googleapis.com/auth/contacts.readonly';
 	const timer = React.useRef();
 	const { dialogProps } = props
 
@@ -96,26 +96,28 @@ export default function ChatDialog(props) {
 			timer.current = setTimeout(() => {
 				setSuccess(true);
 				setLoading(false);
+				alert('en construcción')
+				props.funcion()
 				// consumeWSChat('GET', 'google', '', '')
 				// 	.then(result => {
 				// 		localStorage.setItem('tokenGoogle', JSON.stringify(result.access_token))
 				// 	})
-				gapi.load('auth2', initClient)
-				function initClient() {
-					gapi.auth2.authorize({
-						apiKey: `${Config.api_key}`,
-						client_id: `${Config.client_id}`,
-						scope: SCOPES,
-						cookie_policy: 'none'
-					}, response => {
-						if (response.hasOwnProperty('error')) {
+				// gapi.load('auth2', initClient)
+				// function initClient() {
+				// 	gapi.auth2.authorize({
+				// 		apiKey: `${Config.api_key}`,
+				// 		client_id: `${Config.client_id}`,
+				// 		scope: SCOPES,
+				// 		cookie_policy: 'none'
+				// 	}, response => {
+				// 		if (response.hasOwnProperty('error')) {
 
-						} else {
-							localStorage.setItem('tokenGoogle', JSON.stringify(response.access_token))
-							props.funcion()
-						}
-					});
-				}
+				// 		} else {
+				// 			localStorage.setItem('tokenGoogle', JSON.stringify(response.access_token))
+				// 			props.funcion()
+				// 		}
+				// 	});
+				// }
 			}, 2000)
 		}
 	}
