@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Box from '@material-ui/core/Box';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import './App.scss';
-import { UserProvider } from './Componentes/helpers/UserContext'
+import { UserProvider } from './Componentes/helpers/loginContext'
 
 const loading = () => {
 	return (
@@ -16,7 +16,7 @@ const loading = () => {
 function App() {
 	const Login = React.lazy(() => import('./Componentes/Login/Login'));
 	const Layout = React.lazy(() => import('./Componentes/Layout/Layout'));
-	const user = React.useState({ token: localStorage.getItem('token') ? JSON.parse(localStorage.getItem('token')) : '' })
+	const user = React.useState({ name: '', avatar: '', correo: '', nickname: '', cargo: '', status: '' })
 	console.log(`%c ________________________________________
 	 ----------------------------------------
 	 ███╗   ███╗ ██╗ ██╗ ██  ██╗

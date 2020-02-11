@@ -11,7 +11,7 @@ import TortaReuniones from './Usuarios/Reuniones';
 import Zoom from '@material-ui/core/Zoom';
 import LineaLlamadas from './Usuarios/Llamadas';
 import AreaGmail from './Usuarios/Gmail';
-import { AuthTokenRequest } from '../helpers/AxiosInstance'
+import { AuthTokenRequest } from '../helpers/AxiosInstance';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
