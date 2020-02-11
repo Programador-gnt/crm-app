@@ -13,6 +13,9 @@ import {
 import TablaContactos from './TablaContactos';
 import TableChartOutlinedIcon from '@material-ui/icons/TableChartOutlined';
 import WidgetsOutlinedIcon from '@material-ui/icons/WidgetsOutlined';
+import { AuthTokenRequest } from '../helpers/AxiosInstance';
+// import appInteraction from '../helpers/appInteraction';
+
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -27,16 +30,18 @@ const useStyles = makeStyles(theme => ({
 	}
 }));
 
-const actions = [
-	{ name: 'Nuevo' },
-	{ name: 'Table' },
-	{ name: 'Tarjeta' }
-]
+// const actions = [
+// 	{ name: 'Nuevo' },
+// 	{ name: 'Table' },
+// 	{ name: 'Tarjeta' }
+// ]
 
 export default function Clientes() {
 	const history = useHistory()
 	const [open, setOpen] = React.useState(window.screen.width < 769 ? false : true)
 	const [tarjeta, setTarjeta] = React.useState(false)
+	const [actions, setActions] = React.useState([])
+	// const [aplicacion, setAplicacion] = React.useContext(appInteraction)
 	const classes = useStyles()
 
 	const preventActionClickClose = (evt, action) => {
@@ -52,6 +57,16 @@ export default function Clientes() {
 			setTarjeta(true)
 		}
 	}
+
+	const acciones = () => {
+		AuthTokenRequest.post('acciones', { form: 'listaContactos' })
+			.then(result => {
+				setActions(result.data)
+				// setAplicacion({ ...aplicacion, acciones: result.data })
+			})
+	}
+
+	React.useEffect(acciones, [])
 
 	return (
 		<React.Fragment>

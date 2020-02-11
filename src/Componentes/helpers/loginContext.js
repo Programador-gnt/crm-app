@@ -1,7 +1,8 @@
 import React from 'react'
 
-const loginContext = React.createContext([null, () => { }])
+const loginContext = React.createContext([{}, () => { }])
 
-export const UserProvider = loginContext.Provider
-export const UserConsumer = loginContext.Consumer
+export const LoginContextProvider = loginContext.Provider
+export const LoginContextConsumer = loginContext.Consumer
+
 export default loginContext

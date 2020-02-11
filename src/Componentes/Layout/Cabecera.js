@@ -23,6 +23,7 @@ import NotificationsNoneOutlinedIcon from '@material-ui/icons/NotificationsNoneO
 import AddOutlinedIcon from '@material-ui/icons/AddOutlined';
 import ExitToAppOutlinedIcon from '@material-ui/icons/ExitToAppOutlined';
 import PersonOutlineOutlinedIcon from '@material-ui/icons/PersonOutlineOutlined';
+import loginContext from '../helpers/loginContext'
 // import { CometChat } from '@cometchat-pro/chat';
 
 const drawerWidth = 240;
@@ -174,7 +175,7 @@ function Cabecera() {
 	const [openDialog, setOpenDialog] = React.useState(false)
 	const [openChatDialog, setOpenChatDialog] = React.useState(false)
 	const [variable, setVariable] = React.useState(false)
-	const perfil = JSON.parse(localStorage.getItem('perfilGoogle'))
+	const perfil = React.useContext(loginContext)[0]
 	const path = window.location.pathname.split('/')[1]
 	const path2 = window.location.pathname.split('/')[2]
 	const history = useHistory()
@@ -324,7 +325,7 @@ function Cabecera() {
 									<List>
 										<ListItem>
 											<ListItemAvatar>
-												<Avatar src={perfil.picture} alt='...' />
+												<Avatar src={perfil.avatar} alt='...' />
 											</ListItemAvatar>
 											<ListItemText primary={<div className={classes.textoPerfil}>
 												<Typography align='center'>{perfil.correo}</Typography>
