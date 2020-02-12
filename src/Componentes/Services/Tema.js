@@ -19,7 +19,6 @@ import deepOrange from '@material-ui/core/colors/deepOrange';
 import brown from '@material-ui/core/colors/brown';
 import gray from '@material-ui/core/colors/grey';
 import blueGray from '@material-ui/core/colors/blueGrey';
-import api from '../constants/api';
 // import RalewayWoff2 from './raleway-v14-latin-regular.woff2';
 
 const colors = {
@@ -173,9 +172,9 @@ const getType = (typeId) => {
 	return types[typeId];
 };
 
-const defaultPrimaryColor = getColor(`${api.primary_color}`);
-const defaultSecondaryColor = getColor(`${api.secondary_color}`);
-const defaultType = getType(`${api.type}`);
+const defaultPrimaryColor = getColor(`orange`);
+const defaultSecondaryColor = getColor(`teal`);
+const defaultType = getType(`dark`);
 
 // const raleway = {
 // 	fontFamily: 'Raleway',

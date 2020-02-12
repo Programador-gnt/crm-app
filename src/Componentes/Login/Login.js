@@ -93,7 +93,7 @@ export default function Login() {
 				AuthTokenRequest.post('login', cuerpo)
 					.then(result => {
 						setIsLoading(false)
-						var objeto = { name: result.data.perfil.name, avatar: result.data.perfil.picture, correo: result.data.perfil.correo, nickname: result.data.perfil.nickname, cargo: result.data.perfil.cargo }
+						var objeto = { id_usuarios: result.data.perfil.id_login, name: result.data.perfil.name, avatar: result.data.perfil.picture, correo: result.data.perfil.correo, nickname: result.data.perfil.nickname, cargo: result.data.perfil.cargo }
 						localStorage.setItem('perfil', JSON.stringify(objeto))
 						localStorage.setItem('token', JSON.stringify(result.data.token))
 						setLoginContext({ name: result.data.perfil.name, avatar: result.data.perfil.picture, correo: result.data.perfil.correo, nickname: result.data.perfil.nickname, cargo: result.data.perfil.cargo })

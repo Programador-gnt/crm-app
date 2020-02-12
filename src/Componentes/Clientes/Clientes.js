@@ -30,12 +30,6 @@ const useStyles = makeStyles(theme => ({
 	}
 }));
 
-// const actions = [
-// 	{ name: 'Nuevo' },
-// 	{ name: 'Table' },
-// 	{ name: 'Tarjeta' }
-// ]
-
 export default function Clientes() {
 	const history = useHistory()
 	const [open, setOpen] = React.useState(window.screen.width < 769 ? false : true)
