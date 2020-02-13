@@ -24,7 +24,8 @@ import { Redirect, useHistory } from 'react-router-dom';
 import CloseIcon from '@material-ui/icons/Close';
 import Copyright from '../Layout/Copyright';
 import { AuthTokenRequest } from '../helpers/AxiosInstance';
-import loginContext from '../helpers/loginContext'
+import loginContext from '../helpers/loginContext';
+import theming from '../Services/Tema';
 
 
 const useStyles = makeStyles(theme => ({
@@ -94,8 +95,15 @@ export default function Login() {
 					.then(result => {
 						setIsLoading(false)
 						var objeto = { id_usuarios: result.data.perfil.id_login, name: result.data.perfil.name, avatar: result.data.perfil.picture, correo: result.data.perfil.correo, nickname: result.data.perfil.nickname, cargo: result.data.perfil.cargo }
+						var palette = { primary: result.data.perfil.primario, secondary: result.data.perfil.secundario, type: result.data.perfil.tipo }
 						localStorage.setItem('perfil', JSON.stringify(objeto))
+						localStorage.setItem('palette', JSON.stringify(palette))
 						localStorage.setItem('token', JSON.stringify(result.data.token))
+						theming.changeTheme({
+							primaryColor: result.data.perfil.primario,
+							secondaryColor: result.data.perfil.secundario,
+							type: result.data.perfil.tipo
+						})
 						setLoginContext({ name: result.data.perfil.name, avatar: result.data.perfil.picture, correo: result.data.perfil.correo, nickname: result.data.perfil.nickname, cargo: result.data.perfil.cargo })
 						history.push('/inicio')
 					}).catch(error => {

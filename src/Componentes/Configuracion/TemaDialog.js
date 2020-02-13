@@ -16,37 +16,46 @@ import {
 	Hidden,
 	Button
 } from '@material-ui/core';
-import FiberManualRecord from '@material-ui/icons/FiberManualRecord';
+import OpacityOutlinedIcon from '@material-ui/icons/OpacityOutlined';
 import InvertColorsIcon from '@material-ui/icons/InvertColors';
 import theming from '../Services/Tema';
+import { AuthTokenRequest } from '../helpers/AxiosInstance'
 
 
-function TemaDialog(props) {
+function TemaDialog({ abrir, funcion }) {
+	const datos = JSON.parse(localStorage.getItem('perfil'))
+	const palette = JSON.parse(localStorage.getItem('palette'))
 	const [tema, setTema] = React.useState({
-		primaryColor: theming.defaultTheme.primaryColor.id,
-		secondaryColor: theming.defaultTheme.secondaryColor.id,
-		type: theming.defaultTheme.type.id
+		primaryColor: palette.primary,
+		secondaryColor: palette.secondary,
+		type: palette.type
 	})
 	const theme = theming.defaultTheme
 
 	const handleColorChange = (event) => {
 		setTema({
 			...tema,
+			id_usuarios: datos.id_usuarios,
 			[event.target.name]: event.target.value
 		})
 	};
 
 	const cambiarTema = () => {
-		theming.changeTheme({
-			primaryColor: typeof tema.primaryColor === 'undefined' ? theme.primaryColor.id : tema.primaryColor,
-			secondaryColor: typeof tema.secondaryColor === 'undefined' ? theme.secondaryColor.id : tema.secondaryColor,
-			type: typeof tema.type === 'undefined' ? theme.type.id : tema.type
-		})
-		props.funcion()
+		AuthTokenRequest.post('tema/editar', tema)
+			.then(() => {
+				theming.changeTheme({
+					primaryColor: typeof tema.primaryColor === 'undefined' ? theme.primaryColor.id : tema.primaryColor,
+					secondaryColor: typeof tema.secondaryColor === 'undefined' ? theme.secondaryColor.id : tema.secondaryColor,
+					type: typeof tema.type === 'undefined' ? theme.type.id : tema.type
+				})
+				var palette = { primary: tema.primaryColor, secondary: tema.secondaryColor, type: tema.type }
+				localStorage.setItem('palette', JSON.stringify(palette))
+				funcion()
+			})
 	}
 
 	return (
-		<Dialog open={props.abrir} onClose={props.funcion}>
+		<Dialog open={abrir} onClose={funcion}>
 			<DialogTitle disableTypography>
 				<Typography variant="h6">
 					Cambiar paleta de colores
@@ -57,7 +66,7 @@ function TemaDialog(props) {
 					<Box mb={1}>
 						<ListItem>
 							<ListItemIcon>
-								<FiberManualRecord color="primary" />
+								<OpacityOutlinedIcon color='primary' />
 							</ListItemIcon>
 
 							<FormControl fullWidth>
@@ -68,7 +77,7 @@ function TemaDialog(props) {
 										native
 										value={tema.primaryColor}
 										name='primaryColor'
-										onChange={handleColorChange.bind()}
+										onChange={handleColorChange}
 									>
 										{Object.keys(theming.colors).map((color) => {
 											color = theming.colors[color];
@@ -83,7 +92,7 @@ function TemaDialog(props) {
 									<Select
 										value={tema.primaryColor}
 										name='primaryColor'
-										onChange={handleColorChange.bind()}
+										onChange={handleColorChange}
 									>
 										{Object.keys(theming.colors).map((color) => {
 											color = theming.colors[color];
@@ -100,7 +109,7 @@ function TemaDialog(props) {
 					<Box mb={1}>
 						<ListItem>
 							<ListItemIcon>
-								<FiberManualRecord color="secondary" />
+								<OpacityOutlinedIcon color='secondary' />
 							</ListItemIcon>
 
 							<FormControl fullWidth>
@@ -111,7 +120,7 @@ function TemaDialog(props) {
 										native
 										value={tema.secondaryColor}
 										name='secondaryColor'
-										onChange={handleColorChange.bind()}
+										onChange={handleColorChange}
 
 									>
 										{Object.keys(theming.colors).map((color) => {
@@ -129,7 +138,7 @@ function TemaDialog(props) {
 
 										value={tema.secondaryColor}
 										name='secondaryColor'
-										onChange={handleColorChange.bind()}
+										onChange={handleColorChange}
 									>
 										{Object.keys(theming.colors).map((color) => {
 											color = theming.colors[color];
@@ -158,7 +167,7 @@ function TemaDialog(props) {
 										native
 										value={tema.type}
 										name='type'
-										onChange={handleColorChange.bind()}
+										onChange={handleColorChange}
 
 									>
 										{Object.keys(theming.types).map((type) => {
@@ -175,7 +184,7 @@ function TemaDialog(props) {
 									<Select
 										value={tema.type}
 										name='type'
-										onChange={handleColorChange.bind()}
+										onChange={handleColorChange}
 									>
 										{Object.keys(theming.types).map((type) => {
 											type = theming.types[type];

@@ -7,6 +7,10 @@ import Footer from './Footer';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Menu from './Menu';
 import { makeStyles } from '@material-ui/core/styles';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import indigo from '@material-ui/core/colors/indigo';
+import red from '@material-ui/core/colors/red';
+import theming from '../Services/Tema'
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -21,45 +25,58 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function Layout() {
+	const theme = theming.defaultTheme
 	const classes = useStyles()
+	const ok = {
+		palette: {
+			primary: indigo,
+			secondary: red,
+			type: 'light'
+		}
+	}
+
+	const theme2 = createMuiTheme(ok)
+
 
 	return (
-		<React.Fragment>
-			<CssBaseline />
-			<div className="app">
-				<Paper elevation={4}>
-					<Suspense>
-						<Cabecera />
+		<MuiThemeProvider theme={typeof theme === 'undefined' ? theme2 : theme}>
+			<React.Fragment>
+				<CssBaseline />
+				<div className="app">
+					<Paper elevation={4}>
+						<Suspense>
+							<Cabecera />
+						</Suspense>
+					</Paper>
+					<Suspense style={{ position: 'fixed' }}>
+						<Menu />
 					</Suspense>
-				</Paper>
-				<Suspense style={{ position: 'fixed' }}>
-					<Menu />
-				</Suspense>
 
-				<main className={classes.root}>
-					<Suspense>
-						<Switch>
-							{routes.map((route) => {
-								return route.component ? (
-									<Route
-										key={route.id}
-										path={route.path}
-										exact={route.exact}
-										name={route.name}
-										render={props => (
-											<route.component key={route.id} {...props} />
-										)} />
-								) : (null);
-							})}
-							<Redirect to="/login" />
-						</Switch>
+					<main className={classes.root}>
+						<Suspense>
+							<Switch>
+								{routes.map((route) => {
+									return route.component ? (
+										<Route
+											key={route.id}
+											path={route.path}
+											exact={route.exact}
+											name={route.name}
+											render={props => (
+												<route.component key={route.id} {...props} />
+											)} />
+									) : (null);
+								})}
+								<Redirect to="/login" />
+							</Switch>
+						</Suspense>
+					</main>
+					<Suspense >
+						<Footer />
 					</Suspense>
-				</main>
-				<Suspense >
-					<Footer />
-				</Suspense>
-			</div>
-		</React.Fragment>
+				</div>
+			</React.Fragment>
+		</MuiThemeProvider>
 	);
 }
 export default Layout;

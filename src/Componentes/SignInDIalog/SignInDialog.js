@@ -47,13 +47,12 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-export default function SignInDialog(props) {
+export default function SignInDialog({ abrir, cerrar }) {
 	const classes = useStyles();
 	const [MensajeEnviar, setMensajeEnviar] = React.useState({})
 	const [loading, setLoading] = React.useState(false);
 	const [success, setSuccess] = React.useState(false);
 	const timer = React.useRef();
-	const { dialogProps } = props
 	var Mensaje
 
 	const buttonClassname = clsx({
@@ -92,7 +91,7 @@ export default function SignInDialog(props) {
 	return (
 		<React.Fragment>
 			<CssBaseline />
-			<Dialog fullWidth maxWidth="sm" {...dialogProps} open={props.abrir} onClose={props.cerrar}>
+			<Dialog fullWidth maxWidth="sm" open={abrir} onClose={cerrar}>
 				<DialogTitle>
 					Enviar mensaje
                 </DialogTitle>
@@ -111,7 +110,7 @@ export default function SignInDialog(props) {
 											label="Destinatario"
 											placeholder="Correo electrónico"
 											required
-											onChange={enviarChange.bind()}
+											onChange={enviarChange}
 											type="text"
 											variant="outlined"
 										/>
@@ -124,7 +123,7 @@ export default function SignInDialog(props) {
 											label="Subject"
 											name='Subject'
 											placeholder="Motivo del mensaje"
-											onChange={enviarChange.bind()}
+											onChange={enviarChange}
 											required
 											type="text"
 											variant="outlined"
@@ -139,7 +138,7 @@ export default function SignInDialog(props) {
 											label="Mensaje"
 											name='Snippet'
 											placeholder="Cuerpo del mensaje"
-											onChange={enviarChange.bind()}
+											onChange={enviarChange}
 											required
 											type="text"
 											variant="outlined"
@@ -158,7 +157,7 @@ export default function SignInDialog(props) {
 									fullWidth
 									label="Destinatario"
 									placeholder="Correo electrónico"
-									onChange={enviarChange.bind()}
+									onChange={enviarChange}
 									required
 									type="text"
 									variant="outlined"
@@ -171,7 +170,7 @@ export default function SignInDialog(props) {
 									label="Subject"
 									name='Subject'
 									placeholder="Motivo del mensaje"
-									onChange={enviarChange.bind()}
+									onChange={enviarChange}
 									required
 									type="text"
 									variant="outlined"
@@ -186,7 +185,7 @@ export default function SignInDialog(props) {
 									label="Mensaje"
 									name='Snippet'
 									placeholder="Cuerpo del mensaje"
-									onChange={enviarChange.bind()}
+									onChange={enviarChange}
 									required
 									type="text"
 									variant="outlined"
@@ -196,7 +195,7 @@ export default function SignInDialog(props) {
 					</Hidden>
 				</DialogContent>
 				<DialogActions>
-					<Button color="secondary" onClick={props.cerrar}>Cerrar</Button>
+					<Button color="secondary" onClick={cerrar}>Cerrar</Button>
 					<Button
 						onClick={() => enviarMensaje()}
 						color="primary"

@@ -5,10 +5,6 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import './App.scss';
 import { AppInteractionProvider } from './Componentes/helpers/appInteraction';
 import { LoginContextProvider } from './Componentes/helpers/loginContext';
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-import theming from './Componentes/Services/Tema';
-import gray from '@material-ui/core/colors/grey';
-import blueGray from '@material-ui/core/colors/blueGrey';
 
 const loading = () => {
 	return (
@@ -19,7 +15,6 @@ const loading = () => {
 }
 
 function App() {
-	var theme = theming.defaultTheme
 	const data = localStorage.getItem('perfil') ? JSON.parse(localStorage.getItem('perfil')) : ''
 	const Login = React.lazy(() => import('./Componentes/Login/Login'));
 	const Layout = React.lazy(() => import('./Componentes/Layout/Layout'));
@@ -34,28 +29,17 @@ function App() {
 	 ██║ ╚═╝ ██║ ██║ ██║ ██╗ ██║
 	 ╚═╝     ╚═╝ ╚═╝ ╚═╝ ╚═╝ ╚═╝`, "font-family:monospace; color: #0F669D")
 
-	const ok = {
-		palette: {
-			primary: gray,
-			secondary: blueGray,
-			type: 'dark'
-		}
-	}
-	const tema = createMuiTheme(ok)
-
 	return (
 		<LoginContextProvider value={user}>
 			<AppInteractionProvider value={actions}>
-				<MuiThemeProvider theme={tema}>
-					<Router>
-						<React.Suspense fallback={loading()}>
-							<Switch>
-								<Route exact path='/login' name='Login' render={props => <Login {...props} />} />
-								<Route path='/' name='Inicio' render={props => <Layout {...props} />} />
-							</Switch>
-						</React.Suspense>
-					</Router>
-				</MuiThemeProvider>
+				<Router>
+					<React.Suspense fallback={loading()}>
+						<Switch>
+							<Route exact path='/login' name='Login' render={props => <Login {...props} />} />
+							<Route path='/' name='Inicio' render={props => <Layout {...props} />} />
+						</Switch>
+					</React.Suspense>
+				</Router>
 			</AppInteractionProvider>
 		</LoginContextProvider>
 	);

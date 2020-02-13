@@ -41,7 +41,6 @@ import CallOutlinedIcon from '@material-ui/icons/CallOutlined';
 import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined';
 import SaveOutlinedIcon from '@material-ui/icons/SaveOutlined';
 import PhotoIcon from '@material-ui/icons/Photo';
-// import consumeWSChat from '../Config/WebServiceChat';
 import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
 import { useHistory } from 'react-router-dom';
 import { AuthTokenRequest } from '../helpers/AxiosInstance'
@@ -127,7 +126,6 @@ export default function Nuevo() {
 	const [arrayRedes, setArrayRedes] = React.useState([])
 	const [direccion, setDireccion] = React.useState({ tipo: 'casa', pais: 'peru' })
 	const [arrayDireccion, setArrayDireccion] = React.useState([])
-	// const [empresas, setEmpresas] = React.useState([])
 	const [dialogDireccion, setDialogDireccion] = React.useState(false)
 	const classes = useStyles()
 	const perfil = JSON.parse(localStorage.getItem('perfilGoogle'))
@@ -178,13 +176,6 @@ export default function Nuevo() {
 		}
 	}
 
-	// const agregarEmpresa = () => {
-	//     setEmpresas([...empresas, { razonSocial: informacion2.razonSocial }])
-	// }
-
-	// const eliminarEmpresa = (i) => {
-	//     setEmpresas(empresas.splice(i))
-	// }
 
 	const onChangeTelefonos = (e) => {
 		setTelefonos({
@@ -282,13 +273,6 @@ export default function Nuevo() {
 
 		setImagenAvatar(URL.createObjectURL(avatar))
 		setAvatarGuardar(URL.createObjectURL(avatar))
-
-		// this.setState({
-		//     avatar: avatar,
-		//     avatarUrl: URL.createObjectURL(avatar)
-		// }, () => {
-		//     this.props.openSnackbar(`Selected image “${avatar.name}”`, 5);
-		// });
 	};
 
 	const guardar = () => {
@@ -648,11 +632,6 @@ export default function Nuevo() {
 								type="text"
 							/>
 						</Grid>
-						{/* <Grid item xs={12} sm={3}>
-                            <Fab color='secondary' size='small' aria-label='agregar' onClick={() => agregarEmpresa()}>
-                                <AddIcon />
-                            </Fab>
-                        </Grid> */}
 						<Grid item xs={12} sm={6}>
 							<TextField
 								name='cargo'
@@ -664,26 +643,6 @@ export default function Nuevo() {
 							/>
 						</Grid>
 						<Divider />
-						{/* <Grid item xs={12} sm={12}>
-                            <List>
-                                {empresas.length > 0 ?
-                                    empresas.map((empresa, index) => (
-                                        <ListItem key={index}>
-                                            <ListItemAvatar>
-                                                <DomainIcon color='secondary' />
-                                            </ListItemAvatar>
-                                            <ListItemText primary={empresa.razonSocial} />
-                                            <DeleteOutlineOutlinedIcon color='error' onClick={() => eliminarEmpresa(index)} style={{ cursor: 'pointer' }} />
-                                        </ListItem>
-                                    ))
-                                    :
-                                    <ListItem>
-                                        <ListItemText primary='No hay empresas agregada' />
-                                    </ListItem>
-                                }
-                            </List>
-                            <Divider />
-                        </Grid> */}
 					</Grid>
 					<Grid container spacing={2}>
 						<Divider />

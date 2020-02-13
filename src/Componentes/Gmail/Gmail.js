@@ -478,7 +478,7 @@ function Gmail() {
 	return (
 		<React.Fragment>
 			<CssBaseline />
-			<SignInDialog abrir={openDialog} cerrar={closeDialog.bind()} />
+			<SignInDialog abrir={openDialog} cerrar={closeDialog} />
 			<Snackbar
 				anchorOrigin={{
 					vertical: 'bottom',
@@ -527,8 +527,8 @@ function Gmail() {
 								label="¿Qué deseas buscar?"
 								autoComplete="correo"
 								autoFocus
-								onChange={onChangeCorreo.bind()}
-								onKeyDown={Enter.bind()}
+								onChange={onChangeCorreo}
+								onKeyDown={Enter}
 								value={correo}
 							/>
 						</div>

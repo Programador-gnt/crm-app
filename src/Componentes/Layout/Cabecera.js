@@ -23,8 +23,8 @@ import NotificationsNoneOutlinedIcon from '@material-ui/icons/NotificationsNoneO
 import AddOutlinedIcon from '@material-ui/icons/AddOutlined';
 import ExitToAppOutlinedIcon from '@material-ui/icons/ExitToAppOutlined';
 import PersonOutlineOutlinedIcon from '@material-ui/icons/PersonOutlineOutlined';
-import loginContext from '../helpers/loginContext'
-// import { CometChat } from '@cometchat-pro/chat';
+import loginContext from '../helpers/loginContext';
+import theming from '../Services/Tema';
 
 const drawerWidth = 240;
 
@@ -176,6 +176,7 @@ function Cabecera() {
 	const [openChatDialog, setOpenChatDialog] = React.useState(false)
 	const [variable, setVariable] = React.useState(false)
 	const perfil = React.useContext(loginContext)[0]
+	const palette = JSON.parse(localStorage.getItem('palette'))
 	const path = window.location.pathname.split('/')[1]
 	const path2 = window.location.pathname.split('/')[2]
 	const history = useHistory()
@@ -211,7 +212,7 @@ function Cabecera() {
 
 	const dialog = () => {
 		setOpenDialog(true)
-		setAnchorEl(null);
+		setConmutador(null);
 	}
 
 	const chatDialog = () => {
@@ -221,6 +222,7 @@ function Cabecera() {
 
 	const cerrar = () => {
 		setOpenDialog(false)
+
 		return (history.push(window.location.pathname))
 	}
 
@@ -230,6 +232,12 @@ function Cabecera() {
 
 	const chat = () => {
 		if (localStorage.getItem('token')) {
+			theming.changeTheme({
+				primaryColor: palette.primary,
+				secondaryColor: palette.secondary,
+				type: palette.type
+			})
+			history.push(window.location.pathname)
 			socket.emit('conectado', perfil.nickname)
 			socket.on('conectado/respuesta', result => {
 				if (localStorage.getItem('usuarioChat')) {
@@ -250,13 +258,9 @@ function Cabecera() {
 
 	React.useEffect(chat, [])
 
-	if (localStorage.getItem('token') === null) {
-		return (<Redirect to='/login' />)
-	}
+	if (localStorage.getItem('token') === null) {return (<Redirect to='/login' />)}
 
-	if (variable === true) {
-		return (<Redirect to='/login' />)
-	}
+	if (variable === true) { return (<Redirect to='/login' />)}
 
 	return (
 		<div className={classes.root}>
@@ -269,13 +273,7 @@ function Cabecera() {
 			<ChatDialog abrir={openChatDialog} funcion={() => cerrarChatDialog()} />
 			<TemaDialog abrir={openDialog} funcion={() => cerrar()} />
 			<Backdrop open={open} className={classes.back} onClick={() => handleDrawerClose()} />
-			<AppBar
-				position="fixed"
-				// className={clsx(classes.appBar, {
-				// 	[classes.appBarShift]: open,
-				// })}
-				className={classes.appBar}
-			>
+			<AppBar position="fixed" className={classes.appBar}>
 				<Toolbar>
 					<IconButton
 						color="inherit"

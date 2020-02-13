@@ -5,10 +5,6 @@ import { makeStyles, withStyles } from '@material-ui/core/styles';
 import { blue, green, red } from '@material-ui/core/colors';
 import GoogleIcon from 'mdi-material-ui/Google';
 import FacebookIcon from '@material-ui/icons/Facebook';
-// import Config from '../Config/Config';
-// import gapi from 'gapi-client';
-// import consumeWSChat from '../Config/WebServiceChat';
-// import { CometChat } from '@cometchat-pro/chat';
 
 
 const useStyles = makeStyles(theme => ({
@@ -71,15 +67,13 @@ const FacebookButton = withStyles(theme => ({
 	},
 }))(Button);
 
-export default function ChatDialog(props) {
+export default function ChatDialog({ abrir, funcion }) {
 	const classes = useStyles();
 	const [loading, setLoading] = React.useState(false);
 	const [success, setSuccess] = React.useState(false);
 	const [loadingF, setLoadingF] = React.useState(false);
 	const [successF, setSuccessF] = React.useState(false);
-	// const SCOPES = 'https://mail.google.com https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/calendar https://www.google.com/m8/feeds/ https://www.googleapis.com/auth/contacts.readonly';
 	const timer = React.useRef();
-	const { dialogProps } = props
 
 	const buttonClassname = clsx({
 		[classes.buttonSuccess]: success,
@@ -97,7 +91,7 @@ export default function ChatDialog(props) {
 				setSuccess(true);
 				setLoading(false);
 				alert('en construcción')
-				props.funcion()
+				funcion()
 				// consumeWSChat('GET', 'google', '', '')
 				// 	.then(result => {
 				// 		localStorage.setItem('tokenGoogle', JSON.stringify(result.access_token))
@@ -129,12 +123,7 @@ export default function ChatDialog(props) {
 			timer.current = setTimeout(() => {
 				setSuccessF(true);
 				setLoadingF(false);
-				props.funcion()
-				// CometChat.login(usuario.uid, Config.chatKey)
-				// 	.then(result => {
-				// 		localStorage.setItem('usuarioChat', JSON.stringify(result))
-				// 		props.funcion()
-				// 	})
+				funcion()
 			}, 2000)
 		}
 	}
@@ -148,7 +137,7 @@ export default function ChatDialog(props) {
 	return (
 		<React.Fragment>
 			<CssBaseline />
-			<Dialog {...dialogProps} open={props.abrir} onClose={props.funcion}>
+			<Dialog open={abrir} onClose={funcion}>
 				<DialogTitle>
 					Configuraciones
                 </DialogTitle>
@@ -216,7 +205,7 @@ export default function ChatDialog(props) {
 					</Hidden>
 				</DialogContent>
 				<DialogActions>
-					<Button color="secondary" onClick={props.funcion}>Cerrar</Button>
+					<Button color="secondary" onClick={funcion}>Cerrar</Button>
 				</DialogActions>
 			</Dialog>
 		</React.Fragment>
