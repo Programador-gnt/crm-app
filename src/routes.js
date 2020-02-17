@@ -1,14 +1,14 @@
 import React from 'react';
 
-const Inicio = React.lazy(() => import('./Componentes/Inicio/Inicio'))
-const Gmail = React.lazy(() => import('./Componentes/Gmail/Gmail'))
-const Agenda = React.lazy(() => import('./Componentes/Calendario/Calendario'))
-const Contactos = React.lazy(() => import('./Componentes/Clientes/Clientes'))
+const Inicio = React.lazy(() => import('./Componentes/Inicio'))
+const Gmail = React.lazy(() => import('./Componentes/Gmail'))
+const Agenda = React.lazy(() => import('./Componentes/Calendario'))
+const Contactos = React.lazy(() => import('./Componentes/Clientes'))
 const Info = React.lazy(() => import('./Componentes/Clientes/Info'))
 const Nuevo = React.lazy(() => import('./Componentes/Clientes/Nuevo'))
-const Empresas = React.lazy(() => import('./Componentes/Empresas/Empresas'))
+const Empresas = React.lazy(() => import('./Componentes/Empresas'))
 const NuevaEmpresa = React.lazy(() => import('./Componentes/Empresas/Nuevo'))
-const Chat = React.lazy(() => import('./Componentes/Chat/Chat'))
+const Chat = React.lazy(() => import('./Componentes/Chat'))
 const InfoEmpresa = React.lazy(() => import('./Componentes/Empresas/Info'))
 
 const routes = [

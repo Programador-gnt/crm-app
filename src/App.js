@@ -16,8 +16,8 @@ const loading = () => {
 
 function App() {
 	const data = localStorage.getItem('perfil') ? JSON.parse(localStorage.getItem('perfil')) : ''
-	const Login = React.lazy(() => import('./Componentes/Login/Login'));
-	const Layout = React.lazy(() => import('./Componentes/Layout/Layout'));
+	const Login = React.lazy(() => import('./Componentes/Login'));
+	const Layout = React.lazy(() => import('./Componentes/Layout'));
 	const user = React.useState(localStorage.getItem('perfil') ? { name: data.name, avatar: data.avatar, correo: data.correo, nickname: data.nickname, cargo: data.correo } : {})
 	const actions = React.useState(localStorage.getItem('token') ? { formContent: {}, acciones: [] } : { formContent: {}, acciones: [] })
 	console.log(`%c ________________________________________
@@ -36,7 +36,7 @@ function App() {
 					<React.Suspense fallback={loading()}>
 						<Switch>
 							<Route exact path='/login' name='Login' render={props => <Login {...props} />} />
-							<Route path='/' name='Inicio' render={props => <Layout {...props} />} />
+							<Route path='/' name='Layout' render={props => <Layout {...props} />} />
 						</Switch>
 					</React.Suspense>
 				</Router>
