@@ -23,9 +23,6 @@ import {
 	Dialog,
 	Zoom
 } from '@material-ui/core'
-import SpeedDial from '@material-ui/lab/SpeedDial';
-import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
-import ArrowBackOutlinedIcon from '@material-ui/icons/ArrowBackOutlined';
 import { makeStyles } from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
 import DomainIcon from '@material-ui/icons/Domain';
@@ -39,11 +36,9 @@ import LinkedInIcon from '@material-ui/icons/LinkedIn';
 import YouTubeIcon from '@material-ui/icons/YouTube';
 import CallOutlinedIcon from '@material-ui/icons/CallOutlined';
 import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined';
-import SaveOutlinedIcon from '@material-ui/icons/SaveOutlined';
 import PhotoIcon from '@material-ui/icons/Photo';
-import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
-import { useHistory } from 'react-router-dom';
-import { AuthTokenRequest } from '../helpers/AxiosInstance'
+// import { AuthTokenRequest } from '../helpers/AxiosInstance';
+import useInteractions from '../helpers/useInteractions';
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -104,20 +99,13 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-const actions = [
-	{ name: 'Volver' },
-	{ name: 'Guardar' }
-];
-
 export default function Nuevo() {
-	const history = useHistory()
-	const [open, setOpen] = React.useState(window.screen.width < 769 ? false : true)
 	const [denei, setDenei] = React.useState('')
 	const [ruc, setRuc] = React.useState('')
 	const [informacion1, setInformacion1] = React.useState({})
 	const [informacion2, setInformacion2] = React.useState({})
 	const [imagenAvatar, setImagenAvatar] = React.useState('')
-	const [avatarGuardar, setAvatarGuardar] = React.useState([])
+	// const [avatarGuardar, setAvatarGuardar] = React.useState([])
 	const [telefonos, setTelefonos] = React.useState({ tipo: 'personal' })
 	const [arrayTelefono, setArrayTelefono] = React.useState([])
 	const [correos, setCorreos] = React.useState({ tipo: 'personal' })
@@ -129,6 +117,7 @@ export default function Nuevo() {
 	const [dialogDireccion, setDialogDireccion] = React.useState(false)
 	const classes = useStyles()
 	const perfil = JSON.parse(localStorage.getItem('perfilGoogle'))
+	const { isFormContent } = useInteractions();
 
 	const onChange = (e) => {
 		setDenei(e.target.value)
@@ -272,27 +261,19 @@ export default function Nuevo() {
 		}
 
 		setImagenAvatar(URL.createObjectURL(avatar))
-		setAvatarGuardar(URL.createObjectURL(avatar))
+		// setAvatarGuardar(URL.createObjectURL(avatar))
 	};
 
 	const guardar = () => {
-		console.log(avatarGuardar)
-		AuthTokenRequest.post('contactos/upload', {foto: avatarGuardar})
-			.then(() => {
-			
-			})
+		alert('Joder, has activado la función!!')
 	}
 
-	const preventActionClickClose = (evt, action) => {
-		evt.preventDefault()
-		evt.stopPropagation()
-		if (action.name === 'Volver') {
-			history.push('/contactos')
-		}
-		if (action.name === 'Guardar') {
-			guardar()
-		}
+
+	const acciones = () => {
+		isFormContent(window.location.pathname, 'contactosNuevo', guardar)
 	}
+
+	React.useEffect(acciones, [])
 
 	return (
 		<React.Fragment>
@@ -509,23 +490,6 @@ export default function Nuevo() {
                     </Button>
 						</DialogActions>
 					</Dialog>
-					<SpeedDial
-						ariaLabel="SpeedDial tooltip example"
-						className={classes.speedDial}
-						icon={<SpeedDialIcon />}
-						onClick={() => setOpen(!open)}
-						open={open}>
-
-						{actions.map(action => (
-							<SpeedDialAction
-								tooltipOpen
-								key={action.name}
-								icon={action.name === 'Volver' ? <ArrowBackOutlinedIcon /> : action.name === 'Guardar' ? <SaveOutlinedIcon /> : ''}
-								tooltipTitle={action.name}
-								onClick={evt => preventActionClickClose(evt, action)}
-							/>
-						))}
-					</SpeedDial>
 					<Grid container spacing={2}>
 						<Grid item xs={12}>
 							<Typography variant="h6">

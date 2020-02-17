@@ -12,7 +12,9 @@ import Zoom from '@material-ui/core/Zoom';
 import LineaLlamadas from './Usuarios/Llamadas';
 import AreaGmail from './Usuarios/Gmail';
 import { AuthTokenRequest } from '../helpers/AxiosInstance';
-import loginContext from '../helpers/loginContext'
+import loginContext from '../helpers/loginContext';
+import useInteractions from '../helpers/useInteractions';
+
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -30,9 +32,11 @@ export default function Inicio() {
 	const [total, setTotal] = React.useState(null)
 	const [totalReuniones, setTotalReuniones] = React.useState(null)
 	const perfil = React.useContext(loginContext)[0]
+	const { isFormContent } = useInteractions();
 	const classes = useStyles()
 
 	const consultarUsuarios = () => {
+		isFormContent(window.location.pathname, 'inicio')
 		AuthTokenRequest.get('contactos')
 			.then(result => {
 				setTotal(result.data.length)

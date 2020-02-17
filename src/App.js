@@ -19,16 +19,24 @@ function App() {
 	const Login = React.lazy(() => import('./Componentes/Login'));
 	const Layout = React.lazy(() => import('./Componentes/Layout'));
 	const user = React.useState(localStorage.getItem('perfil') ? { name: data.name, avatar: data.avatar, correo: data.correo, nickname: data.nickname, cargo: data.correo } : {})
-	const actions = React.useState(localStorage.getItem('token') ? { formContent: {}, acciones: [] } : { formContent: {}, acciones: [] })
-	console.log(`%c ________________________________________
-	 ----------------------------------------
-	 ███╗   ███╗ ██╗ ██╗ ██  ██╗
-	 ████╗ ████║ ██║ ██║██   ██║
-	 ██╔████╔██║ ██║ ████    ██║
-	 ██║╚██╔╝██║ ██║ ██║██╗  ██║
-	 ██║ ╚═╝ ██║ ██║ ██║ ██╗ ██║
-	 ╚═╝     ╚═╝ ╚═╝ ╚═╝ ╚═╝ ╚═╝`, "font-family:monospace; color: #0F669D")
+	const actions = React.useState({ formContent: { path: undefined, funciones: undefined }, acciones: [] })
+	// console.log(`%c ________________________________________
+	//  ----------------------------------------
+	//  ███╗   ███╗ ██╗ ██╗ ██  ██╗
+	//  ████╗ ████║ ██║ ██║██   ██║
+	//  ██╔████╔██║ ██║ ████    ██║
+	//  ██║╚██╔╝██║ ██║ ██║██╗  ██║
+	//  ██║ ╚═╝ ██║ ██║ ██║ ██╗ ██║
+	//  ╚═╝     ╚═╝ ╚═╝ ╚═╝ ╚═╝ ╚═╝`, "font-family:monospace; color: #0F669D")
 
+	console.log(`%c ________________________________________
+	----------------------------------------
+	 █████╗   ██████╗   ███╗   ███╗
+	██║  ██╗  ██║  ██╗  ████╗ ████║
+	██║  ╚═╝  ██████═╝  ██╔████╔██║
+	██║  ██╗  ██║  ██╗  ██║╚██╔╝██║
+	 █████╔╝  ██║  ██║  ██║ ╚═╝ ██║
+	 ╚════╝   ╚═╝  ╚═╝  ╚═╝     ╚═╝`, "font-family:monospace; color: #0F669D")
 	return (
 		<LoginContextProvider value={user}>
 			<AppInteractionProvider value={actions}>
