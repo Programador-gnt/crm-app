@@ -1,8 +1,16 @@
-import React from 'react'
+import React from 'react';
+import { loginFunctionReducer, initialState } from '../helpers/LoginReducer'
 
-const loginContext = React.createContext([{}, () => {}])
+const LoginContext = React.createContext()
+export const LoginContextProvider = LoginContext.Provider
 
-export const LoginContextProvider = loginContext.Provider
-export const LoginContextConsumer = loginContext.Consumer
+export const LoginContextProviders = (props) => {
+    const [authLogin, dispatchLogin] = React.useReducer(loginFunctionReducer, initialState)
 
-export default loginContext
+    return (<LoginContextProvider value={{ authLogin, dispatchLogin }}>
+        {props.children}
+    </LoginContextProvider>)
+
+}
+
+export default LoginContext

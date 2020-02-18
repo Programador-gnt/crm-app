@@ -3,8 +3,8 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Box from '@material-ui/core/Box';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import './App.scss';
-import { AppInteractionProvider } from './Componentes/helpers/appInteraction';
-import { LoginContextProvider } from './Componentes/helpers/loginContext';
+import { AppInteractionContextProvider } from './Componentes/helpers/appInteraction';
+import { LoginContextProviders } from './Componentes/helpers/loginContext';
 
 const loading = () => {
 	return (
@@ -15,11 +15,8 @@ const loading = () => {
 }
 
 function App() {
-	const data = localStorage.getItem('perfil') ? JSON.parse(localStorage.getItem('perfil')) : ''
 	const Login = React.lazy(() => import('./Componentes/Login'));
 	const Layout = React.lazy(() => import('./Componentes/Layout'));
-	const user = React.useState(localStorage.getItem('perfil') ? { name: data.name, avatar: data.avatar, correo: data.correo, nickname: data.nickname, cargo: data.correo } : {})
-	const actions = React.useState({ formContent: { path: undefined, funciones: undefined }, acciones: [] })
 	// console.log(`%c ________________________________________
 	//  ----------------------------------------
 	//  ███╗   ███╗ ██╗ ██╗ ██  ██╗
@@ -38,8 +35,8 @@ function App() {
 	 █████╔╝  ██║  ██║  ██║ ╚═╝ ██║
 	 ╚════╝   ╚═╝  ╚═╝  ╚═╝     ╚═╝`, "font-family:monospace; color: #0F669D")
 	return (
-		<LoginContextProvider value={user}>
-			<AppInteractionProvider value={actions}>
+		<LoginContextProviders>
+			<AppInteractionContextProvider>
 				<Router>
 					<React.Suspense fallback={loading()}>
 						<Switch>
@@ -48,8 +45,8 @@ function App() {
 						</Switch>
 					</React.Suspense>
 				</Router>
-			</AppInteractionProvider>
-		</LoginContextProvider>
+			</AppInteractionContextProvider>
+		</LoginContextProviders>
 	);
 }
 export default App;

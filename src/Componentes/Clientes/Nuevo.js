@@ -37,8 +37,8 @@ import YouTubeIcon from '@material-ui/icons/YouTube';
 import CallOutlinedIcon from '@material-ui/icons/CallOutlined';
 import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined';
 import PhotoIcon from '@material-ui/icons/Photo';
-// import { AuthTokenRequest } from '../helpers/AxiosInstance';
-import useInteractions from '../helpers/useInteractions';
+import { AuthTokenRequest } from '../helpers/AxiosInstance';
+import AppInteractionContext from '../helpers/appInteraction';
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -117,7 +117,7 @@ export default function Nuevo() {
 	const [dialogDireccion, setDialogDireccion] = React.useState(false)
 	const classes = useStyles()
 	const perfil = JSON.parse(localStorage.getItem('perfilGoogle'))
-	const { isFormContent } = useInteractions();
+	const { dispatch } = React.useContext(AppInteractionContext)
 
 	const onChange = (e) => {
 		setDenei(e.target.value)
@@ -269,11 +269,14 @@ export default function Nuevo() {
 	}
 
 
-	const acciones = () => {
-		isFormContent(window.location.pathname, 'contactosNuevo', guardar)
+	const consultarAcciones = () => {
+		AuthTokenRequest.post('acciones', { form: 'contactosNuevo' })
+			.then(result => {
+				dispatch(['contactosNuevo', window.location.pathname, guardar, result.data])
+			})
 	}
 
-	React.useEffect(acciones, [])
+	React.useEffect(consultarAcciones, [])
 
 	return (
 		<React.Fragment>

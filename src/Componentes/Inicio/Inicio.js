@@ -12,8 +12,8 @@ import Zoom from '@material-ui/core/Zoom';
 import LineaLlamadas from './Usuarios/Llamadas';
 import AreaGmail from './Usuarios/Gmail';
 import { AuthTokenRequest } from '../helpers/AxiosInstance';
-import loginContext from '../helpers/loginContext';
-import useInteractions from '../helpers/useInteractions';
+import LoginContext from '../helpers/loginContext';
+import AppInteractionContext from '../helpers/appInteraction';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -31,12 +31,11 @@ const useStyles = makeStyles((theme) => ({
 export default function Inicio() {
 	const [total, setTotal] = React.useState(null)
 	const [totalReuniones, setTotalReuniones] = React.useState(null)
-	const perfil = React.useContext(loginContext)[0]
-	const { isFormContent } = useInteractions();
+	const { authLogin } = React.useContext(LoginContext)
+	const { dispatch } = React.useContext(AppInteractionContext)
 	const classes = useStyles()
 
 	const consultarUsuarios = () => {
-		isFormContent(window.location.pathname, 'inicio')
 		AuthTokenRequest.get('contactos')
 			.then(result => {
 				setTotal(result.data.length)
@@ -46,15 +45,23 @@ export default function Inicio() {
 	const consultarReuniones = () => {
 		AuthTokenRequest.get('eventos', {
 			params: {
-				creator: perfil.correo
+				creator: authLogin.correo
 			}
 		}).then(result => {
 			setTotalReuniones(result.data.length)
 		})
 	}
 
+	const consultarAcciones = () => {
+		AuthTokenRequest.post('acciones', { form: 'inicio' })
+			.then(result => {
+				dispatch(['inicio', window.location.pathname, 'funcion', result.data])
+			})
+	}
+
 	React.useEffect(consultarUsuarios, [])
 	React.useEffect(consultarReuniones, [])
+	React.useEffect(consultarAcciones, [])
 
 	return (
 		<React.Fragment>

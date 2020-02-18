@@ -23,7 +23,7 @@ import NotificationsNoneOutlinedIcon from '@material-ui/icons/NotificationsNoneO
 import AddOutlinedIcon from '@material-ui/icons/AddOutlined';
 import ExitToAppOutlinedIcon from '@material-ui/icons/ExitToAppOutlined';
 import PersonOutlineOutlinedIcon from '@material-ui/icons/PersonOutlineOutlined';
-import loginContext from '../helpers/loginContext';
+import LoginContext from '../helpers/loginContext';
 import theming from '../Services/Tema';
 
 const drawerWidth = 240;
@@ -175,7 +175,7 @@ function Cabecera() {
 	const [openDialog, setOpenDialog] = React.useState(false)
 	const [openChatDialog, setOpenChatDialog] = React.useState(false)
 	const [variable, setVariable] = React.useState(false)
-	const perfil = React.useContext(loginContext)[0]
+	const { authLogin } = React.useContext(LoginContext)
 	const palette = JSON.parse(localStorage.getItem('palette'))
 	const path = window.location.pathname.split('/')[1]
 	const path2 = window.location.pathname.split('/')[2]
@@ -238,13 +238,13 @@ function Cabecera() {
 				type: palette.type
 			})
 			history.push(window.location.pathname)
-			socket.emit('conectado', perfil.nickname)
+			socket.emit('conectado', authLogin.nickname)
 			socket.on('conectado/respuesta', result => {
 				if (localStorage.getItem('usuarioChat')) {
 					socket.emit('usuarios')
 					socket.on('notificacion', mensaje => {
 						setInfoNotificacion({ avatar: mensaje.avatar, nombre: mensaje.uid })
-						setNotificacion(mensaje.uid === perfil.nickname ? false : true)
+						setNotificacion(mensaje.uid === authLogin.nickname ? false : true)
 					})
 				} else {
 					localStorage.setItem('usuarioChat', JSON.stringify(result))
@@ -258,9 +258,9 @@ function Cabecera() {
 
 	React.useEffect(chat, [])
 
-	if (localStorage.getItem('token') === null) {return (<Redirect to='/login' />)}
+	if (localStorage.getItem('token') === null) { return (<Redirect to='/login' />) }
 
-	if (variable === true) { return (<Redirect to='/login' />)}
+	if (variable === true) { return (<Redirect to='/login' />) }
 
 	return (
 		<div className={classes.root}>
@@ -323,12 +323,12 @@ function Cabecera() {
 									<List>
 										<ListItem>
 											<ListItemAvatar>
-												<Avatar src={perfil.avatar} alt='...' />
+												<Avatar src={authLogin.avatar} alt='...' />
 											</ListItemAvatar>
 											<ListItemText primary={<div className={classes.textoPerfil}>
-												<Typography align='center'>{perfil.correo}</Typography>
-												<Typography align='center'><b>{perfil.name}</b></Typography>
-												<Typography align='center'><em>{perfil.cargo}</em></Typography>
+												<Typography align='center'>{authLogin.correo}</Typography>
+												<Typography align='center'><b>{authLogin.name}</b></Typography>
+												<Typography align='center'><em>{authLogin.cargo}</em></Typography>
 											</div>} />
 										</ListItem>
 									</List>

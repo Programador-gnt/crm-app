@@ -24,7 +24,7 @@ import { Redirect, useHistory } from 'react-router-dom';
 import CloseIcon from '@material-ui/icons/Close';
 import Copyright from '../Layout/Copyright';
 import { AuthTokenRequest } from '../helpers/AxiosInstance';
-import loginContext from '../helpers/loginContext';
+import LoginContext from '../helpers/loginContext';
 import theming from '../Services/Tema';
 
 
@@ -77,7 +77,7 @@ export default function Login() {
 	const [cuerpo, setCuerpo] = React.useState({ nickname: '', password: '' })
 	const [isLoading, setIsLoading] = React.useState(false)
 	const classes = useStyles();
-	const setLoginContext = React.useContext(loginContext)[1]
+	const { dispatchLogin } = React.useContext(LoginContext)
 
 	const handleCloseMensaje = () => {
 		setAviso({ mensaje: '', aviso: false })
@@ -104,7 +104,7 @@ export default function Login() {
 							secondaryColor: result.data.perfil.secundario,
 							type: result.data.perfil.tipo
 						})
-						setLoginContext({ name: result.data.perfil.name, avatar: result.data.perfil.picture, correo: result.data.perfil.correo, nickname: result.data.perfil.nickname, cargo: result.data.perfil.cargo })
+						dispatchLogin(['login', objeto])
 						history.push('/inicio')
 					}).catch(error => {
 						setAviso({ mensaje: error.response.data, aviso: true })

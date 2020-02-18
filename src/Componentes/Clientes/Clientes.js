@@ -6,7 +6,8 @@ import {
 	Zoom
 } from '@material-ui/core';
 import TablaContactos from './TablaContactos';
-import useInteractions from '../helpers/useInteractions';
+import AppInteractionContext from '../helpers/appInteraction';
+import { AuthTokenRequest } from '../helpers/AxiosInstance';
 
 
 const useStyles = makeStyles(theme => ({
@@ -19,14 +20,18 @@ const useStyles = makeStyles(theme => ({
 
 
 export default function Clientes({ tarjeta }) {
-	const { isFormContent } = useInteractions();
+	const { dispatch } = React.useContext(AppInteractionContext)
 	const classes = useStyles()
 
-	const acciones = () => {
-		isFormContent(window.location.pathname, 'listaContactos')
+	const consultarAcciones = () => {
+		AuthTokenRequest.post('acciones', { form: 'listaContactos' })
+			.then(result => {
+				dispatch(['listaContactos', window.location.pathname, 'funcion', result.data])
+			})
 	}
 
-	React.useEffect(acciones, [])
+	React.useEffect(consultarAcciones, [])
+
 
 	return (
 		<React.Fragment>

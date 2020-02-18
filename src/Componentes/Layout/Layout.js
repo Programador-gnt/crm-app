@@ -11,7 +11,7 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import indigo from '@material-ui/core/colors/indigo';
 import red from '@material-ui/core/colors/red';
 import theming from '../Services/Tema';
-import appInteraction from '../helpers/appInteraction';
+import AppInteractionContext from '../helpers/appInteraction';
 import TableChartOutlinedIcon from '@material-ui/icons/TableChartOutlined';
 import WidgetsOutlinedIcon from '@material-ui/icons/WidgetsOutlined';
 import ArrowBackOutlinedIcon from '@material-ui/icons/ArrowBackOutlined';
@@ -41,7 +41,7 @@ function Layout() {
 	const [open, setOpen] = React.useState(window.screen.width < 769 ? false : true)
 	const history = useHistory()
 	const [tarjeta, setTarjeta] = React.useState(false)
-	const actions = React.useContext(appInteraction)[0];
+	const { interactions } = React.useContext(AppInteractionContext)
 	const classes = useStyles()
 	const ok = {
 		palette: {
@@ -56,7 +56,7 @@ function Layout() {
 		evt.preventDefault()
 		evt.stopPropagation()
 		if (action.name === 'Nuevo') {
-			history.push(`${actions.formContent.path}/nuevo`)
+			history.push(`${interactions.formContent.path}/nuevo`)
 		}
 		if (action.name === 'Table') {
 			setTarjeta(false)
@@ -69,7 +69,7 @@ function Layout() {
 		}
 
 		if (action.name === 'Guardar') {
-			actions.formContent.funciones()
+			interactions.formContent.funcion()
 		}
 	}
 
@@ -89,15 +89,15 @@ function Layout() {
 					</Suspense>
 
 					<main className={classes.root}>
-						{actions.formContent.path === '/inicio' ?
-							null : actions.formContent.path === '/calendario' ? null
+						{interactions.formContent.path === '/inicio' ?
+							null : interactions.formContent.path === '/calendario' ? null
 								: <SpeedDial
 									ariaLabel="Speedial"
 									className={classes.speedDial}
 									icon={<SpeedDialIcon />}
 									onClick={() => setOpen(!open)}
 									open={open}>
-									{actions.acciones.map(action => (
+									{interactions.acciones.map(action => (
 										<SpeedDialAction
 											tooltipOpen
 											key={action.name}

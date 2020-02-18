@@ -1,8 +1,15 @@
 import React from 'react'
+import { interactionFunctionReducer, initialState } from './InteractionReducer';
 
-const appInteraction = React.createContext([{}, () => { }])
+const AppInteractionContext = React.createContext()
+export const AppInteractionProvider = AppInteractionContext.Provider
 
-export const AppInteractionProvider = appInteraction.Provider
-export const AppInteractionConsumer = appInteraction.Consumer
+export const AppInteractionContextProvider = (props) => {
+    const [interactions, dispatch] = React.useReducer(interactionFunctionReducer, initialState)
 
-export default appInteraction
+    return (<AppInteractionProvider value={{ interactions, dispatch }}>
+        {props.children}
+    </AppInteractionProvider>)
+}
+
+export default AppInteractionContext
