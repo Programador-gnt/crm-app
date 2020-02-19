@@ -1,3 +1,13 @@
+import React from 'react'
 import Inicio from './Inicio';
+import { InicioContextProviders } from './inicioContext';
 
-export default Inicio;
+function IndexInicio() {
+    return (
+        <InicioContextProviders>
+            <Inicio />
+        </InicioContextProviders>
+    )
+}
+
+export default IndexInicio;

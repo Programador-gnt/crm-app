@@ -4,7 +4,9 @@ import { makeStyles } from '@material-ui/styles';
 import { Card, CardContent, Grid, Typography, Avatar } from '@material-ui/core';
 import PeopleIcon from '@material-ui/icons/PeopleOutlined';
 import { green } from '@material-ui/core/colors';
-import { Redirect } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
+import { AuthTokenRequest } from '../../../helpers/AxiosInstance';
+import InicioContext from '../../inicioContext'
 
 const useStyles = makeStyles(() => ({
 	root: {
@@ -39,14 +41,20 @@ const useStyles = makeStyles(() => ({
 	}
 }));
 
-const Usuarios = (props) => {
-	const [clientes, setClientes] = React.useState(false)
+const Usuarios = () => {
+	const history = useHistory()
+	const { inicio, dispatchInicio } = React.useContext(InicioContext)
 	const classes = useStyles();
 
-
-	if (clientes === true) {
-		return (<Redirect to='/clientes' />)
+	const consultarTotal = () => {
+		AuthTokenRequest.get('contactos')
+			.then(result => {
+				dispatchInicio(['usuarios', result.data.length])
+			})
 	}
+
+	React.useEffect(consultarTotal, [])
+
 
 	return (
 		<Card className={classes.root}>
@@ -62,9 +70,9 @@ const Usuarios = (props) => {
 							variant="body2">
 							TOTAL CONTACTOS
             </Typography>
-						<Typography variant="h3">{props.total}</Typography>
+						<Typography variant="h3">{inicio.usuarios}</Typography>
 					</Grid>
-					<Grid item onClick={() => setClientes(true)} style={{ cursor: 'pointer' }}>
+					<Grid item onClick={() => history.push('/contactos')} style={{ cursor: 'pointer' }}>
 						<Avatar className={classes.avatar}>
 							<PeopleIcon className={classes.icon} />
 						</Avatar>

@@ -2,10 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import { Card, CardContent, Grid, Typography, Avatar } from '@material-ui/core';
-// import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import EventIcon from '@material-ui/icons/Event';
 import { blue } from '@material-ui/core/colors';
-import { Redirect } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
+import LoginContext from '../../../helpers/loginContext';
+import InicioContext from '../../inicioContext';
+import { AuthTokenRequest } from '../../../helpers/AxiosInstance';
 
 const useStyles = makeStyles(() => ({
 	root: {
@@ -40,13 +42,24 @@ const useStyles = makeStyles(() => ({
 	}
 }));
 
-const Reuniones = (props) => {
-	const [reuniones, setReuniones] = React.useState(false)
+const Reuniones = () => {
+	const { authLogin } = React.useContext(LoginContext)
+	const { inicio, dispatchInicio } = React.useContext(InicioContext)
+	const history = useHistory()
 	const classes = useStyles();
 
-	if (reuniones === true) {
-		return (<Redirect to='/calendario' />)
+	const consultarTotal = () => {
+		AuthTokenRequest.get('eventos', {
+			params: {
+				creator: authLogin.correo
+			}
+		}).then(result => {
+			dispatchInicio(['reuniones', result.data.length])
+		})
 	}
+
+	React.useEffect(consultarTotal, [])
+
 
 	return (
 		<Card className={classes.root}>
@@ -61,9 +74,9 @@ const Reuniones = (props) => {
 							variant="body2">
 							TOTAL REUNIONES
             			</Typography>
-						<Typography variant="h3">{props.total}</Typography>
+						<Typography variant="h3">{inicio.reuniones}</Typography>
 					</Grid>
-					<Grid item onClick={() => setReuniones(true)} style={{ cursor: 'pointer' }}>
+					<Grid item onClick={() => history.push('/agenda')} style={{ cursor: 'pointer' }}>
 						<Avatar className={classes.avatar}>
 							<EventIcon className={classes.icon} />
 						</Avatar>

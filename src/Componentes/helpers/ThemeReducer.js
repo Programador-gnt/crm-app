@@ -133,12 +133,7 @@ const colors = {
 		id: 'blue-gray',
 		name: 'Blue Gray',
 		import: blueGray
-	},
-	// black: {
-	// 	id: 'black',
-	// 	name: 'Black',
-	// 	import: '#000000'
-	// }
+	}
 };
 
 const types = {
@@ -171,36 +166,44 @@ const getType = (typeId) => {
 	return types[typeId];
 };
 
-var theming = {};
+const data = localStorage.getItem('palette') ? JSON.parse(localStorage.getItem('palette')) : ''
+var initialPrimary = localStorage.getItem('palette') ? getColor(data.primary) : ''
+var initialSecondary = localStorage.getItem('palette') ? getColor(data.secondary) : ''
+var initialType = localStorage.getItem('palette') ? getType(data.type) : ''
 
-theming.colors = colors;
-theming.types = types;
+export const initialState = localStorage.getItem('palette') ?
+	createMuiTheme({
+		palette: {
+			primary: initialPrimary.import,
+			secondary: initialSecondary.import,
+			type: initialType.id
+		},
+	}) :
+	createMuiTheme({
+		palette: {
+			primary: indigo,
+			secondary: red,
+			type: 'light'
+		},
+	})
 
-theming.changeTheme = (theme) => {
-	return new Promise((resolve, reject) => {
+export function themeFunctionReducer(state, [action, payload]) {
+	switch (action) {
+		case 'cambiarTema':
+			var primaryColor = getColor(payload.primary)
+			var secondaryColor = getColor(payload.secondary)
+			var type = getType(payload.type)
 
-		let primaryColor = getColor(theme.primaryColor);
-		let secondaryColor = getColor(theme.secondaryColor);
-		let type = getType(theme.type);
+			var theme = createMuiTheme({
+				palette: {
+					primary: primaryColor.import,
+					secondary: secondaryColor.import,
+					type: type.id
+				},
+			})
+			return theme;
 
-		theme = createMuiTheme({
-			palette: {
-				primary: primaryColor.import,
-				secondary: secondaryColor.import,
-				type: type.id
-			},
-
-			primaryColor: primaryColor,
-			secondaryColor: secondaryColor,
-			type: type
-		});
-		theming.defaultPrimaryColor = primaryColor;
-		theming.defaultSecondaryColor = secondaryColor;
-		theming.defaultType = type;
-
-		theming.defaultTheme = theme;
-		resolve(theming)
-	});
-};
-
-export default theming;
+		default:
+			return state;
+	}
+}

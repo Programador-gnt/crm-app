@@ -1,14 +1,13 @@
 import React from 'react';
 import { Paper } from '@material-ui/core';
 import { PieChart, Pie, Tooltip } from 'recharts';
-// import { Chart, PieSeries, Title } from '@devexpress/dx-react-chart-material-ui';
-// import { Animation } from '@devexpress/dx-react-chart';
+import InicioContext from '../inicioContext'
 
 
-export default function TortaReuniones(props) {
-	const { enero, febrero, marzo, abril, mayo, junio, julio, agosto, septiembre, octubre, noviembre, diciembre } = props
+export default function TortaReuniones({ febrero, marzo, abril, mayo, junio, julio, agosto, septiembre, octubre, noviembre, diciembre }) {
+	const { inicio } = React.useContext(InicioContext)
 	const data = [
-		{ name: 'Ene', value: enero },
+		{ name: 'Ene', value: inicio.reuniones },
 		{ name: 'Feb', value: febrero },
 		{ name: 'Mar', value: marzo },
 		{ name: 'Abr', value: abril },
@@ -28,11 +27,6 @@ export default function TortaReuniones(props) {
 				<Pie dataKey="value" isAnimationActive={true} data={data} cx={200} cy={200} outerRadius={140} fill="#3782e2" label />
 				<Tooltip />
 			</PieChart>
-			{/* <Chart data={data}>
-				<PieSeries valueField="contactos" argumentField="mes" innerRadius={0.6}/>
-				<Title text="Reuniones" />
-				<Animation duration={1000} />
-			</Chart> */}
 		</Paper>
 	);
 }

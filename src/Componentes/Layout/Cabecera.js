@@ -24,7 +24,7 @@ import AddOutlinedIcon from '@material-ui/icons/AddOutlined';
 import ExitToAppOutlinedIcon from '@material-ui/icons/ExitToAppOutlined';
 import PersonOutlineOutlinedIcon from '@material-ui/icons/PersonOutlineOutlined';
 import LoginContext from '../helpers/loginContext';
-import theming from '../Services/Tema';
+import ThemeContext from '../helpers/themeContext';
 
 const drawerWidth = 240;
 
@@ -176,10 +176,10 @@ function Cabecera() {
 	const [openChatDialog, setOpenChatDialog] = React.useState(false)
 	const [variable, setVariable] = React.useState(false)
 	const { authLogin } = React.useContext(LoginContext)
-	const palette = JSON.parse(localStorage.getItem('palette'))
 	const path = window.location.pathname.split('/')[1]
 	const path2 = window.location.pathname.split('/')[2]
 	const history = useHistory()
+	const { dispatchTheme } = React.useContext(ThemeContext)
 
 	const handleDrawerOpen = () => {
 		setOpen(true);
@@ -200,13 +200,14 @@ function Cabecera() {
 	const LogOut = () => {
 		setAnchorEl(null);
 		if (localStorage.getItem('token')) {
+			var palette = { primary: 'indigo', secondary: 'red', type: 'light' }
+			dispatchTheme(['cambiarTema', palette])
 			setVariable(true)
 			var user = JSON.parse(localStorage.getItem('usuarioChat'))
 			socket.emit('desconectado', user.uid)
 			socket.emit('usuarios')
 			localStorage.clear();
 		}
-		// CometChat.logout()
 	}
 
 
@@ -232,12 +233,6 @@ function Cabecera() {
 
 	const chat = () => {
 		if (localStorage.getItem('token')) {
-			theming.changeTheme({
-				primaryColor: palette.primary,
-				secondaryColor: palette.secondary,
-				type: palette.type
-			})
-			history.push(window.location.pathname)
 			socket.emit('conectado', authLogin.nickname)
 			socket.on('conectado/respuesta', result => {
 				if (localStorage.getItem('usuarioChat')) {

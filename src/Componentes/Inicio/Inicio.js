@@ -12,7 +12,6 @@ import Zoom from '@material-ui/core/Zoom';
 import LineaLlamadas from './Usuarios/Llamadas';
 import AreaGmail from './Usuarios/Gmail';
 import { AuthTokenRequest } from '../helpers/AxiosInstance';
-import LoginContext from '../helpers/loginContext';
 import AppInteractionContext from '../helpers/appInteraction';
 
 
@@ -29,28 +28,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Inicio() {
-	const [total, setTotal] = React.useState(null)
-	const [totalReuniones, setTotalReuniones] = React.useState(null)
-	const { authLogin } = React.useContext(LoginContext)
 	const { dispatch } = React.useContext(AppInteractionContext)
 	const classes = useStyles()
-
-	const consultarUsuarios = () => {
-		AuthTokenRequest.get('contactos')
-			.then(result => {
-				setTotal(result.data.length)
-			})
-	}
-
-	const consultarReuniones = () => {
-		AuthTokenRequest.get('eventos', {
-			params: {
-				creator: authLogin.correo
-			}
-		}).then(result => {
-			setTotalReuniones(result.data.length)
-		})
-	}
 
 	const consultarAcciones = () => {
 		AuthTokenRequest.post('acciones', { form: 'inicio' })
@@ -59,8 +38,6 @@ export default function Inicio() {
 			})
 	}
 
-	React.useEffect(consultarUsuarios, [])
-	React.useEffect(consultarReuniones, [])
 	React.useEffect(consultarAcciones, [])
 
 	return (
@@ -72,7 +49,7 @@ export default function Inicio() {
 						sm={6}
 						xl={3}
 						xs={12} className={classes.usuarios}>
-						<Usuarios total={total} />
+						<Usuarios />
 					</Grid>
 				</Zoom>
 				<Zoom in={true} timeout={500}>
@@ -80,7 +57,7 @@ export default function Inicio() {
 						sm={6}
 						xl={3}
 						xs={12} className={classes.usuarios}>
-						<Reuniones total={totalReuniones} />
+						<Reuniones />
 					</Grid>
 				</Zoom>
 				<Zoom in={true} timeout={1000}>
@@ -101,7 +78,6 @@ export default function Inicio() {
 				</Zoom>
 				<Grid item xs={12} sm={6} xl={3} lg={3}>
 					<BarraUsuario
-						enero={total}
 						febrero={5}
 						marzo={2}
 						abril={1}
@@ -117,7 +93,6 @@ export default function Inicio() {
 				</Grid>
 				<Grid item xs={12} sm={6} xl={3} lg={3}>
 					<TortaReuniones
-						enero={totalReuniones}
 						febrero={5}
 						marzo={2}
 						abril={1}

@@ -12,6 +12,9 @@ export function interactionFunctionReducer(state, [action, path, funcion, payloa
 		case 'inicio':
 			return { ...state, formContent: { path: path, funcion: funcion }, acciones: payload };
 
+		case 'agenda':
+			return { ...state, formContent: { path: path, funcion: funcion }, acciones: payload };
+
 		case 'listaContactos':
 			return { ...state, formContent: { path: path, funcion: funcion }, acciones: payload };
 

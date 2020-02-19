@@ -51,7 +51,9 @@ import { green } from '@material-ui/core/colors';
 import clsx from 'clsx';
 import InvertColorsIcon from '@material-ui/icons/InvertColors';
 import PersonAddOutlinedIcon from '@material-ui/icons/PersonAddOutlined';
-import { AuthTokenRequest } from '../helpers/AxiosInstance'
+import { AuthTokenRequest } from '../helpers/AxiosInstance';
+import AppInteractionContext from '../helpers/appInteraction';
+import LoginContext from '../helpers/loginContext'
 
 // const SCOPES = 'https://mail.google.com https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/calendar https://www.google.com/m8/feeds/ https://www.googleapis.com/auth/contacts.readonly';
 
@@ -110,7 +112,8 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function Calendario() {
-	const perfil = JSON.parse(localStorage.getItem('usuarioChat'))
+	const { authLogin } = React.useContext(LoginContext)
+	const { dispatch } = React.useContext(AppInteractionContext)
 	const classes = useStyles()
 	const header = {
 		left: 'prev,next, today',
@@ -143,7 +146,7 @@ export default function Calendario() {
 	const [abrirDialog, setAbrirDialog] = React.useState(false)
 	const [loading, setLoading] = React.useState(false);
 	const [success, setSuccess] = React.useState(false);
-	const [eventoNuevo, setEventoNuevo] = React.useState({ creator: perfil.correo, backgroundColor: '#dc2127' })
+	const [eventoNuevo, setEventoNuevo] = React.useState({ creator: authLogin.correo, backgroundColor: '#dc2127' })
 	const [arrayInvitados, setArrayInvitados] = React.useState([])
 	const [invitados, setInvitados] = React.useState({})
 	const [dialogInvitados, setDialogInvitados] = React.useState(false)
@@ -154,7 +157,7 @@ export default function Calendario() {
 	const GetEventos = () => {
 		AuthTokenRequest.get('eventos', {
 			params: {
-				creator: perfil.correo
+				creator: authLogin.correo
 			}
 		}).then(result => {
 			setEventosGoogle(result.data)
@@ -405,7 +408,7 @@ export default function Calendario() {
 					.then(() => {
 						setAbrirDialog(false)
 						GetEventos()
-						setEventoNuevo({ creator: perfil.correo, backgroundColor: '#dc2127' })
+						setEventoNuevo({ creator: authLogin.correo, backgroundColor: '#dc2127' })
 					})
 			}, 2000)
 		}
@@ -496,7 +499,15 @@ export default function Calendario() {
 		}
 	}
 
+	const consultarAcciones = () => {
+		AuthTokenRequest.post('acciones', { form: 'agenda' })
+			.then(result => {
+				dispatch(['agenda', window.location.pathname, 'funcion', result.data])
+			})
+	}
+
 	React.useEffect(GetEventos, [])
+	React.useEffect(consultarAcciones, [])
 
 	return (
 		<React.Fragment>

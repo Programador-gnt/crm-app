@@ -16,7 +16,7 @@ import {
 	Link,
 	LinearProgress,
 	Snackbar,
-	Fade
+	Zoom
 } from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { makeStyles } from '@material-ui/core/styles';
@@ -25,7 +25,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import Copyright from '../Layout/Copyright';
 import { AuthTokenRequest } from '../helpers/AxiosInstance';
 import LoginContext from '../helpers/loginContext';
-import theming from '../Services/Tema';
+import ThemeContext from '../helpers/themeContext'
 
 
 const useStyles = makeStyles(theme => ({
@@ -78,6 +78,7 @@ export default function Login() {
 	const [isLoading, setIsLoading] = React.useState(false)
 	const classes = useStyles();
 	const { dispatchLogin } = React.useContext(LoginContext)
+	const { dispatchTheme } = React.useContext(ThemeContext)
 
 	const handleCloseMensaje = () => {
 		setAviso({ mensaje: '', aviso: false })
@@ -99,12 +100,8 @@ export default function Login() {
 						localStorage.setItem('perfil', JSON.stringify(objeto))
 						localStorage.setItem('palette', JSON.stringify(palette))
 						localStorage.setItem('token', JSON.stringify(result.data.token))
-						theming.changeTheme({
-							primaryColor: result.data.perfil.primario,
-							secondaryColor: result.data.perfil.secundario,
-							type: result.data.perfil.tipo
-						})
 						dispatchLogin(['login', objeto])
+						dispatchTheme(['cambiarTema', palette])
 						history.push('/inicio')
 					}).catch(error => {
 						setAviso({ mensaje: error.response.data, aviso: true })
@@ -121,24 +118,24 @@ export default function Login() {
 
 	return (
 		<Grid container component="main" className={classes.root}>
-			<Container component={Paper} elevation={5} maxWidth='xs' className={classes.main}>
-				<CssBaseline />
-				<Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }} open={aviso.aviso} autoHideDuration={3000} onClose={handleCloseMensaje} style={{ opacity: '0.8' }}
-					ContentProps={{ 'aria-describedby': 'mensaje' }}
-					message={<Typography id="mensaje" variant='button'>{aviso.mensaje}</Typography>}
-					action={[
-						<IconButton
-							key="close"
-							aria-label="close"
-							color="inherit"
-							className={classes.close}
-							onClick={handleCloseMensaje}
-						>
-							<CloseIcon />
-						</IconButton>,
-					]}
-				/>
-				<Fade in={true} timeout={1000}>
+			<Zoom in={true} timeout={1000}>
+				<Container component={Paper} elevation={5} maxWidth='xs' className={classes.main}>
+					<CssBaseline />
+					<Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }} open={aviso.aviso} autoHideDuration={3000} onClose={handleCloseMensaje} style={{ opacity: '0.8' }}
+						ContentProps={{ 'aria-describedby': 'mensaje' }}
+						message={<Typography id="mensaje" variant='button'>{aviso.mensaje}</Typography>}
+						action={[
+							<IconButton
+								key="close"
+								aria-label="close"
+								color="inherit"
+								className={classes.close}
+								onClick={handleCloseMensaje}
+							>
+								<CloseIcon />
+							</IconButton>,
+						]}
+					/>
 					<div className={classes.paper}>
 						<Avatar className={classes.avatar}>
 							<LockOutlinedIcon />
@@ -208,8 +205,8 @@ export default function Login() {
 							<Copyright />
 						</Box>
 					</div>
-				</Fade>
-			</Container>
+				</Container>
+			</Zoom>
 		</Grid>
 	);
 }

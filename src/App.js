@@ -5,6 +5,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import './App.scss';
 import { AppInteractionContextProvider } from './Componentes/helpers/appInteraction';
 import { LoginContextProviders } from './Componentes/helpers/loginContext';
+import { ThemeContextProviders } from './Componentes/helpers/themeContext';
 
 const loading = () => {
 	return (
@@ -37,14 +38,16 @@ function App() {
 	return (
 		<LoginContextProviders>
 			<AppInteractionContextProvider>
-				<Router>
-					<React.Suspense fallback={loading()}>
-						<Switch>
-							<Route exact path='/login' name='Login' render={props => <Login {...props} />} />
-							<Route path='/' name='Layout' render={props => <Layout {...props} />} />
-						</Switch>
-					</React.Suspense>
-				</Router>
+				<ThemeContextProviders>
+					<Router>
+						<React.Suspense fallback={loading()}>
+							<Switch>
+								<Route exact path='/login' name='Login' render={props => <Login {...props} />} />
+								<Route path='/' name='Layout' render={props => <Layout {...props} />} />
+							</Switch>
+						</React.Suspense>
+					</Router>
+				</ThemeContextProviders>
 			</AppInteractionContextProvider>
 		</LoginContextProviders>
 	);

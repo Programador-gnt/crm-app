@@ -7,10 +7,6 @@ import Footer from './Footer';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Menu from './Menu';
 import { makeStyles } from '@material-ui/core/styles';
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-import indigo from '@material-ui/core/colors/indigo';
-import red from '@material-ui/core/colors/red';
-import theming from '../Services/Tema';
 import AppInteractionContext from '../helpers/appInteraction';
 import TableChartOutlinedIcon from '@material-ui/icons/TableChartOutlined';
 import WidgetsOutlinedIcon from '@material-ui/icons/WidgetsOutlined';
@@ -37,20 +33,11 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function Layout() {
-	const theme = theming.defaultTheme
 	const [open, setOpen] = React.useState(window.screen.width < 769 ? false : true)
 	const history = useHistory()
 	const [tarjeta, setTarjeta] = React.useState(false)
 	const { interactions } = React.useContext(AppInteractionContext)
 	const classes = useStyles()
-	const ok = {
-		palette: {
-			primary: indigo,
-			secondary: red,
-			type: 'light'
-		}
-	}
-	const theme2 = createMuiTheme(ok)
 
 	const preventActionClickClose = (evt, action) => {
 		evt.preventDefault()
@@ -75,62 +62,60 @@ function Layout() {
 
 
 	return (
-		<MuiThemeProvider theme={typeof theme === 'undefined' ? theme2 : theme}>
-			<React.Fragment>
-				<CssBaseline />
-				<div className="app">
-					<Paper elevation={4}>
-						<Suspense>
-							<Cabecera />
-						</Suspense>
-					</Paper>
-					<Suspense style={{ position: 'fixed' }}>
-						<Menu />
+		<React.Fragment>
+			<CssBaseline />
+			<div className="app">
+				<Paper elevation={4}>
+					<Suspense>
+						<Cabecera />
 					</Suspense>
+				</Paper>
+				<Suspense style={{ position: 'fixed' }}>
+					<Menu />
+				</Suspense>
 
-					<main className={classes.root}>
-						{interactions.formContent.path === '/inicio' ?
-							null : interactions.formContent.path === '/calendario' ? null
-								: <SpeedDial
-									ariaLabel="Speedial"
-									className={classes.speedDial}
-									icon={<SpeedDialIcon />}
-									onClick={() => setOpen(!open)}
-									open={open}>
-									{interactions.acciones.map(action => (
-										<SpeedDialAction
-											tooltipOpen
-											key={action.name}
-											icon={action.name === 'Guardar' ? <SaveOutlinedIcon /> : action.name === 'Volver' ? <ArrowBackOutlinedIcon /> : action.name === 'Nuevo' ? <AddIcon /> : action.name === 'Table' ? <TableChartOutlinedIcon /> : action.name === 'Tarjeta' ? <WidgetsOutlinedIcon /> : ''}
-											tooltipTitle={action.name}
-											onClick={evt => preventActionClickClose(evt, action)}
-										/>
-									))}
-								</SpeedDial>}
-						<Suspense>
-							<Switch>
-								{routes.map((route) => {
-									return route.component ? (
-										<Route
-											key={route.id}
-											path={route.path}
-											exact={route.exact}
-											name={route.name}
-											render={props => (
-												<route.component key={route.id} {...props} tarjeta={tarjeta} />
-											)} />
-									) : (null);
-								})}
-								<Redirect to="/login" />
-							</Switch>
-						</Suspense>
-					</main>
-					<Suspense >
-						<Footer />
+				<main className={classes.root}>
+					{interactions.formContent.path === '/inicio' ?
+						null : interactions.formContent.path === '/agenda' ? null
+							: <SpeedDial
+								ariaLabel="Speedial"
+								className={classes.speedDial}
+								icon={<SpeedDialIcon />}
+								onClick={() => setOpen(!open)}
+								open={open}>
+								{interactions.acciones.map(action => (
+									<SpeedDialAction
+										tooltipOpen
+										key={action.name}
+										icon={action.name === 'Guardar' ? <SaveOutlinedIcon /> : action.name === 'Volver' ? <ArrowBackOutlinedIcon /> : action.name === 'Nuevo' ? <AddIcon /> : action.name === 'Table' ? <TableChartOutlinedIcon /> : action.name === 'Tarjeta' ? <WidgetsOutlinedIcon /> : ''}
+										tooltipTitle={action.name}
+										onClick={evt => preventActionClickClose(evt, action)}
+									/>
+								))}
+							</SpeedDial>}
+					<Suspense>
+						<Switch>
+							{routes.map((route) => {
+								return route.component ? (
+									<Route
+										key={route.id}
+										path={route.path}
+										exact={route.exact}
+										name={route.name}
+										render={props => (
+											<route.component key={route.id} {...props} tarjeta={tarjeta} />
+										)} />
+								) : (null);
+							})}
+							<Redirect to="/login" />
+						</Switch>
 					</Suspense>
-				</div>
-			</React.Fragment>
-		</MuiThemeProvider>
+				</main>
+				<Suspense >
+					<Footer />
+				</Suspense>
+			</div>
+		</React.Fragment>
 	);
 }
 export default Layout;
