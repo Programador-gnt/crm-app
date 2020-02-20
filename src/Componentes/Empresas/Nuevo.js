@@ -1,18 +1,13 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
 import { LinearProgress, CssBaseline, Paper, Typography, Grid, TextField, Fab, ListItemText, ListItem, List, ListItemAvatar, AppBar, Toolbar, MenuItem, DialogTitle, DialogContent, DialogActions, Hidden, Button, Dialog, Snackbar, IconButton, Table, TableBody, TableCell, TableHead, TableRow, Checkbox } from '@material-ui/core';
-import SpeedDial from '@material-ui/lab/SpeedDial';
-import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
-import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
-import ArrowBackOutlinedIcon from '@material-ui/icons/ArrowBackOutlined';
 import { makeStyles } from '@material-ui/core/styles';
 import DomainIcon from '@material-ui/icons/Domain';
 import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
 import PhoneAndroidOutlinedIcon from '@material-ui/icons/PhoneAndroidOutlined';
 import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined';
-import SaveOutlinedIcon from '@material-ui/icons/SaveOutlined';
 import CloseIcon from '@material-ui/icons/Close';
 import CakeOutlinedIcon from '@material-ui/icons/CakeOutlined';
+import AppInteractionContext from '../helpers/appInteraction';
 import { AuthTokenRequest } from '../helpers/AxiosInstance';
 
 const useStyles = makeStyles(theme => ({
@@ -36,11 +31,6 @@ const useStyles = makeStyles(theme => ({
 			marginLeft: 'auto',
 			marginRight: 'auto',
 		},
-	},
-	speedDial: {
-		position: 'fixed',
-		bottom: theme.spacing(7),
-		right: theme.spacing(2),
 	},
 	card: {
 		width: 400,
@@ -75,14 +65,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-const actions = [
-	{ name: 'Volver' },
-	{ name: 'Guardar' }
-];
-
 export default function Nuevo() {
-	const history = useHistory()
-	const [open, setOpen] = React.useState(window.screen.width < 769 ? false : true)
+	const { dispatch } = React.useContext(AppInteractionContext)
 	const [dialogDireccion, setDialogDireccion] = React.useState(false)
 	const [aviso, setAviso] = React.useState(false)
 	const [listaActiva, setListaActiva] = React.useState(null)
@@ -236,17 +220,6 @@ export default function Nuevo() {
 		setAviso(false)
 	};
 
-	const preventActionClickClose = (evt, action) => {
-		evt.preventDefault()
-		evt.stopPropagation()
-		if (action.name === 'Volver') {
-			history.push('/empresas')
-		}
-		if (action.name === 'Guardar') {
-			guardar()
-		}
-	}
-
 	const agregarCuenta = () => {
 		setListaActivaBanco(true)
 		document.getElementById('correo').focus()
@@ -264,6 +237,15 @@ export default function Nuevo() {
 			telefonoBanco: ''
 		})
 	}
+
+	const consultarAcciones = () => {
+		AuthTokenRequest.post('acciones', { form: 'empresasNuevo' })
+			.then(result => {
+				dispatch(['empresasInfo', window.location.pathname, guardar, result.data])
+			})
+	}
+
+	React.useEffect(consultarAcciones, [])
 
 
 	return (
@@ -516,23 +498,6 @@ export default function Nuevo() {
                     </Button>
 						</DialogActions>
 					</Dialog>
-					<SpeedDial
-						ariaLabel="SpeedDial tooltip example"
-						className={classes.speedDial}
-						icon={<SpeedDialIcon />}
-						onClick={() => setOpen(!open)}
-						open={open}>
-
-						{actions.map(action => (
-							<SpeedDialAction
-								tooltipOpen
-								key={action.name}
-								icon={action.name === 'Volver' ? <ArrowBackOutlinedIcon /> : action.name === 'Guardar' ? <SaveOutlinedIcon /> : ''}
-								tooltipTitle={action.name}
-								onClick={evt => preventActionClickClose(evt, action)}
-							/>
-						))}
-					</SpeedDial>
 					<Grid container spacing={2}>
 						<Grid item xs={12} sm={3}>
 							<TextField

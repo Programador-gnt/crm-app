@@ -1,13 +1,9 @@
 import React from 'react';
 import { CssBaseline, Grid, Card, CardContent, CardActions, Avatar, Typography, IconButton, Tooltip, Paper, Button, TextField, LinearProgress } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import SpeedDial from '@material-ui/lab/SpeedDial';
-import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
-import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
-import ArrowBackOutlinedIcon from '@material-ui/icons/ArrowBackOutlined';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
+import AppInteractionContext from '../helpers/appInteraction';
 import { AuthTokenRequest } from '../helpers/AxiosInstance';
-import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -16,11 +12,6 @@ const useStyles = makeStyles(theme => ({
 		width: '100%',
 		marginTop: theme.spacing(8),
 		paddingLeft: theme.spacing(4)
-	},
-	speedDial: {
-		position: 'fixed',
-		bottom: theme.spacing(7),
-		right: theme.spacing(2),
 	},
 	card: {
 
@@ -55,13 +46,10 @@ const useStyles = makeStyles(theme => ({
 	}
 }));
 
-const actions = [
-	{ name: 'Volver' }
-];
+
 
 export default function Info() {
-	const history = useHistory()
-	const [open, setOpen] = React.useState(window.screen.width < 769 ? false : true)
+	const { dispatch } = React.useContext(AppInteractionContext)
 	const [infor, setInfor] = React.useState({})
 	const [letra, setLetra] = React.useState(null)
 	const [editar, setEditar] = React.useState(true)
@@ -81,14 +69,6 @@ export default function Info() {
 			})
 	}
 
-	const preventActionClickClose = (evt, action) => {
-		evt.preventDefault()
-		evt.stopPropagation()
-		if (action.name === 'Volver') {
-			history.push('/empresas')
-		}
-	}
-
 	const guardar = () => {
 		if (!isLoading) {
 			setIsLoading(true);
@@ -99,28 +79,19 @@ export default function Info() {
 		}
 	}
 
+	const consultarAcciones = () => {
+		AuthTokenRequest.post('acciones', { form: 'empresasInfo' })
+			.then(result => {
+				dispatch(['empresasInfo', window.location.pathname, guardar, result.data])
+			})
+	}
+
+	React.useEffect(consultarAcciones, [])
 	React.useEffect(info, [])
 
 	return (
 		<React.Fragment>
 			<CssBaseline />
-			<SpeedDial
-				ariaLabel="SpeedDial tooltip example"
-				className={classes.speedDial}
-				icon={<SpeedDialIcon />}
-				onClick={() => setOpen(!open)}
-				open={open}>
-
-				{actions.map(action => (
-					<SpeedDialAction
-						tooltipOpen
-						key={action.name}
-						icon={action.name === 'Volver' ? <ArrowBackOutlinedIcon /> : ''}
-						tooltipTitle={action.name}
-						onClick={evt => preventActionClickClose(evt, action)}
-					/>
-				))}
-			</SpeedDial>
 			<Grid container className={classes.root} spacing={2}>
 				<Grid item xs={12} sm={4}>
 					<Card className={classes.card} raised={true}>

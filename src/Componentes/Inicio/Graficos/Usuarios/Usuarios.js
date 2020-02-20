@@ -78,9 +78,6 @@ const Usuarios = () => {
 						</Avatar>
 					</Grid>
 				</Grid>
-				{/* <div className={classes.difference}>
-					<Typography className={classes.caption} variant="caption">5 Ùltima semana</Typography>
-				</div> */}
 			</CardContent>
 		</Card>
 	);

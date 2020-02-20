@@ -36,7 +36,7 @@ function Layout() {
 	const [open, setOpen] = React.useState(window.screen.width < 769 ? false : true)
 	const history = useHistory()
 	const [tarjeta, setTarjeta] = React.useState(false)
-	const { interactions } = React.useContext(AppInteractionContext)
+	const { interactions, dispatch } = React.useContext(AppInteractionContext)
 	const classes = useStyles()
 
 	const preventActionClickClose = (evt, action) => {
@@ -52,7 +52,7 @@ function Layout() {
 			setTarjeta(true)
 		}
 		if (action.name === 'Volver') {
-			history.push(`/${window.location.pathname.split('/')[1]}`)
+			dispatch(['Volver', `/${interactions.formContent.path.split('/')[1]}`, 'funcion', interactions.acciones])
 		}
 
 		if (action.name === 'Guardar') {

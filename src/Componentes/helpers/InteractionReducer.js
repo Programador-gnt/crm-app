@@ -21,6 +21,21 @@ export function interactionFunctionReducer(state, [action, path, funcion, payloa
 		case 'contactosNuevo':
 			return { ...state, formContent: { path: path, funcion: funcion }, acciones: payload };
 
+		case 'contactosInfo':
+			return { ...state, formContent: { path: path, funcion: funcion }, acciones: payload };
+
+		case 'listaEmpresas':
+			return { ...state, formContent: { path: path, funcion: funcion }, acciones: payload };
+
+		case 'empresasInfo':
+			return { ...state, formContent: { path: path, funcion: funcion }, acciones: payload };
+
+		case 'empresasNuevo':
+			return { ...state, formContent: { path: path, funcion: funcion }, acciones: payload };
+
+		case 'Volver':
+			return { ...state, formContent: { path: path, funcion: funcion }, acciones: payload };
+
 		default:
 			return state;
 	}

@@ -8,6 +8,8 @@ import {
 import TablaContactos from './TablaContactos';
 import AppInteractionContext from '../helpers/appInteraction';
 import { AuthTokenRequest } from '../helpers/AxiosInstance';
+import ContactosContext from './contactosContext';
+import Info from './Info'
 
 
 const useStyles = makeStyles(theme => ({
@@ -19,8 +21,9 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-export default function Clientes({ tarjeta }) {
-	const { dispatch } = React.useContext(AppInteractionContext)
+export default function Contactos({ tarjeta }) {
+	const { interactions, dispatch } = React.useContext(AppInteractionContext)
+	const { contactos } = React.useContext(ContactosContext)
 	const classes = useStyles()
 
 	const consultarAcciones = () => {
@@ -32,14 +35,17 @@ export default function Clientes({ tarjeta }) {
 
 	React.useEffect(consultarAcciones, [])
 
-
 	return (
 		<React.Fragment>
 			<CssBaseline />
 			<Zoom in={true} timeout={500}>
 				<Grid container spacing={1} className={classes.root}>
 					<Grid item xs={12}>
-						<TablaContactos tarjeta={tarjeta} />
+						{contactos.abrirInfo ?
+							<Info /> :
+							interactions.formContent.path === '/contactos' ?
+								<TablaContactos tarjeta={tarjeta} /> : null
+						}
 					</Grid>
 				</Grid>
 			</Zoom>
