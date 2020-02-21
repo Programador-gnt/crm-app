@@ -24,7 +24,8 @@ import MaterialTable from 'material-table';
 import { AuthTokenRequest } from '../helpers/AxiosInstance';
 import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
-import ContactosContext from './contactosContext'
+import ContactosContext from './contactosContext';
+import AppInteractionContext from '../helpers/appInteraction'
 
 const useStyles = makeStyles((theme) => ({
 	back: {
@@ -58,7 +59,8 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} timeout={500} />;
 });
 
-export default function TablaContactos({ tarjeta }) {
+export default function TablaContactos() {
+	const { interactions, dispatch } = React.useContext(AppInteractionContext)
 	const { contactos, dispatchContactos } = React.useContext(ContactosContext)
 	const [openDialog, setOpenDialog] = React.useState(false)
 	const [id, setId] = React.useState(null)
@@ -95,6 +97,14 @@ export default function TablaContactos({ tarjeta }) {
 		setAnchorEl(null);
 	};
 
+	const consultarAcciones = () => {
+		AuthTokenRequest.post('acciones', { form: 'listaContactos' })
+			.then(result => {
+				dispatch(['listaContactos', '/contactos', 'funcion', interactions.formContent.funcionSecundaria, result.data])
+			})
+	}
+
+	React.useEffect(consultarAcciones, [])
 	React.useEffect(usuarios, [])
 
 	return (
@@ -123,7 +133,7 @@ export default function TablaContactos({ tarjeta }) {
           			</Button>
 				</DialogActions>
 			</Dialog>
-			{tarjeta ?
+			{interactions.formContent.funcionSecundaria ?
 				<Grid container spacing={2}>
 					{contactos.contactos.map((info, index) => (
 						<Zoom key={index} in={true} timeout={500}>
@@ -133,7 +143,10 @@ export default function TablaContactos({ tarjeta }) {
 										action={
 											<>
 												<Tooltip title='Editar'>
-													<IconButton onClick={() => dispatchContactos(['abrirInfo', { abririnfo: true, id_usuarios: info.id_usuarios }])}>
+													<IconButton onClick={() => {
+														dispatch(['contactosInfo', `/contactos/info`, 'funcion', interactions.formContent.funcionSecundaria, interactions.acciones])
+														dispatchContactos(['abrirInfo', { id_usuarios: info.id_usuarios }])
+													}}>
 														<EditOutlinedIcon />
 													</IconButton>
 												</Tooltip>
@@ -181,7 +194,10 @@ export default function TablaContactos({ tarjeta }) {
 							{
 								icon: 'search',
 								tooltip: 'Ver',
-								onClick: (event, rowData) => dispatchContactos(['abrirInfo', { abrirInfo: true, id_usuarios: rowData.id_usuarios }])
+								onClick: (event, rowData) => {
+									dispatch(['contactosInfo', `/contactos/info`, 'funcion', interactions.formContent.funcionSecundaria, interactions.acciones])
+									dispatchContactos(['abrirInfo', { id_usuarios: rowData.id_usuarios }])
+								}
 							},
 							{
 								icon: 'delete',

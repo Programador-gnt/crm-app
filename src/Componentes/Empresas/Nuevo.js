@@ -7,14 +7,11 @@ import PhoneAndroidOutlinedIcon from '@material-ui/icons/PhoneAndroidOutlined';
 import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined';
 import CloseIcon from '@material-ui/icons/Close';
 import CakeOutlinedIcon from '@material-ui/icons/CakeOutlined';
-import AppInteractionContext from '../helpers/appInteraction';
 import { AuthTokenRequest } from '../helpers/AxiosInstance';
+import AppInteractionContext from '../helpers/appInteraction';
 
 const useStyles = makeStyles(theme => ({
 	root: {
-		marginTop: theme.spacing(3),
-		marginBottom: theme.spacing(3),
-		padding: theme.spacing(2),
 		[theme.breakpoints.up(600 + theme.spacing(3) * 2)]: {
 			marginTop: theme.spacing(6),
 			marginBottom: theme.spacing(6),
@@ -66,7 +63,7 @@ const useStyles = makeStyles(theme => ({
 
 
 export default function Nuevo() {
-	const { dispatch } = React.useContext(AppInteractionContext)
+	const { interactions, dispatch } = React.useContext(AppInteractionContext)
 	const [dialogDireccion, setDialogDireccion] = React.useState(false)
 	const [aviso, setAviso] = React.useState(false)
 	const [listaActiva, setListaActiva] = React.useState(null)
@@ -241,7 +238,7 @@ export default function Nuevo() {
 	const consultarAcciones = () => {
 		AuthTokenRequest.post('acciones', { form: 'empresasNuevo' })
 			.then(result => {
-				dispatch(['empresasInfo', window.location.pathname, guardar, result.data])
+				dispatch(['empresasInfo', '/empresas/nuevo', guardar, interactions.formContent.funcionSecundaria, result.data])
 			})
 	}
 

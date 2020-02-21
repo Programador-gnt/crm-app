@@ -28,13 +28,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Inicio() {
-	const { dispatch } = React.useContext(AppInteractionContext)
+	const { interactions, dispatch } = React.useContext(AppInteractionContext)
 	const classes = useStyles()
 
 	const consultarAcciones = () => {
 		AuthTokenRequest.post('acciones', { form: 'inicio' })
 			.then(result => {
-				dispatch(['inicio', window.location.pathname, 'funcion', result.data])
+				dispatch(['inicio', window.location.pathname, 'funcion', interactions.formContent.funcionSecundaria, result.data])
 			})
 	}
 

@@ -1,7 +1,7 @@
 import React, { Suspense } from 'react';
 import Cabecera from './Cabecera';
 import { Paper } from '@material-ui/core';
-import { Redirect, Route, Switch, useHistory } from 'react-router-dom';
+import { Redirect, Route, Switch } from 'react-router-dom';
 import routes from '../../routes';
 import Footer from './Footer';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -34,8 +34,6 @@ const useStyles = makeStyles(theme => ({
 
 function Layout() {
 	const [open, setOpen] = React.useState(window.screen.width < 769 ? false : true)
-	const history = useHistory()
-	const [tarjeta, setTarjeta] = React.useState(false)
 	const { interactions, dispatch } = React.useContext(AppInteractionContext)
 	const classes = useStyles()
 
@@ -43,16 +41,16 @@ function Layout() {
 		evt.preventDefault()
 		evt.stopPropagation()
 		if (action.name === 'Nuevo') {
-			history.push(`${interactions.formContent.path}/nuevo`)
+			dispatch(['Nuevo', `${interactions.formContent.path}/nuevo`, 'funcion', interactions.formContent.funcionSecundaria, interactions.acciones])
 		}
 		if (action.name === 'Table') {
-			setTarjeta(false)
+			dispatch(['Tarjeta', interactions.formContent.path, 'funcion', false, interactions.acciones])
 		}
 		if (action.name === 'Tarjeta') {
-			setTarjeta(true)
+			dispatch(['Tarjeta', interactions.formContent.path, 'funcion', true, interactions.acciones])
 		}
 		if (action.name === 'Volver') {
-			dispatch(['Volver', `/${interactions.formContent.path.split('/')[1]}`, 'funcion', interactions.acciones])
+			dispatch(['Volver', `/${interactions.formContent.path.split('/')[1]}`, 'funcion', interactions.formContent.funcionSecundaria, interactions.acciones])
 		}
 
 		if (action.name === 'Guardar') {
@@ -103,7 +101,7 @@ function Layout() {
 										exact={route.exact}
 										name={route.name}
 										render={props => (
-											<route.component key={route.id} {...props} tarjeta={tarjeta} />
+											<route.component key={route.id} {...props} />
 										)} />
 								) : (null);
 							})}

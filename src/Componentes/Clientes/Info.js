@@ -45,8 +45,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function Info() {
-	const { dispatch } = React.useContext(AppInteractionContext)
-	const [infor, setInfor] = React.useState({})
+	const { interactions, dispatch } = React.useContext(AppInteractionContext)
 	const [editar, setEditar] = React.useState(true)
 	const { contactos, dispatchContactos } = React.useContext(ContactosContext)
 	const classes = useStyles()
@@ -57,14 +56,14 @@ export default function Info() {
 				id_usuarios: contactos.id_usuarios
 			}
 		}).then(result => {
-			setInfor(result.data)
+			dispatchContactos(['consultarInfo', result.data])
 		})
 	}
 
 	const consultarAcciones = () => {
 		AuthTokenRequest.post('acciones', { form: 'contactosInfo' })
 			.then(result => {
-				dispatch(['contactosInfo', `${window.location.pathname}/info`, 'funcion', result.data])
+				dispatch(['contactosInfo', `/contactos/info`, 'funcion', interactions.formContent.funcionSecundaria, result.data])
 			})
 	}
 
@@ -80,15 +79,15 @@ export default function Info() {
 					<Grid item xs={12} sm={4}>
 						<Card className={classes.card} raised={true}>
 							<CardContent>
-								<Avatar className={classes.avatar} src={infor.avatar} />
+								<Avatar className={classes.avatar} src={contactos.informacion.avatar} />
 								<Typography variant="h5" className={classes.texto} color='secondary'>
-									{infor.name}
+									{contactos.informacion.name}
 								</Typography>
 								<Typography variant="body1" className={classes.texto} color='textPrimary'>
-									{infor.correo}
+									{contactos.informacion.correo}
 								</Typography>
 								<Typography variant="body1" className={classes.texto} color='textSecondary'>
-									{infor.empresa}
+									{contactos.informacion.empresa}
 								</Typography>
 							</CardContent>
 							<CardActions disableSpacing>
@@ -126,7 +125,7 @@ export default function Info() {
 								<Grid item xs={12} sm={6}>
 									<TextField
 										name='name'
-										value={infor.name || ''}
+										value={contactos.informacion.name || ''}
 										disabled={editar}
 										margin='normal'
 										autoFocus
@@ -138,7 +137,7 @@ export default function Info() {
 								<Grid item xs={12} sm={6}>
 									<TextField
 										name='dni'
-										value={infor.dni || ''}
+										value={contactos.informacion.dni || ''}
 										disabled={editar}
 										margin='normal'
 										fullWidth
@@ -149,7 +148,7 @@ export default function Info() {
 								<Grid item xs={12} sm={6}>
 									<TextField
 										name='empresa'
-										value={infor.empresa || ''}
+										value={contactos.informacion.empresa || ''}
 										disabled={editar}
 										margin='normal'
 										fullWidth
@@ -160,7 +159,7 @@ export default function Info() {
 								<Grid item xs={12} sm={6}>
 									<TextField
 										name='telefono'
-										value={infor.telefono || ''}
+										value={contactos.informacion.telefono || ''}
 										disabled={editar}
 										margin='normal'
 										fullWidth
@@ -171,7 +170,7 @@ export default function Info() {
 								<Grid item xs={12} sm={6}>
 									<TextField
 										name='correo'
-										value={infor.correo || ''}
+										value={contactos.informacion.correo || ''}
 										disabled={editar}
 										margin='normal'
 										fullWidth
@@ -182,7 +181,7 @@ export default function Info() {
 								<Grid item xs={12} sm={6}>
 									<TextField
 										name='cargo'
-										value={infor.cargo || ''}
+										value={contactos.informacion.cargo || ''}
 										disabled={editar}
 										margin='normal'
 										fullWidth

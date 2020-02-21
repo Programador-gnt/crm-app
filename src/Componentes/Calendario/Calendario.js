@@ -53,7 +53,8 @@ import InvertColorsIcon from '@material-ui/icons/InvertColors';
 import PersonAddOutlinedIcon from '@material-ui/icons/PersonAddOutlined';
 import { AuthTokenRequest } from '../helpers/AxiosInstance';
 import AppInteractionContext from '../helpers/appInteraction';
-import LoginContext from '../helpers/loginContext'
+import LoginContext from '../helpers/loginContext';
+import CalendarioContext from './calendarioContext'
 
 // const SCOPES = 'https://mail.google.com https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/calendar https://www.google.com/m8/feeds/ https://www.googleapis.com/auth/contacts.readonly';
 
@@ -112,8 +113,9 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function Calendario() {
+	const { calendario, dispatchCalendario } = React.useContext(CalendarioContext)
 	const { authLogin } = React.useContext(LoginContext)
-	const { dispatch } = React.useContext(AppInteractionContext)
+	const { interactions, dispatch } = React.useContext(AppInteractionContext)
 	const classes = useStyles()
 	const header = {
 		left: 'prev,next, today',
@@ -134,9 +136,9 @@ export default function Calendario() {
 		second: '2-digit',
 		meridiem: true
 	}
-	const [eventosGoogle, setEventosGoogle] = React.useState([])
+	// const [eventosGoogle, setEventosGoogle] = React.useState([])
 	const [aviso, setAviso] = React.useState(false);
-	const [eventoConsultado, setEventoConsultado] = React.useState({})
+	// const [eventoConsultado, setEventoConsultado] = React.useState({})
 	// const [modalEventoVista, setModalEventoVista] = React.useState({})
 	const [dialogEvento, setDialogEvento] = React.useState(false)
 	// const [colorEvento, setEventoColor] = React.useState('')
@@ -147,7 +149,7 @@ export default function Calendario() {
 	const [loading, setLoading] = React.useState(false);
 	const [success, setSuccess] = React.useState(false);
 	const [eventoNuevo, setEventoNuevo] = React.useState({ creator: authLogin.correo, backgroundColor: '#dc2127' })
-	const [arrayInvitados, setArrayInvitados] = React.useState([])
+	// const [arrayInvitados, setArrayInvitados] = React.useState([])
 	const [invitados, setInvitados] = React.useState({})
 	const [dialogInvitados, setDialogInvitados] = React.useState(false)
 	// const [colorId, setColorId] = React.useState(11)
@@ -160,7 +162,8 @@ export default function Calendario() {
 				creator: authLogin.correo
 			}
 		}).then(result => {
-			setEventosGoogle(result.data)
+			dispatchCalendario(['consultarEventos', result.data])
+			// setEventosGoogle(result.data)
 			setAviso(true)
 		})
 		// consumeWSCalendar('GET', '', '', '')
@@ -270,7 +273,8 @@ export default function Calendario() {
 				id_eventos: id
 			}
 		}).then(result => {
-			setArrayInvitados(result.data)
+			dispatchCalendario(['consultarInvitados', result.data])
+			// setArrayInvitados(result.data)
 		})
 	}
 
@@ -280,7 +284,8 @@ export default function Calendario() {
 				id: id
 			}
 		}).then(result => {
-			setEventoConsultado(result.data)
+			dispatchCalendario(['eventoConsultado', result.data])
+			// setEventoConsultado(result.data)
 			setDialogEvento(true)
 		})
 		// consumeWSCalendar('GET', '/', '', `${id}`)
@@ -309,7 +314,7 @@ export default function Calendario() {
 		setDialogEvento(false);
 		// setModalEventoVista({})
 		// setEventoColor('')
-		setEventoConsultado({})
+		// setEventoConsultado({})
 		setIdEventoEliminar('')
 	}
 
@@ -320,7 +325,7 @@ export default function Calendario() {
 			}
 		}).then(() => {
 			setDialogEvento(false)
-			setEventoConsultado({})
+			// setEventoConsultado({})
 			setIdEventoEliminar('')
 			GetEventos()
 		})
@@ -473,7 +478,7 @@ export default function Calendario() {
 	// }
 
 	const cerrarDialog = () => {
-		setArrayInvitados([])
+		// setArrayInvitados([])
 		setAbrirDialog(false)
 	}
 
@@ -502,7 +507,7 @@ export default function Calendario() {
 	const consultarAcciones = () => {
 		AuthTokenRequest.post('acciones', { form: 'agenda' })
 			.then(result => {
-				dispatch(['agenda', window.location.pathname, 'funcion', result.data])
+				dispatch(['agenda', window.location.pathname, 'funcion', interactions.formContent.funcionSecundaria, result.data])
 			})
 	}
 
@@ -512,31 +517,14 @@ export default function Calendario() {
 	return (
 		<React.Fragment>
 			<CssBaseline />
-			<Snackbar
-				anchorOrigin={{
-					vertical: 'bottom',
-					horizontal: 'left',
-				}}
+			<Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
 				open={aviso}
 				autoHideDuration={2000}
 				onClose={handleCloseMensaje}
 				style={{ opacity: '0.8' }}
-				ContentProps={{
-					'aria-describedby': 'message-id',
-				}}
-				message={<Typography id="message-id" variant='button'>{eventosGoogle.length ? 'Cargando eventos...' : 'No posees eventos'}{<LinearProgress color="primary" style={{ width: '100%', marginBottom: 0 }} />}</Typography>}
-				action={[
-					<IconButton
-						key="close"
-						aria-label="close"
-						color="inherit"
-						className={classes.close}
-						onClick={handleCloseMensaje}
-					>
-						<CloseIcon />
-					</IconButton>,
-				]}
-			/>
+				ContentProps={{ 'aria-describedby': 'message-id' }}
+				message={<Typography id="message-id" variant='button'>{calendario.calendario.length ? 'Cargando eventos...' : 'No posees eventos'}{<LinearProgress color="secondary" style={{ width: '100%', marginBottom: 0 }} />}</Typography>}
+				action={[<IconButton key="close" aria-label="close" color="inherit" className={classes.close} onClick={handleCloseMensaje}><CloseIcon /></IconButton>]} />
 			<Dialog fullWidth open={dialogInvitados} onClose={() => setDialogInvitados(false)}>
 				<DialogTitle disableTypography>
 					<Typography variant="h6" className={classes.title}>
@@ -563,8 +551,8 @@ export default function Calendario() {
 							</Grid>
 							<Grid item xs={12} sm={12}>
 								<List>
-									{arrayInvitados.length ?
-										arrayInvitados.map((invit, index) => (
+									{calendario.invitados.length ?
+										calendario.invitados.map((invit, index) => (
 											<ListItem key={index} button onClick={() => eliminarInivitados(invit.id)}>
 												<ListItemAvatar>
 													<Avatar className={classes.invitadoss} size='small'>
@@ -601,8 +589,8 @@ export default function Calendario() {
 							</Grid>
 							<Grid item xs>
 								<List>
-									{arrayInvitados.length ?
-										arrayInvitados.map((invit, index) => (
+									{calendario.invitados.length ?
+										calendario.invitados.map((invit, index) => (
 											<ListItem key={index} button onClick={() => eliminarInivitados(invit.id)}>
 												<ListItemAvatar>
 													<Avatar className={classes.invitadoss} size='small'>
@@ -769,13 +757,13 @@ export default function Calendario() {
 				</DialogActions>
 			</Dialog>
 			<Dialog fullScreen open={dialogEvento} onClose={handleCloseDialogEvento} TransitionComponent={Transition}>
-				<AppBar className={classes.appBar} style={{ backgroundColor: eventoConsultado.backgroundColor }}>
+				<AppBar className={classes.appBar} style={{ backgroundColor: calendario.evento.backgroundColor }}>
 					<Toolbar>
 						<IconButton edge="start" color="inherit" onClick={handleCloseDialogEvento} aria-label="cerrar">
 							<CloseIcon />
 						</IconButton>
 						<Typography variant="h6" className={classes.title}>
-							{eventoConsultado.title}
+							{calendario.evento.title}
 						</Typography>
 						<Fab size='small' color="secondary" aria-label="eliminar" onClick={() => eliminarEvento()}>
 							<DeleteOutlineIcon /></Fab>
@@ -788,7 +776,7 @@ export default function Calendario() {
 								<GroupIcon />
 							</Avatar>
 						</ListItemAvatar>
-						<ListItemText primary={arrayInvitados.length ? arrayInvitados.length + ' Invitado(s)' : ''} secondary={arrayInvitados.length ? arrayInvitados.map(invitao => (invitao.correo + ', ')) : 'No posee invitados'} />
+						<ListItemText primary={calendario.invitados.length ? calendario.invitados.length + ' Invitado(s)' : ''} secondary={calendario.invitados.length ? calendario.invitados.map(invitao => (invitao.correo + ', ')) : 'No posee invitados'} />
 						<PersonAddOutlinedIcon color='primary' />
 					</ListItem>
 					<Divider />
@@ -798,7 +786,7 @@ export default function Calendario() {
 								<DescriptionOutlinedIcon />
 							</Avatar>
 						</ListItemAvatar>
-						<ListItemText primary="Descripción" secondary={eventoConsultado.hasOwnProperty('description') ? eventoConsultado.description : 'No posee descripción'} />
+						<ListItemText primary="Descripción" secondary={calendario.evento.hasOwnProperty('description') ? calendario.evento.description : 'No posee descripción'} />
 					</ListItem>
 					<Divider />
 					<ListItem>
@@ -807,7 +795,7 @@ export default function Calendario() {
 								<EventOutlinedIcon />
 							</Avatar>
 						</ListItemAvatar>
-						<ListItemText primary="Creador" secondary={eventoConsultado.hasOwnProperty('creator') ? eventoConsultado.creator : ''} />
+						<ListItemText primary="Creador" secondary={calendario.evento.hasOwnProperty('creator') ? calendario.evento.creator : ''} />
 					</ListItem>
 					<Divider />
 					<ListItem>
@@ -816,7 +804,7 @@ export default function Calendario() {
 								<ScheduleOutlinedIcon />
 							</Avatar>
 						</ListItemAvatar>
-						<ListItemText primary="Inicio" secondary={eventoConsultado.start} />
+						<ListItemText primary="Inicio" secondary={calendario.evento.start} />
 					</ListItem>
 					<Divider />
 					<ListItem>
@@ -825,7 +813,7 @@ export default function Calendario() {
 								<ScheduleOutlinedIcon />
 							</Avatar>
 						</ListItemAvatar>
-						<ListItemText primary="Final" secondary={eventoConsultado.end} />
+						<ListItemText primary="Final" secondary={calendario.evento.end} />
 					</ListItem>
 				</List>
 			</Dialog>
@@ -841,7 +829,7 @@ export default function Calendario() {
 						defaultView='dayGridMonth'
 						plugins={[dayGridPlugin, interactionPlugin, timeGrid, timelinePlugin, resourceTimelinePlugin, bootstrapPlugin, listPlugin]}
 						themeSystem='standart'
-						events={eventosGoogle.length ? eventosGoogle : ''}
+						events={calendario.calendario.length ? calendario.calendario : ''}
 						header={header}
 						// locale={datos.locale}
 						locale='es'

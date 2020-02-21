@@ -7,7 +7,8 @@ import {
 import { makeStyles } from '@material-ui/core/styles';
 import TablaEmpresas from './TablaEmpresas';
 import AppInteractionContext from '../helpers/appInteraction';
-import { AuthTokenRequest } from '../helpers/AxiosInstance';
+import Info from './Info';
+import Nuevo from './Nuevo'
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -22,17 +23,8 @@ const useStyles = makeStyles(theme => ({
 
 
 export default function Empresas() {
-	const { dispatch } = React.useContext(AppInteractionContext)
+	const { interactions } = React.useContext(AppInteractionContext)
 	const classes = useStyles()
-
-	const consultarAcciones = () => {
-		AuthTokenRequest.post('acciones', { form: 'listaEmpresas' })
-			.then(result => {
-				dispatch(['listaEmpresas', window.location.pathname, 'funcion', result.data])
-			})
-	}
-
-	React.useEffect(consultarAcciones, [])
 
 	return (
 		<React.Fragment>
@@ -40,7 +32,12 @@ export default function Empresas() {
 			<Zoom in={true} timeout={500}>
 				<Grid container spacing={1} className={classes.root}>
 					<Grid item xs={12}>
-						<TablaEmpresas />
+						{interactions.formContent.path === '/empresas/info' ?
+							<Info /> :
+							interactions.formContent.path === '/empresas/nuevo' ?
+								<Nuevo /> :
+								<TablaEmpresas />
+						}
 					</Grid>
 				</Grid>
 			</Zoom>

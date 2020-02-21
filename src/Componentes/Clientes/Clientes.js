@@ -7,9 +7,8 @@ import {
 } from '@material-ui/core';
 import TablaContactos from './TablaContactos';
 import AppInteractionContext from '../helpers/appInteraction';
-import { AuthTokenRequest } from '../helpers/AxiosInstance';
-import ContactosContext from './contactosContext';
-import Info from './Info'
+import Info from './Info';
+import Nuevo from './Nuevo';
 
 
 const useStyles = makeStyles(theme => ({
@@ -21,19 +20,9 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-export default function Contactos({ tarjeta }) {
-	const { interactions, dispatch } = React.useContext(AppInteractionContext)
-	const { contactos } = React.useContext(ContactosContext)
+export default function Contactos() {
+	const { interactions } = React.useContext(AppInteractionContext)
 	const classes = useStyles()
-
-	const consultarAcciones = () => {
-		AuthTokenRequest.post('acciones', { form: 'listaContactos' })
-			.then(result => {
-				dispatch(['listaContactos', window.location.pathname, 'funcion', result.data])
-			})
-	}
-
-	React.useEffect(consultarAcciones, [])
 
 	return (
 		<React.Fragment>
@@ -41,10 +30,11 @@ export default function Contactos({ tarjeta }) {
 			<Zoom in={true} timeout={500}>
 				<Grid container spacing={1} className={classes.root}>
 					<Grid item xs={12}>
-						{contactos.abrirInfo ?
+						{interactions.formContent.path === '/contactos/info' ?
 							<Info /> :
-							interactions.formContent.path === '/contactos' ?
-								<TablaContactos tarjeta={tarjeta} /> : null
+							interactions.formContent.path === '/contactos/nuevo' ?
+								<Nuevo /> :
+								<TablaContactos />
 						}
 					</Grid>
 				</Grid>

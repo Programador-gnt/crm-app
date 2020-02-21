@@ -10,11 +10,12 @@ import {
     DialogActions,
     Button
 } from '@material-ui/core';
-import { useHistory } from 'react-router-dom';
 import MaterialTable from 'material-table';
 import { AuthTokenRequest } from '../helpers/AxiosInstance';
+import EmpresasContext from './empresasContext';
+import AppInteractionContext from '../helpers/appInteraction'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
     back: {
         transform: 'translateZ(0px)',
         position: 'fixed',
@@ -27,17 +28,17 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function TablaEmpresas(data) {
+    const { interactions, dispatch } = React.useContext(AppInteractionContext)
+    const { empresas, dispatchEmpresas } = React.useContext(EmpresasContext)
     const [openDialog, setOpenDialog] = React.useState(false)
     const [id, setId] = React.useState(null)
     const [nombre, setNombre] = React.useState(null)
-    const [empresas, setEmpresas] = React.useState([])
-    const history = useHistory()
     const classes = useStyles();
 
     const consultarEmpresas = () => {
         AuthTokenRequest.get('empresas')
             .then(result => {
-                setEmpresas(result.data)
+                dispatchEmpresas(['consultar', result.data])
             })
 
     }
@@ -59,6 +60,14 @@ export default function TablaEmpresas(data) {
         })
     }
 
+    const consultarAcciones = () => {
+        AuthTokenRequest.post('acciones', { form: 'listaEmpresas' })
+            .then(result => {
+                dispatch(['listaEmpresas', '/empresas', 'funcion', interactions.formContent.funcionSecundaria, result.data])
+            })
+    }
+
+    React.useEffect(consultarAcciones, [])
     React.useEffect(consultarEmpresas, [])
 
     return (
@@ -95,12 +104,15 @@ export default function TablaEmpresas(data) {
                     { title: 'Teléfono', field: 'telefono', type: 'numeric' },
                     { title: 'País', field: 'pais' },
                 ]}
-                data={empresas}
+                data={empresas.empresas}
                 actions={[
                     {
                         icon: 'search',
                         tooltip: 'Ver',
-                        onClick: (event, rowData) => history.push(`/empresas/info?id=${rowData.id_empresas}`)
+                        onClick: (event, rowData) => {
+                            dispatch(['empresasInfo', `/empresas/info`, 'funcion', interactions.formContent.funcionSecundaria, interactions.acciones])
+                            dispatchEmpresas(['abrirInfo', { id_empresas: rowData.id_empresas }])
+                        }
                     },
                     {
                         icon: 'delete',

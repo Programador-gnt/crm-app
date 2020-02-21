@@ -4,15 +4,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import AppInteractionContext from '../helpers/appInteraction';
 import { AuthTokenRequest } from '../helpers/AxiosInstance';
+import EmpresasContext from './empresasContext'
 
 const useStyles = makeStyles(theme => ({
-	root: {
-		display: 'flex',
-		flexWrap: 'wrap',
-		width: '100%',
-		marginTop: theme.spacing(8),
-		paddingLeft: theme.spacing(4)
-	},
 	card: {
 
 	},
@@ -49,22 +43,21 @@ const useStyles = makeStyles(theme => ({
 
 
 export default function Info() {
-	const { dispatch } = React.useContext(AppInteractionContext)
-	const [infor, setInfor] = React.useState({})
+	const { interactions, dispatch } = React.useContext(AppInteractionContext)
+	const { empresas, dispatchEmpresas } = React.useContext(EmpresasContext)
 	const [letra, setLetra] = React.useState(null)
 	const [editar, setEditar] = React.useState(true)
 	const [isLoading, setIsLoading] = React.useState(false)
-	const id = window.location.search.split('=')[1]
 	const classes = useStyles()
 
 	const info = () => {
 		AuthTokenRequest.get('empresas/info', {
 			params: {
-				id_empresas: id
+				id_empresas: empresas.id_empresas
 			}
 		})
 			.then(result => {
-				setInfor(result.data)
+				dispatchEmpresas(['consultarInfo', result.data])
 				setLetra(result.data.razonsocial.substr(0, 1))
 			})
 	}
@@ -82,7 +75,7 @@ export default function Info() {
 	const consultarAcciones = () => {
 		AuthTokenRequest.post('acciones', { form: 'empresasInfo' })
 			.then(result => {
-				dispatch(['empresasInfo', window.location.pathname, guardar, result.data])
+				dispatch(['empresasInfo', '/empresas/info', guardar, interactions.formContent.funcionSecundaria, result.data])
 			})
 	}
 
@@ -92,19 +85,19 @@ export default function Info() {
 	return (
 		<React.Fragment>
 			<CssBaseline />
-			<Grid container className={classes.root} spacing={2}>
+			<Grid container spacing={2}>
 				<Grid item xs={12} sm={4}>
 					<Card className={classes.card} raised={true}>
 						<CardContent>
 							<Avatar className={classes.avatar}><Typography variant='h1'>{letra}</Typography></Avatar>
 							<Typography variant="h5" className={classes.texto} color='secondary'>
-								{infor.razonsocial}
+								{empresas.informacion.razonsocial}
 							</Typography>
 							<Typography variant="body1" className={classes.texto} color='textPrimary'>
-								{infor.correo}
+								{empresas.informacion.correo}
 							</Typography>
 							<Typography variant="body1" className={classes.texto} color='textSecondary'>
-								{infor.social}
+								{empresas.informacion.social}
 							</Typography>
 						</CardContent>
 						<CardActions disableSpacing>
@@ -127,7 +120,7 @@ export default function Info() {
 							<Grid item xs={12} sm={6}>
 								<TextField
 									name='razonsocial'
-									value={infor.razonsocial || ''}
+									value={empresas.informacion.razonsocial || ''}
 									disabled={editar}
 									margin='normal'
 									autoFocus
@@ -139,7 +132,7 @@ export default function Info() {
 							<Grid item xs={12} sm={6}>
 								<TextField
 									name='ruc'
-									value={infor.ruc || ''}
+									value={empresas.informacion.ruc || ''}
 									disabled={editar}
 									margin='normal'
 									fullWidth
@@ -150,7 +143,7 @@ export default function Info() {
 							<Grid item xs={12} sm={6}>
 								<TextField
 									name='social'
-									value={infor.social || ''}
+									value={empresas.informacion.social || ''}
 									disabled={editar}
 									margin='normal'
 									fullWidth
@@ -161,7 +154,7 @@ export default function Info() {
 							<Grid item xs={12} sm={6}>
 								<TextField
 									name='telefono'
-									value={infor.telefono || ''}
+									value={empresas.informacion.telefono || ''}
 									disabled={editar}
 									margin='normal'
 									fullWidth
@@ -172,7 +165,7 @@ export default function Info() {
 							<Grid item xs={12} sm={6}>
 								<TextField
 									name='correo'
-									value={infor.correo || ''}
+									value={empresas.informacion.correo || ''}
 									disabled={editar}
 									margin='normal'
 									fullWidth
@@ -183,7 +176,7 @@ export default function Info() {
 							<Grid item xs={12} sm={6}>
 								<TextField
 									name='pais'
-									value={infor.pais === '1' ? 'Perú' : 'Venezuela' || ''}
+									value={empresas.informacion.pais === '1' ? 'Perú' : 'Venezuela' || ''}
 									disabled={editar}
 									margin='normal'
 									fullWidth

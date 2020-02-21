@@ -1,3 +1,13 @@
+import React from 'react'
 import Empresas from './Empresas';
+import { EmpresasContextProviders } from './empresasContext';
 
-export default Empresas;
+function IndexEmpresas() {
+    return (
+        <EmpresasContextProviders>
+            <Empresas />
+        </EmpresasContextProviders>
+    )
+}
+
+export default IndexEmpresas;

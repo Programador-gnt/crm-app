@@ -42,9 +42,6 @@ import AppInteractionContext from '../helpers/appInteraction';
 
 const useStyles = makeStyles(theme => ({
 	root: {
-		marginTop: theme.spacing(3),
-		marginBottom: theme.spacing(3),
-		padding: theme.spacing(2),
 		[theme.breakpoints.up(600 + theme.spacing(3) * 2)]: {
 			marginTop: theme.spacing(6),
 			marginBottom: theme.spacing(6),
@@ -117,7 +114,7 @@ export default function Nuevo() {
 	const [dialogDireccion, setDialogDireccion] = React.useState(false)
 	const classes = useStyles()
 	const perfil = JSON.parse(localStorage.getItem('perfilGoogle'))
-	const { dispatch } = React.useContext(AppInteractionContext)
+	const { interactions, dispatch } = React.useContext(AppInteractionContext)
 
 	const onChange = (e) => {
 		setDenei(e.target.value)
@@ -272,7 +269,7 @@ export default function Nuevo() {
 	const consultarAcciones = () => {
 		AuthTokenRequest.post('acciones', { form: 'contactosNuevo' })
 			.then(result => {
-				dispatch(['contactosNuevo', window.location.pathname, guardar, result.data])
+				dispatch(['contactosNuevo', '/contactos/nuevo', guardar, interactions.formContent.funcionSecundaria, result.data])
 			})
 	}
 
