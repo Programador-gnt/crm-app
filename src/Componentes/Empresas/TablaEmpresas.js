@@ -96,63 +96,67 @@ export default function TablaEmpresas(data) {
           			</Button>
                 </DialogActions>
             </Dialog>
-            <MaterialTable
-                title='Lista de empresas'
-                columns={[
-                    { title: 'Razón social', field: 'razonsocial' },
-                    { title: 'Ruc', field: 'ruc' },
-                    { title: 'Teléfono', field: 'telefono', type: 'numeric' },
-                    { title: 'País', field: 'pais' },
-                ]}
-                data={empresas.empresas}
-                actions={[
-                    {
-                        icon: 'search',
-                        tooltip: 'Ver',
-                        onClick: (event, rowData) => {
-                            dispatch(['empresasInfo', `/empresas/info`, 'funcion', interactions.formContent.funcionSecundaria, interactions.acciones])
-                            dispatchEmpresas(['abrirInfo', { id_empresas: rowData.id_empresas }])
-                        }
-                    },
-                    {
-                        icon: 'delete',
-                        tooltip: 'Eliminar',
-                        onClick: (event, rowData) => MensajeEliminar(rowData.id_empresas, rowData.razonsocial)
-                    },
-                    {
-                        icon: 'refresh',
-                        tooltip: 'Actualizar',
-                        isFreeAction: true,
-                        onClick: () => { consultarEmpresas() }
-                    },
-                    {
-                        icon: 'filter_list',
-                        tooltip: 'Filtrar datos',
-                        isFreeAction: true,
-                        onClick: () => alert('filtrar')
-                    }
-                ]}
-                localization={{
-                    pagination: {
-                        labelDisplayedRows: '{from}-{to} de {count}'
-                    },
-                    toolbar: {
-                        nRowsSelected: '{0} fila(s) seleccionadas'
-                    },
-                    header: {
-                        actions: 'Actions'
-                    },
-                    body: {
-                        emptyDataSourceMessage: 'No hay nada para mostrar',
-                        filterRow: {
-                            filterTooltip: 'Filter'
-                        }
-                    }
-                }}
-                options={{
-                    search: false
-                }}
-            />
+            {interactions.formContent.funcionSecundaria ?
+                <p>aqui van las tarjetas</p> :
+                <>
+                    <MaterialTable
+                        title='Lista de empresas'
+                        columns={[
+                            { title: 'Razón social', field: 'razonsocial' },
+                            { title: 'Ruc', field: 'ruc' },
+                            { title: 'Teléfono', field: 'telefono', type: 'numeric' },
+                            { title: 'País', field: 'pais' },
+                        ]}
+                        data={empresas.empresas}
+                        actions={[
+                            {
+                                icon: 'search',
+                                tooltip: 'Ver',
+                                onClick: (event, rowData) => {
+                                    dispatch(['empresasInfo', `/empresas/info`, 'funcion', interactions.formContent.funcionSecundaria, interactions.acciones])
+                                    dispatchEmpresas(['abrirInfo', { id_empresas: rowData.id_empresas }])
+                                }
+                            },
+                            {
+                                icon: 'delete',
+                                tooltip: 'Eliminar',
+                                onClick: (event, rowData) => MensajeEliminar(rowData.id_empresas, rowData.razonsocial)
+                            },
+                            {
+                                icon: 'refresh',
+                                tooltip: 'Actualizar',
+                                isFreeAction: true,
+                                onClick: () => { consultarEmpresas() }
+                            },
+                            {
+                                icon: 'filter_list',
+                                tooltip: 'Filtrar datos',
+                                isFreeAction: true,
+                                onClick: () => alert('filtrar')
+                            }
+                        ]}
+                        localization={{
+                            pagination: {
+                                labelDisplayedRows: '{from}-{to} de {count}'
+                            },
+                            toolbar: {
+                                nRowsSelected: '{0} fila(s) seleccionadas'
+                            },
+                            header: {
+                                actions: 'Actions'
+                            },
+                            body: {
+                                emptyDataSourceMessage: 'No hay nada para mostrar',
+                                filterRow: {
+                                    filterTooltip: 'Filter'
+                                }
+                            }
+                        }}
+                        options={{
+                            search: false
+                        }}
+                    />
+                </>}
         </>
     );
 }

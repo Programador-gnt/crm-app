@@ -6,7 +6,7 @@ import PeopleIcon from '@material-ui/icons/PeopleOutlined';
 import { green } from '@material-ui/core/colors';
 import { useHistory } from 'react-router-dom';
 import { AuthTokenRequest } from '../../../helpers/AxiosInstance';
-import InicioContext from '../../inicioContext'
+import InicioContext from '../../inicioContext';
 
 const useStyles = makeStyles(() => ({
 	root: {
@@ -50,6 +50,10 @@ const Usuarios = () => {
 		AuthTokenRequest.get('contactos')
 			.then(result => {
 				dispatchInicio(['usuarios', result.data.length])
+			}).catch(error => {
+				if(error.response.status===401){
+					history.push('/401')
+				}
 			})
 	}
 

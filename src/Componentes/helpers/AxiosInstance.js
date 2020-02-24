@@ -1,5 +1,5 @@
 import axios from 'axios'
-import api from '../constants/api'
+import api from '../constants/api';
 
 // Toda API request requiere token
 const AuthTokenRequest = axios.create({
@@ -19,10 +19,9 @@ AuthTokenRequest.interceptors.request.use(
 
 // interceptor de respuesta (despues de solicitud)
 AuthTokenRequest.interceptors.response.use(
-	response => response,          // Cualquier código de estado que se encuentre dentro del rango de 2xx hace que esta función se active
-	error => Promise.reject(error) // Cualquier código de estado que esté fuera del rango de 2xx hace que esta función se active
+	response => response.status === 401 ? alert('holaaa') : response,          // Cualquier código de estado que se encuentre dentro del rango de 2xx hace que esta función se active
+	error => Promise.reject(error)// Cualquier código de estado que esté fuera del rango de 2xx hace que esta función se active
 )
-
 
 // 
 const NoAuthTokenRequest = axios.create({
