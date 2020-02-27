@@ -5,7 +5,9 @@ const ContactosContext = React.createContext()
 const initialState = {
     contactos: [],
     informacion: {},
-    id_usuarios: null
+    id_usuarios: null,
+    id_eliminar: null,
+    nombreEliminar: null
 }
 
 function contactosFunctionReducer(state, [action, payload]) {
@@ -18,6 +20,10 @@ function contactosFunctionReducer(state, [action, payload]) {
 
         case 'abrirInfo':
             return { ...state, id_usuarios: payload.id_usuarios }
+
+        case 'eliminarContacto':
+            return { ...state, id_eliminar: payload.id_eliminar, nombreEliminar: payload.nombreEliminar }
+
 
         default:
             return state;

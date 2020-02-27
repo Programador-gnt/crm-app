@@ -5,7 +5,9 @@ const EmpresasContext = React.createContext()
 const initialState = {
     empresas: [],
     informacion: {},
-    id_empresas: null
+    id_empresas: null,
+    id_eliminar: null,
+    nombreEliminar: null
 }
 
 function empresasFunctionReducer(state, [action, payload]) {
@@ -18,6 +20,9 @@ function empresasFunctionReducer(state, [action, payload]) {
 
         case 'abrirInfo':
             return { ...state, id_empresas: payload.id_empresas }
+
+        case 'eliminarEmpresa':
+            return { ...state, id_eliminar: payload.id_eliminar, nombreEliminar: payload.nombreEliminar }
 
         default:
             return state;
