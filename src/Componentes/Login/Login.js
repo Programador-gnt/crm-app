@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React from 'react'
 import {
 	Avatar,
 	Button,
@@ -16,16 +16,16 @@ import {
 	Link,
 	LinearProgress,
 	Snackbar,
-	Zoom
-} from '@material-ui/core';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import { makeStyles } from '@material-ui/core/styles';
-import { Redirect, useHistory } from 'react-router-dom';
-import CloseIcon from '@material-ui/icons/Close';
-import Copyright from '../Layout/Copyright';
-import { AuthTokenRequest } from '../helpers/AxiosInstance';
-import LoginContext from '../helpers/loginContext';
-import ThemeContext from '../helpers/themeContext';
+	Fade
+} from '@material-ui/core'
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
+import { makeStyles } from '@material-ui/core/styles'
+import { Redirect, useHistory } from 'react-router-dom'
+import CloseIcon from '@material-ui/icons/Close'
+import Copyright from '../Layout/Copyright'
+import { AuthTokenRequest } from '../helpers/AxiosInstance'
+import LoginContext from '../helpers/loginContext'
+import ThemeContext from '../helpers/themeContext'
 import CrearCuenta from './crearCuenta'
 
 
@@ -58,7 +58,6 @@ const useStyles = makeStyles(theme => ({
 		margin: theme.spacing(3, 0, 2)
 	},
 	main: {
-		opacity: '0.8',
 		height: '60%',
 		marginTop: theme.spacing(10),
 		[theme.breakpoints.down(400 + theme.spacing(2) * 2)]: {
@@ -70,7 +69,7 @@ const useStyles = makeStyles(theme => ({
 			height: '60%'
 		}
 	}
-}));
+}))
 
 export default function Login() {
 	const history = useHistory()
@@ -78,13 +77,13 @@ export default function Login() {
 	const [crear, setCrear] = React.useState(false)
 	const [cuerpo, setCuerpo] = React.useState({ nickname: '', password: '' })
 	const [isLoading, setIsLoading] = React.useState(false)
-	const classes = useStyles();
+	const classes = useStyles()
 	const { dispatchLogin } = React.useContext(LoginContext)
 	const { dispatchTheme } = React.useContext(ThemeContext)
 
 	const handleCloseMensaje = () => {
 		setAviso({ mensaje: '', aviso: false })
-	};
+	}
 
 	const onChange = (e) => {
 		setCuerpo({ ...cuerpo, [e.target.name]: e.target.value })
@@ -92,7 +91,7 @@ export default function Login() {
 
 	const login = () => {
 		if (!isLoading) {
-			setIsLoading(true);
+			setIsLoading(true)
 			setTimeout(() => {
 				AuthTokenRequest.post('login', cuerpo)
 					.then(result => {
@@ -108,7 +107,7 @@ export default function Login() {
 					}).catch(error => {
 						setAviso({ mensaje: error.response.data, aviso: true })
 						setIsLoading(false)
-						document.getElementById('password').focus();
+						document.getElementById('password').focus()
 					})
 			}, 1000)
 		}
@@ -125,12 +124,12 @@ export default function Login() {
 	return (
 		<Grid container component="main" className={classes.root}>
 			{crear ? <CrearCuenta cerrar={cerrarCrear} /> :
-				<Zoom in={true} timeout={1000}>
+				<Fade in={true} timeout={500}>
 					<Container component={Paper} elevation={5} maxWidth='xs' className={classes.main}>
 						<CssBaseline />
 						<Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }} open={aviso.aviso} autoHideDuration={3000} onClose={handleCloseMensaje} style={{ opacity: '0.8' }}
 							ContentProps={{ 'aria-describedby': 'mensaje' }} message={<Typography id="mensaje" variant='button'>{aviso.mensaje}</Typography>}
-							action={[<IconButton key="close" aria-label="close" color="inherit" className={classes.close} onClick={handleCloseMensaje}><CloseIcon /></IconButton>]}/>
+							action={[<IconButton key="close" aria-label="close" color="inherit" className={classes.close} onClick={handleCloseMensaje}><CloseIcon /></IconButton>]} />
 						<div className={classes.paper}>
 							<Avatar className={classes.avatar}>
 								<LockOutlinedIcon />
@@ -201,8 +200,8 @@ export default function Login() {
 							</Box>
 						</div>
 					</Container>
-				</Zoom>
+				</Fade>
 			}
 		</Grid>
-	);
+	)
 }

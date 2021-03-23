@@ -6,6 +6,6 @@ const Config = {
 	chatID: '12175f61a39221e',
 	chatKey: 'dc6caa6233ad738d187ea788fe4208da44d5c50b',
 	chatRegion: 'eu',
-	urlChat: 'http://172.19.39.179:5000/chat/'
+	urlChat: 'http://localhost:5000/chat/'
 }
 export default Config;

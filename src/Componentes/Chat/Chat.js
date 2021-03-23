@@ -187,7 +187,7 @@ export default function Chat() {
 	// const [avatarEntrante, setAvatarEntrante] = React.useState(null)
 	const [llamadaPantalla, setLlamadaPantalla] = React.useState(false)
 	const classes = useStyles()
-	var socket = io.connect('http://172.19.39.179:5000', { 'forceNew': true })
+	var socket = io.connect('http://localhost:5000', { 'forceNew': true })
 	const user = JSON.parse(localStorage.getItem('usuarioChat'))
 	const botonLlamadas = [
 		{ name: 'Audio' },

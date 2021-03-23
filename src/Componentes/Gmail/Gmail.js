@@ -30,7 +30,8 @@ import {
 	Backdrop,
 	Modal,
 	Zoom,
-	TextField
+	TextField,
+	Container
 } from '@material-ui/core';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
@@ -81,7 +82,8 @@ function a11yProps(index) {
 const useStyles = makeStyles(theme => ({
 	root: {
 		width: '100%',
-		marginTop: theme.spacing(10)
+		marginTop: theme.spacing(10),
+		marginBottom: theme.spacing(5)
 	},
 	card: {
 		width: 400,
@@ -172,7 +174,7 @@ function Gmail() {
 	var From
 	var Dates
 	var chatFrom
-	const datos = JSON.parse(localStorage.getItem('perfilGoogle'))
+	const datos = JSON.parse(localStorage.getItem('perfil'))
 
 	const handleCambio = (event, newValue) => {
 		setValor(newValue);
@@ -504,7 +506,7 @@ function Gmail() {
 					</IconButton>,
 				]}
 			/>
-			<Paper elevation={4} className={classes.root} >
+			<Container component={Paper} elevation={4} className={classes.root} maxWidth='lg'>
 				<Modal
 					aria-labelledby='transition-modal-title'
 					aria-describedby="transition-modal-description"
@@ -571,9 +573,9 @@ function Gmail() {
 					<Card className={classes.card}>
 						<CardHeader
 							avatar={
-								<Avatar alt="..." src={datos.picture} />
+								<Avatar alt="..." src={datos.avatar} />
 							}
-							title={perfil.emailAddress}
+							title={datos.correo}
 						/>
 						<CardMedia
 							className={classes.media}
@@ -727,7 +729,7 @@ function Gmail() {
 					</div>
 
 				</Fade>
-			</Paper>
+			</Container>
 		</React.Fragment>
 	);
 }

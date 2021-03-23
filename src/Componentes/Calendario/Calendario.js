@@ -26,7 +26,8 @@ import {
 	Button,
 	TextField,
 	Select,
-	MenuItem
+	MenuItem,
+	Container
 } from '@material-ui/core';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -630,34 +631,32 @@ export default function Calendario() {
 					</ListItem>
 				</List>
 			</Dialog>
-			<Grid className={classes.root}>
-				<Grid item xs={12}>
-					<FullCalendar
-						selectable={true}
-						select={dialogEventoNuevo}
-						weekNumbers={true}
-						editable={true}
-						eventDrop={eventDrag}
-						eventResize={eventDrag}
-						defaultView='dayGridMonth'
-						plugins={plugines}
-						themeSystem='standart'
-						events={calendario.calendario.length ? calendario.calendario : ''}
-						header={header}
-						locale='es'
-						eventClick={eventClick}
-						eventLimit={true}
-						eventTextColor='#fff'
-						eventBorderColor='rgba(0, 0, 0, 0)'
-						navLinks={true}
-						schedulerLicenseKey='GPL-My-Project-Is-Open-Source'
-						slotDuration='00:15'
-						nowIndicator={true}
-						buttonText={botones}
-						eventTimeFormat={formatoTiempo}
-					/>
-				</Grid>
-			</Grid>
+			<Container maxWidth='lg' className={classes.root}>
+				<FullCalendar
+					selectable={true}
+					select={() => dialogEventoNuevo()}
+					weekNumbers={true}
+					editable={true}
+					eventDrop={eventDrag}
+					eventResize={eventDrag}
+					defaultView='dayGridMonth'
+					plugins={plugines}
+					themeSystem='standart'
+					events={calendario.calendario.length ? calendario.calendario : ''}
+					header={header}
+					locale='es'
+					eventClick={eventClick}
+					eventLimit={true}
+					eventTextColor='#fff'
+					eventBorderColor='rgba(0, 0, 0, 0)'
+					navLinks={true}
+					schedulerLicenseKey='GPL-My-Project-Is-Open-Source'
+					slotDuration='00:15'
+					nowIndicator={true}
+					buttonText={botones}
+					eventTimeFormat={formatoTiempo}
+				/>
+			</Container>
 		</React.Fragment>
 	);
 }

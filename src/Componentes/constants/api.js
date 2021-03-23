@@ -1,4 +1,4 @@
-const IP_URL = 'http://172.19.39.179:5000'
+const IP_URL = 'http://localhost:5000'
 
 export default {
 	BASE_IP_URL: IP_URL,

@@ -163,7 +163,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 function Cabecera() {
-	var socket = io.connect('http://172.19.39.179:5000', { 'forceNew': true })
+	var socket = io.connect('http://localhost:5000', { 'forceNew': true })
 	const classes = useStyles();
 	const [open, setOpen] = React.useState(false);
 	const [anchorEl, setAnchorEl] = React.useState(null);
